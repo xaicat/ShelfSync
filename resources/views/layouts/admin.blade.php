@@ -84,7 +84,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
-                <img src="https://i.imgur.com/xnfrPes.png" width="160" height="42" alt="Diu Library Portal">
+                <span>Diu Library Portal</span>
+                <!--<img src="https://i.imgur.com/xnfrPes.png" width="160" height="42" alt="Diu Library Portal">-->
             </a>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto">

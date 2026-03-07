@@ -39,7 +39,9 @@
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <a class="navbar-brand mx-auto" href="{{ route('home') }}">
-                <img src="https://i.imgur.com/xnfrPes.png" width="160" height="42" alt="Diu Library Portal">
+                <span style="padding-right: 20px;">Diu Library Portal</span>
+                <!--<img src="" width="160" height="42" alt="Diu Library Portal">-->
+                
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#userNavbar">
                 <span class="navbar-toggler-icon"></span>
@@ -47,7 +49,7 @@
             
             <div class="collapse navbar-collapse" id="userNavbar">
                 @auth
-                    <h4 class="text-white mx-auto d-none d-lg-block" style="font-size: 1rem;">Welcome, {{ Auth::user()->name }}</h4>
+                    <h4 class="text-white mx-auto d-none d-lg-block" style="font-size: 1rem; font-family:'Syne', sans-serif; background: linear-gradient(135deg, #fff 30%, #06d6a0 70%, #3b82f6) !important; background-clip: text !important; -webkit-background-clip: text !important;-webkit-text-fill-color: transparent !important; line-height: 1 !important; margin: 0;padding: 0;box-sizing: border-box;">User: {{ Auth::user()->name }}</h4>
                 @endauth
                 
                 <ul class="navbar-nav ml-auto">
