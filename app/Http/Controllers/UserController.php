@@ -132,6 +132,10 @@ class UserController extends Controller
             'quantity'       => 'required|numeric|min:1',
         ]);
 
+        if (\Illuminate\Support\Facades\Auth::user()->card_status !== 'approved') {
+            return redirect()->back()->with('error', 'You must have an approved Library Card to rent books.');
+        }
+
         $book = Book::findOrFail($request->book_id);
         if ($book->quantity < $request->quantity) {
             return redirect()->back()->with('error', 'Not enough copies available. Only ' . $book->quantity . ' left.');
@@ -163,6 +167,37 @@ class UserController extends Controller
     public function contact()
     {
         return view('user.contact');
+    }
+
+    // ═══════════════════════════════════════════════
+    // LIBRARY CARD SYSTEM
+    // ═══════════════════════════════════════════════
+    public function applyCard(Request $request)
+    {
+        $request->validate([
+            'student_id' => 'required|string',
+            'department' => 'required|string'
+        ]);
+
+        \App\Models\LibraryCard::updateOrCreate(
+            ['user_id' => Auth::id()],
+            [
+                'student_id' => $request->student_id,
+                'department' => $request->department,
+                'status' => 'pending'
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Library Card Application submitted.');
+    }
+
+    public function renewCard(Request $request)
+    {
+        $card = Auth::user()->libraryCard;
+        if ($card && in_array($card->status, ['expired', 'revoked'])) {
+            $card->update(['status' => 'pending']);
+        }
+        return redirect()->back()->with('success', 'Renewal request submitted.');
     }
 
     public function submitContact(Request $request)

@@ -73,18 +73,12 @@
 
             <div class="col-md-5">
                 <div class="mb-3">
-                    <label>Update Cover Image</label>
-                    <div id="dropZone" style="border:2px dashed var(--ss-border-strong);border-radius:14px;padding:16px;text-align:center;cursor:pointer;transition:border-color 0.2s;" onclick="document.getElementById('imageInput').click()">
-                        <img id="imgPreview" src="{{ $book->image ? asset('products/'.$book->image) : '' }}" alt="Cover"
-                            style="{{ $book->image ? 'display:block' : 'display:none' }};max-width:100%;max-height:200px;border-radius:10px;margin:0 auto 10px;object-fit:cover;">
-                        <div id="dropPlaceholder" style="{{ $book->image ? 'display:none' : 'display:block' }}">
-                            <i class="fas fa-sync-alt" style="font-size:2rem;color:var(--ss-text-3);margin-bottom:10px;display:block;"></i>
-                            <p style="color:var(--ss-text-2);font-size:0.82rem;margin:0;">Click to replace cover image</p>
-                        </div>
-                        @if($book->image)
-                        <p style="font-size:0.72rem;color:var(--ss-text-3);margin-top:8px;">Click to change image</p>
-                        @endif
-                        <input type="file" id="imageInput" name="productImage" accept="image/*" style="display:none;" onchange="previewImage(event)">
+                    <label>Update Cover URL</label>
+                    <input type="url" name="cover_url" id="coverUrlInput" class="ss-input" placeholder="https://..." value="{{ $book->image ?? '' }}" oninput="updatePreview(this.value)" style="margin-bottom:12px;">
+
+                    <div id="dropZone" style="border:2px dashed var(--ss-border-strong);border-radius:14px;padding:16px;text-align:center;transition:border-color 0.2s;">
+                        <img id="imgPreview" src="{{ $book->image ?? asset('img/no-cover.svg') }}" onerror="this.onerror=null;this.src='{{ asset('img/no-cover.svg') }}';" alt="Cover"
+                            style="max-width:100%;max-height:200px;border-radius:10px;margin:0 auto;object-fit:cover;">
                     </div>
                 </div>
             </div>
@@ -102,18 +96,17 @@
 </div>
 
 <script>
-function previewImage(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-        const img = document.getElementById('imgPreview');
-        img.src = ev.target.result;
-        img.style.display = 'block';
-        document.getElementById('dropPlaceholder').style.display = 'none';
-        document.getElementById('dropZone').style.borderColor = 'var(--ss-cyan)';
-    };
-    reader.readAsDataURL(file);
+function updatePreview(url) {
+    const img = document.getElementById('imgPreview');
+    const zone = document.getElementById('dropZone');
+    
+    if (url) {
+        img.src = url;
+        zone.style.borderColor = 'var(--ss-cyan)';
+    } else {
+        img.src = '{{ asset("img/no-cover.svg") }}';
+        zone.style.borderColor = 'var(--ss-border-strong)';
+    }
 }
 </script>
 </x-admin-layout>

@@ -38,6 +38,10 @@
                 <span class="sidebar-badge">{{ $pending }}</span>
             @endif
         </a>
+        <a href="{{ route('admin.returns.scan') }}"
+           class="sidebar-item {{ request()->routeIs('admin.returns*') ? 'active' : '' }}">
+            <span class="si-icon"><i class="fas fa-barcode"></i></span> Quick Return
+        </a>
         <a href="{{ route('admin.categories') }}"
            class="sidebar-item {{ request()->routeIs('admin.categories*') ? 'active' : '' }}">
             <span class="si-icon"><i class="fas fa-tags"></i></span> Categories
@@ -45,6 +49,15 @@
         <a href="{{ route('admin.members') }}"
            class="sidebar-item {{ request()->routeIs('admin.members') ? 'active' : '' }}">
             <span class="si-icon"><i class="fas fa-users"></i></span> Members
+        </a>
+        
+        <a href="{{ route('admin.cards') }}"
+           class="sidebar-item {{ request()->routeIs('admin.cards') ? 'active' : '' }}">
+            <span class="si-icon"><i class="fas fa-id-badge"></i></span> Card Requests
+            @php $pendingCount = \App\Models\LibraryCard::where('status', 'pending')->count(); @endphp
+            @if($pendingCount > 0)
+                <span class="sidebar-badge">{{ $pendingCount }}</span>
+            @endif
         </a>
 
         <div class="sidebar-section-label">Account</div>

@@ -50,11 +50,9 @@
 
             <!-- Cover -->
             <div class="book-card-cover">
-                @if($book->image)
-                    <img src="{{ asset('products/'.$book->image) }}" alt="{{ $book->name }}">
-                @else
-                    <i class="fas fa-book no-cover"></i>
-                @endif
+                <img src="{{ $book->image ?? asset('img/no-cover.svg') }}" 
+                     onerror="this.onerror=null;this.src='{{ asset('img/no-cover.svg') }}';"
+                     alt="{{ $book->name }}">
 
                 <!-- Wishlist toggle (auth only) -->
                 @auth
@@ -90,9 +88,15 @@
                     <span class="book-card-price">৳{{ number_format($book->price, 0) }}</span>
                     @if($book->quantity > 0)
                         @auth
-                        <a href="{{ route('user.rent', $book->id) }}" class="ss-btn ss-btn-primary ss-btn-sm">
-                            <i class="fas fa-bookmark"></i> Rent
-                        </a>
+                            @if(Auth::user()->card_status === 'approved')
+                                <a href="{{ route('user.rent', $book->id) }}" class="ss-btn ss-btn-primary ss-btn-sm">
+                                    <i class="fas fa-bookmark"></i> Rent
+                                </a>
+                            @else
+                                <a href="{{ route('profile.edit') }}" class="ss-btn ss-btn-ghost ss-btn-sm" style="color:var(--ss-amber);border-color:var(--ss-amber);">
+                                    <i class="fas fa-id-card"></i> Card Req.
+                                </a>
+                            @endif
                         @else
                         <a href="{{ route('login') }}" class="ss-btn ss-btn-ghost ss-btn-sm">Login</a>
                         @endauth

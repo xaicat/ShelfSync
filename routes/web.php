@@ -41,6 +41,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/reading/{id}/progress',[UserController::class, 'updateProgress'])->name('user.reading.progress');
     Route::patch('/reading/{id}/mark-read',[UserController::class, 'markRead'])->name('user.reading.mark_read');
 
+    // Library Cards
+    Route::post('/library-card/apply', [UserController::class, 'applyCard'])->name('user.card.apply');
+    Route::post('/library-card/renew', [UserController::class, 'renewCard'])->name('user.card.renew');
+
     // Wishlist Toggle (AJAX)
     Route::post('/wishlist/toggle/{bookId}', [UserController::class, 'toggleWishlist'])->name('user.wishlist.toggle');
 });
@@ -56,6 +60,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::patch('/rentals/{id}/approve',[AdminController::class, 'approveRental'])->name('rentals.approve');
     Route::patch('/rentals/{id}/return', [AdminController::class, 'returnRental'])->name('rentals.return');
     Route::patch('/rentals/{id}/reject', [AdminController::class, 'rejectRental'])->name('rentals.reject');
+
+    // Returns Scanner
+    Route::get('/returns/scan',  [AdminController::class, 'scanReturn'])->name('returns.scan');
+    Route::post('/returns/scan', [AdminController::class, 'processScan'])->name('returns.processScan');
+
+    // Card Requests & Admin Actions
+    Route::get('/cards',         [AdminController::class, 'displayCards'])->name('cards');
+    Route::patch('/cards/{id}/approve', [AdminController::class, 'approveCard'])->name('cards.approve');
+    Route::patch('/cards/{id}/reject', [AdminController::class, 'rejectCard'])->name('cards.reject');
+    Route::patch('/user/{id}/revoke', [AdminController::class, 'revokeCard'])->name('revoke.card');
 
     // Categories
     Route::get('/categories',        [AdminController::class, 'categories'])->name('categories');

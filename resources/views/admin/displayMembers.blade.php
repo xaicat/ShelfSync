@@ -62,6 +62,15 @@
                                     <i class="fas fa-arrow-up"></i> Promote
                                 </button>
                             </form>
+                            
+                            @if($user->libraryCard && in_array($user->libraryCard->status, ['approved', 'pending']))
+                                <form action="{{ route('revoke.card', $user->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Revoke Library Card for {{ addslashes($user->name) }}?')">
+                                    @csrf @method('PATCH')
+                                    <button type="submit" class="ss-btn ss-btn-danger ss-btn-sm" title="Revoke Card">
+                                        <i class="fas fa-id-card-alt"></i> Revoke
+                                    </button>
+                                </form>
+                            @endif
                         @else
                             <form action="{{ route('admin.members.demote', $user->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Demote {{ addslashes($user->name) }} to User?')">
                                 @csrf @method('PATCH')

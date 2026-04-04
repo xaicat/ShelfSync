@@ -12,11 +12,9 @@
     <!-- Book preview -->
     <div class="ss-card anim-fade-up-1" style="padding:18px;display:flex;gap:16px;align-items:center;margin-bottom:22px;">
         <div style="width:56px;height:74px;border-radius:10px;overflow:hidden;flex-shrink:0;border:1px solid var(--ss-border);background:linear-gradient(135deg,rgba(37,99,235,0.15),rgba(124,58,237,0.12));display:flex;align-items:center;justify-content:center;">
-            @if($book->image)
-                <img src="{{ asset('products/'.$book->image) }}" style="width:100%;height:100%;object-fit:cover;">
-            @else
-                <i class="fas fa-book" style="color:var(--ss-text-3);"></i>
-            @endif
+            <img src="{{ $book->image ?? asset('img/no-cover.svg') }}" 
+                 onerror="this.onerror=null;this.src='{{ asset('img/no-cover.svg') }}';"
+                 style="width:100%;height:100%;object-fit:cover;">
         </div>
         <div style="flex:1;">
             <div style="font-family:var(--ss-font-display);font-weight:700;color:#fff;font-size:1rem;">{{ $book->name }}</div>

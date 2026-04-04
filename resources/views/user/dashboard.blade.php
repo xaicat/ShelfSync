@@ -66,11 +66,9 @@
                     <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;">
                         <!-- Cover -->
                         <div style="width:46px;height:60px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid var(--ss-border);background:linear-gradient(135deg,rgba(37,99,235,0.15),rgba(124,58,237,0.12));display:flex;align-items:center;justify-content:center;">
-                            @if($rp->book->image)
-                                <img src="{{ asset('products/'.$rp->book->image) }}" style="width:100%;height:100%;object-fit:cover;">
-                            @else
-                                <i class="fas fa-book" style="color:var(--ss-text-3);font-size:0.9rem;"></i>
-                            @endif
+                            <img src="{{ $rp->book->image ?? asset('img/no-cover.svg') }}" 
+                                 onerror="this.onerror=null;this.src='{{ asset('img/no-cover.svg') }}';"
+                                 style="width:100%;height:100%;object-fit:cover;">
                         </div>
                         <div style="flex:1;min-width:0;">
                             <div style="font-weight:700;color:#fff;font-size:0.92rem;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $rp->book->name }}</div>
@@ -121,11 +119,9 @@
                 @foreach($activeRentals as $rental)
                 <div class="ss-card" style="padding:14px;display:flex;align-items:center;gap:12px;">
                     <div style="width:40px;height:52px;border-radius:7px;overflow:hidden;flex-shrink:0;border:1px solid var(--ss-border);background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;">
-                        @if($rental->book && $rental->book->image)
-                            <img src="{{ asset('products/'.$rental->book->image) }}" style="width:100%;height:100%;object-fit:cover;">
-                        @else
-                            <i class="fas fa-book" style="color:var(--ss-text-3);font-size:0.8rem;"></i>
-                        @endif
+                        <img src="{{ isset($rental->book) && $rental->book->image ? $rental->book->image : asset('img/no-cover.svg') }}" 
+                             onerror="this.onerror=null;this.src='{{ asset('img/no-cover.svg') }}';"
+                             style="width:100%;height:100%;object-fit:cover;">
                     </div>
                     <div style="flex:1;min-width:0;">
                         <div style="font-weight:600;color:#fff;font-size:0.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $rental->book->name ?? 'N/A' }}</div>

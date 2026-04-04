@@ -12,6 +12,118 @@
     @if(session('status') === 'profile-updated')
     <div class="alert alert-success anim-fade-up mb-4"><i class="fas fa-check-circle mr-2"></i> Profile updated successfully!</div>
     @endif
+    @if(session('success'))
+    <div class="alert alert-success anim-fade-up mb-4"><i class="fas fa-check-circle mr-2"></i> {{ session('success') }}</div>
+    @endif
+
+    <!-- Digital ID Card Section -->
+    <div class="ss-card anim-fade-up-1" style="padding:32px;margin-bottom:20px;">
+        <div style="margin-bottom:22px;">
+            <div class="ss-section-label">Membership</div>
+            <h3 style="font-size:1rem;font-weight:700;color:#fff;margin:0;">Digital Library Card</h3>
+        </div>
+
+        @php $card = Auth::user()->libraryCard; @endphp
+        
+        @if(!$card)
+            <!-- Apply for Card -->
+            <div style="background:rgba(255,255,255,0.03);border:1px dashed var(--ss-border-strong);border-radius:14px;padding:30px;text-align:center;">
+                <i class="fas fa-id-card" style="font-size:2.5rem;color:var(--ss-text-3);margin-bottom:14px;display:block;"></i>
+                <h4 style="color:#fff;font-size:1.1rem;font-weight:700;margin-bottom:6px;">Apply for Library Access</h4>
+                <p style="color:var(--ss-text-2);font-size:0.85rem;margin-bottom:20px;">You need an approved library card to rent books.</p>
+                
+                <form method="POST" action="{{ route('user.card.apply') }}" style="max-width:400px;margin:0 auto;text-align:left;">
+                    @csrf
+                    <div class="mb-3">
+                        <label>Student ID Number</label>
+                        <input type="text" name="student_id" required class="ss-input" placeholder="232-35-XXX">
+                    </div>
+                    <div class="mb-3">
+                        <label>Department</label>
+                        <input type="text" name="department" required class="ss-input" placeholder="SWE, CSE, ITM etc">
+                    </div>
+                    <button type="submit" class="ss-btn ss-btn-primary" style="width:100%;"><i class="fas fa-paper-plane"></i> Submit Application</button>
+                </form>
+            </div>
+        @elseif($card->status === 'pending')
+            <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:14px;padding:24px;text-align:center;">
+                <i class="fas fa-hourglass-half" style="font-size:2rem;color:var(--ss-amber);margin-bottom:12px;display:block;"></i>
+                <h4 style="color:#fff;font-size:1rem;font-weight:700;margin-bottom:4px;">Application Under Review</h4>
+                <p style="color:var(--ss-amber);font-size:0.85rem;margin:0;">Your library card request is pending admin approval.</p>
+            </div>
+        @else
+            <!-- The Card -->
+            @php 
+                $cStatus = Auth::user()->card_status; 
+                $glowClass = $cStatus === 'approved' ? 'rgba(0,212,255,0.4)' : ($cStatus === 'revoked' ? 'rgba(244,63,94,0.4)' : 'rgba(255,255,255,0.1)');
+                $borderClass = $cStatus === 'approved' ? 'var(--ss-cyan)' : ($cStatus === 'revoked' ? 'var(--ss-rose)' : 'var(--ss-border-strong)');
+                $filter = $cStatus === 'expired' ? 'grayscale(100%) opacity(0.7)' : 'none';
+            @endphp
+            
+            <div style="display:flex;justify-content:center;margin-bottom:20px;">
+                <div style="width:350px;height:200px;border-radius:16px;background:linear-gradient(135deg, rgba(30,30,40,0.8), rgba(15,15,20,0.95));border:1px solid {{ $borderClass }};box-shadow:0 0 25px {{ $glowClass }};position:relative;overflow:hidden;padding:24px;filter: {{ $filter }};{{ $cStatus === 'revoked' ? 'animation: pulse-red 2s infinite;' : '' }}">
+                    
+                    <!-- SVG Overlay Pattern -->
+                    <svg style="position:absolute;top:0;right:0;width:150px;height:100%;opacity:0.05;" viewBox="0 0 100 100">
+                        <circle cx="80" cy="20" r="40" fill="#fff"/>
+                        <circle cx="100" cy="80" r="30" fill="#fff"/>
+                    </svg>
+                    
+                    <!-- Header -->
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+                        <div>
+                            <div style="font-family:var(--ss-font-display);font-size:0.75rem;font-weight:800;letter-spacing:1px;color:var(--ss-cyan);text-transform:uppercase;">ShelfSync Member</div>
+                            <div style="font-size:0.65rem;color:var(--ss-text-3);">Digital Access Card</div>
+                        </div>
+                    </div>
+
+                    <!-- Details -->
+                    <div style="margin-bottom:16px;">
+                        <div style="font-family:monospace;font-size:1.1rem;color:#fff;letter-spacing:2px;margin-bottom:4px;text-shadow: 0 0 4px rgba(255,255,255,0.2);">UID: {{ $card->student_id }}</div>
+                        <div style="font-size:0.95rem;font-weight:700;color:#fff;">{{ Auth::user()->name }}</div>
+                        <div style="font-size:0.75rem;color:var(--ss-text-2);">{{ $card->department }}</div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+                        <div>
+                            <div style="font-size:0.6rem;color:var(--ss-text-3);text-transform:uppercase;">Valid Thru</div>
+                            <div style="font-size:0.8rem;color:#fff;font-weight:600;">
+                                {{ $card->expires_at ? $card->expires_at->format('m/Y') : 'Lifetime' }}
+                            </div>
+                        </div>
+                        
+                        @if($cStatus === 'approved')
+                            <span class="ss-badge" style="background:var(--ss-cyan);color:#000;border:none;font-weight:800;">ACTIVE</span>
+                        @elseif($cStatus === 'expired')
+                            <span class="ss-badge" style="background:#555;color:#fff;border:none;">EXPIRED</span>
+                        @elseif($cStatus === 'revoked')
+                            <span class="ss-badge ss-badge-danger" style="background:var(--ss-rose);color:#fff;border:none;">REVOKED</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            @if($cStatus === 'expired' || $cStatus === 'revoked')
+                <div style="text-align:center;">
+                    <form method="POST" action="{{ route('user.card.renew') }}">
+                        @csrf
+                        <button type="submit" class="ss-btn ss-btn-primary">
+                            <i class="fas fa-sync"></i> Request Renewal
+                        </button>
+                    </form>
+                </div>
+            @endif
+        @endif
+    </div>
+
+    <style>
+    @keyframes pulse-red {
+        0% { box-shadow: 0 0 0 0 rgba(244,63,94, 0.4); border-color: rgba(244,63,94, 1); }
+        70% { box-shadow: 0 0 0 15px rgba(244,63,94, 0); border-color: rgba(244,63,94, 0.5); }
+        100% { box-shadow: 0 0 0 0 rgba(244,63,94, 0); border-color: rgba(244,63,94, 1); }
+    }
+    </style>
 
     <!-- Profile Card -->
     <div class="ss-card anim-fade-up-1" style="padding:32px;margin-bottom:20px;">

@@ -94,6 +94,42 @@ class AdminController extends Controller
     }
 
     // ═══════════════════════════════════════════════
+    // QUICK RETURN SCANNER
+    // ═══════════════════════════════════════════════
+    public function scanReturn()
+    {
+        return view('admin.returns_scan');
+    }
+
+    public function processScan(Request $request)
+    {
+        $request->validate(['scan_id' => 'required']);
+        $scan = trim($request->scan_id);
+        
+        // Extract numeric ID if scanned QR starts with RENTAL-
+        $id = str_replace('RENTAL-', '', strtoupper($scan));
+        
+        $rental = Rental::find($id);
+        if (!$rental) {
+            return redirect()->back()->with('error', "No rental record found for '{$scan}'")->withInput();
+        }
+
+        if ($rental->approval_status === 'returned') {
+            return redirect()->back()->with('error', 'This book has already been returned.');
+        }
+
+        if ($rental->approval_status !== 'approved') {
+            return redirect()->back()->with('error', 'Cannot return. Rental status is currently: ' . $rental->approval_status);
+        }
+
+        // Process Return
+        $rental->update(['approval_status' => 'returned']);
+        $rental->book->increment('quantity', clone $rental->quantity);
+
+        return redirect()->back()->with('success', "Success! '{$rental->book->name}' has been marked as returned and stock updated.");
+    }
+
+    // ═══════════════════════════════════════════════
     // CATEGORY MANAGEMENT
     // ═══════════════════════════════════════════════
     public function categories()
@@ -142,19 +178,27 @@ class AdminController extends Controller
         $request->validate([
             'name'        => 'required',
             'author'      => 'nullable|string|max:255',
-            'category_id' => 'required',
+            'category_id' => 'nullable',
+            'new_category'=> 'nullable|string|max:255',
             'price'       => 'required|numeric',
             'quantity'    => 'required|numeric',
             'description' => 'nullable',
-            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'cover_url'   => 'nullable|string|max:2048',
         ]);
 
-        $data = $request->except(['_token', 'image']);
+        $data = $request->except(['_token', 'image', 'new_category', 'cover_url']);
 
-        if ($request->hasFile('image')) {
-            $imageName = time() . '.' . $request->image->extension();
-            $request->image->move(public_path('products'), $imageName);
-            $data['image'] = $imageName;
+        // Handle Smart Category Mapping
+        if ($request->filled('new_category')) {
+            $cat = \App\Models\Category::firstOrCreate(['name' => $request->new_category]);
+            $data['category_id'] = $cat->id;
+        } elseif (!$request->category_id) {
+            return redirect()->back()->withErrors(['category_id' => 'Please select a category or provide a new one.'])->withInput();
+        }
+
+        // Handle Image URL directly (No Local Storage)
+        if ($request->filled('cover_url')) {
+            $data['image'] = $request->cover_url;
         }
 
         Book::create($data);
@@ -179,12 +223,10 @@ class AdminController extends Controller
             'quantity' => 'required|numeric',
         ]);
 
-        $data = $request->except(['_token', '_method', 'productImage']);
+        $data = $request->except(['_token', '_method', 'cover_url']);
 
-        if ($request->hasFile('productImage')) {
-            $imageName = time() . '.' . $request->productImage->extension();
-            $request->productImage->move(public_path('products'), $imageName);
-            $data['image'] = $imageName;
+        if ($request->filled('cover_url')) {
+            $data['image'] = $request->cover_url;
         }
 
         $book->update($data);
@@ -225,5 +267,42 @@ class AdminController extends Controller
         }
         $user->update(['role' => 'user']);
         return redirect()->back()->with('success', "{$user->name} has been demoted to User.");
+    }
+
+    public function revokeCard($id)
+    {
+        $user = User::findOrFail($id);
+        if ($user->libraryCard) {
+            $user->libraryCard->update(['status' => 'revoked']);
+            return redirect()->back()->with('success', "Library card for {$user->name} has been revoked.");
+        }
+        return redirect()->back()->with('error', 'No library card found to revoke.');
+    }
+
+    // ═══════════════════════════════════════════════
+    // LIBRARY CARD REQUESTS
+    // ═══════════════════════════════════════════════
+    public function displayCards()
+    {
+        $cards = \App\Models\LibraryCard::with('user')->orderBy('created_at', 'desc')->get();
+        return view('admin.cards', compact('cards'));
+    }
+
+    public function approveCard($id)
+    {
+        $card = \App\Models\LibraryCard::findOrFail($id);
+        $card->update([
+            'status' => 'approved',
+            'issued_at' => now(),
+            'expires_at' => now()->addMonths(6)
+        ]);
+        return redirect()->back()->with('success', 'Library Card Approved! Issue Date and 6-Month Expiry configured.');
+    }
+
+    public function rejectCard($id)
+    {
+        $card = \App\Models\LibraryCard::findOrFail($id);
+        $card->update(['status' => 'rejected']);
+        return redirect()->back()->with('success', 'Library Card Rejected.');
     }
 }
