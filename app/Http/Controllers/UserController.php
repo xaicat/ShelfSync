@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Rental;
 use App\Models\Contact;
+use App\Models\Wishlist;
+use App\Models\ReadingProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,10 +17,83 @@ class UserController extends Controller
         return view('user.index');
     }
 
+    // ── User Dashboard ─────────────────────────────────────────
+    public function dashboard()
+    {
+        $user = Auth::user();
+
+        $activeRentals   = Rental::with('book')->where('user_id', $user->id)->where('approval_status', 'approved')->get();
+        $pendingRentals  = Rental::where('user_id', $user->id)->where('approval_status', 'pending')->count();
+        $completedBooks  = ReadingProgress::where('user_id', $user->id)->where('status', 'completed')->count();
+        $wishlistCount   = Wishlist::where('user_id', $user->id)->count();
+        $currentlyReading = ReadingProgress::with('book')->where('user_id', $user->id)->where('status', 'reading')->orderByDesc('updated_at')->get();
+        $readingHistory   = ReadingProgress::with('book')->where('user_id', $user->id)->where('status', 'completed')->orderByDesc('completed_at')->limit(5)->get();
+
+        return view('user.dashboard', compact(
+            'user', 'activeRentals', 'pendingRentals',
+            'completedBooks', 'wishlistCount',
+            'currentlyReading', 'readingHistory'
+        ));
+    }
+
+    // ── Reading Tracker ─────────────────────────────────────────
+    public function addReading(Request $request)
+    {
+        $request->validate([
+            'book_id'  => 'required|exists:books,id',
+            'progress' => 'nullable|integer|min:0|max:100',
+        ]);
+
+        ReadingProgress::updateOrCreate(
+            ['user_id' => Auth::id(), 'book_id' => $request->book_id],
+            [
+                'progress'   => $request->progress ?? 0,
+                'status'     => 'reading',
+                'started_at' => now(),
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Added to your reading list!');
+    }
+
+    public function updateProgress(Request $request, $id)
+    {
+        $rp = ReadingProgress::where('user_id', Auth::id())->findOrFail($id);
+        $request->validate(['progress' => 'required|integer|min:0|max:100']);
+
+        $rp->update(['progress' => $request->progress]);
+
+        if (request()->expectsJson()) {
+            return response()->json(['success' => true, 'progress' => $rp->progress]);
+        }
+        return redirect()->back()->with('success', 'Progress updated!');
+    }
+
+    public function markRead($id)
+    {
+        $rp = ReadingProgress::where('user_id', Auth::id())->findOrFail($id);
+        $rp->update(['status' => 'completed', 'progress' => 100, 'completed_at' => now()]);
+        return redirect()->back()->with('success', 'Book marked as read! 🎉');
+    }
+
+    // ── Wishlist ─────────────────────────────────────────────────
+    public function toggleWishlist($bookId)
+    {
+        $existing = Wishlist::where('user_id', Auth::id())->where('book_id', $bookId)->first();
+        if ($existing) {
+            $existing->delete();
+            $state = false;
+        } else {
+            Wishlist::create(['user_id' => Auth::id(), 'book_id' => $bookId]);
+            $state = true;
+        }
+        return response()->json(['wishlisted' => $state]);
+    }
+
+    // ── Books ──────────────────────────────────────────────────
     public function showBooks(Request $request)
     {
         $query = Book::with('category');
-
         if ($request->filled('search')) {
             $q = $request->search;
             $query->where(function ($qb) use ($q) {
@@ -28,15 +103,18 @@ class UserController extends Controller
                    ->orWhereHas('category', fn($c) => $c->where('name', 'like', "%$q%"));
             });
         }
-
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
         }
-
-        $books = $query->orderBy('name')->get();
+        $books      = $query->orderBy('name')->get();
         $categories = \App\Models\Category::all();
 
-        return view('user.books', compact('books', 'categories'));
+        // Wishlist IDs for the current user
+        $wishlistIds = Auth::check()
+            ? Wishlist::where('user_id', Auth::id())->pluck('book_id')->toArray()
+            : [];
+
+        return view('user.books', compact('books', 'categories', 'wishlistIds'));
     }
 
     public function showRentForm($id)
@@ -45,10 +123,6 @@ class UserController extends Controller
         return view('user.rent', compact('book'));
     }
 
-    /**
-     * Process Rental — creates a PENDING record only.
-     * Book quantity is NOT decremented until admin approves.
-     */
     public function processRent(Request $request)
     {
         $request->validate([
@@ -59,8 +133,6 @@ class UserController extends Controller
         ]);
 
         $book = Book::findOrFail($request->book_id);
-
-        // Check availability for optimistic validation only
         if ($book->quantity < $request->quantity) {
             return redirect()->back()->with('error', 'Not enough copies available. Only ' . $book->quantity . ' left.');
         }
@@ -72,11 +144,8 @@ class UserController extends Controller
             'return_date'     => $request->return_date,
             'quantity'        => $request->quantity,
             'status'          => $request->status ?? 'Online',
-            'approval_status' => 'pending', // ← awaits admin approval
+            'approval_status' => 'pending',
         ]);
-
-        // NOTE: Book quantity is NOT decremented here.
-        // It is decremented only when admin approves via approveRental().
 
         return redirect()->route('user.my_rents')
             ->with('success', 'Rental request submitted! Awaiting admin approval.');
@@ -88,7 +157,6 @@ class UserController extends Controller
             ->where('user_id', Auth::id())
             ->orderByDesc('created_at')
             ->get();
-
         return view('user.my_rents', compact('rentals'));
     }
 
@@ -97,16 +165,12 @@ class UserController extends Controller
         return view('user.contact');
     }
 
-    /**
-     * Contact form — now actually saves to contacts table.
-     */
     public function submitContact(Request $request)
     {
         $request->validate([
             'productName' => 'required|string|max:255',
             'Number'      => 'required|string|max:20',
             'Email'       => 'required|email|max:255',
-            'category'    => 'nullable|string|max:100',
             'Message'     => 'required|string',
         ]);
 
@@ -119,6 +183,6 @@ class UserController extends Controller
             'message'  => $request->Message,
         ]);
 
-        return redirect()->back()->with('success', 'Your message has been received! We will get back to you shortly.');
+        return redirect()->back()->with('success', 'Your message has been received!');
     }
 }

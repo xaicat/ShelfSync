@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\User;
 use App\Models\Rental;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -201,7 +202,28 @@ class AdminController extends Controller
     // ═══════════════════════════════════════════════
     public function members()
     {
-        $users = User::where('role', 'user')->get();
+        // Show all users except the currently logged-in admin
+        $users = User::where('id', '!=', Auth::id())->orderBy('created_at', 'desc')->get();
         return view('admin.displayMembers', compact('users'));
+    }
+
+    public function promoteUser($id)
+    {
+        $user = User::findOrFail($id);
+        if ($user->id === Auth::id()) {
+            return redirect()->back()->with('error', 'You cannot change your own role.');
+        }
+        $user->update(['role' => 'admin']);
+        return redirect()->back()->with('success', "{$user->name} has been promoted to Admin.");
+    }
+
+    public function demoteUser($id)
+    {
+        $user = User::findOrFail($id);
+        if ($user->id === Auth::id()) {
+            return redirect()->back()->with('error', 'You cannot demote yourself.');
+        }
+        $user->update(['role' => 'user']);
+        return redirect()->back()->with('success', "{$user->name} has been demoted to User.");
     }
 }

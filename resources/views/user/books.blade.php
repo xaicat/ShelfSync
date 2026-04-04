@@ -1,128 +1,185 @@
 <x-user-layout>
 <style>
 .books-page { padding: 50px 0 80px; }
-.page-header { margin-bottom: 36px; }
-.filter-bar {
-    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-    margin-bottom: 28px;
-}
-.filter-bar .ss-input { border-radius: var(--ss-r-pill) !important; padding: 10px 18px 10px 42px !important; }
-.search-wrap { position: relative; flex: 1; min-width: 240px; max-width: 360px; }
-.search-wrap i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--ss-text-3); font-size: 0.8rem; pointer-events: none; }
-.filter-select { flex: 0 0 180px; }
-
-.books-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 22px;
-}
-.books-count { font-size: 0.82rem; color: var(--ss-text-2); margin-left: auto; }
+.filter-bar { display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:28px; }
+.search-wrap { position:relative;flex:1;min-width:240px;max-width:380px; }
+.search-wrap i { position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--ss-text-3);font-size:0.8rem;pointer-events:none; }
+.search-wrap input { padding-left:42px !important; border-radius:var(--ss-r-pill) !important; }
+.books-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:22px; }
+.books-count { font-size:0.82rem;color:var(--ss-text-2);margin-left:auto;white-space:nowrap; }
+#no-results { display:none;text-align:center;padding:80px 0; }
 </style>
 
 <div class="books-page">
-    <div class="container">
-        <!-- Header -->
-        <div class="page-header anim-fade-up">
-            <div class="ss-section-label">Catalog</div>
-            <h1 class="ss-page-title">Book Collection</h1>
-            <p class="ss-page-subtitle">Browse and rent from our library of {{ $books->count() }} books</p>
-        </div>
+<div class="container">
 
-        <!-- Filter Bar -->
-        <div class="filter-bar anim-fade-up-1">
-            <form action="{{ route('user.books') }}" method="GET" style="display:contents;">
-                <div class="search-wrap">
-                    <i class="fas fa-search"></i>
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        class="ss-input" placeholder="Search title, author…"
-                        style="border-radius:var(--ss-r-pill)!important;padding-left:42px!important;">
-                </div>
-                <select name="category" class="ss-input filter-select">
-                    <option value="">All Categories</option>
-                    @foreach($categories as $cat)
-                        <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
-                            {{ $cat->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <button type="submit" class="ss-btn ss-btn-primary ss-btn-sm"><i class="fas fa-filter"></i> Filter</button>
-                @if(request('search') || request('category'))
-                    <a href="{{ route('user.books') }}" class="ss-btn ss-btn-ghost ss-btn-sm"><i class="fas fa-times"></i> Clear</a>
-                @endif
-                <span class="books-count">{{ $books->count() }} results</span>
-            </form>
-        </div>
-
-        <!-- Books Grid -->
-        @if($books->isEmpty())
-            <div style="text-align:center;padding:80px 0;">
-                <div style="font-size:3rem;margin-bottom:16px;color:var(--ss-text-3);">📚</div>
-                <p style="color:var(--ss-text-2);font-size:1rem;">No books found matching your search.</p>
-                <a href="{{ route('user.books') }}" class="ss-btn ss-btn-ghost ss-btn-sm mt-3">Clear filters</a>
-            </div>
-        @else
-        <div class="books-grid anim-fade-up-2">
-            @foreach($books as $book)
-            <div class="book-card" onmousemove="spotlightCard(event,this)">
-                <!-- Cover -->
-                <div class="book-card-cover">
-                    @if($book->image)
-                        <img src="{{ asset('products/' . $book->image) }}" alt="{{ $book->name }}">
-                    @else
-                        <i class="fas fa-book no-cover"></i>
-                    @endif
-
-                    <!-- Qty badge -->
-                    @if($book->quantity <= 0)
-                        <div class="book-qty-badge out">Out of Stock</div>
-                    @elseif($book->quantity <= 3)
-                        <div class="book-qty-badge low">⚠ {{ $book->quantity }} left</div>
-                    @else
-                        <div class="book-qty-badge">{{ $book->quantity }} left</div>
-                    @endif
-
-                    <!-- New badge if recent -->
-                    @if($book->created_at && $book->created_at->diffInDays() <= 14)
-                        <div style="position:absolute;top:10px;left:10px;">
-                            <span class="ss-badge ss-badge-new" style="padding:2px 8px;font-size:0.62rem;">New</span>
-                        </div>
-                    @endif
-                </div>
-
-                <!-- Body -->
-                <div class="book-card-body">
-                    <div class="book-card-cat">{{ $book->category->name ?? 'General' }}</div>
-                    <div class="book-card-title" title="{{ $book->name }}">{{ $book->name }}</div>
-                    <div class="book-card-author">{{ $book->author ?? 'Unknown Author' }}</div>
-                    <div class="book-card-footer">
-                        <span class="book-card-price">৳{{ number_format($book->price, 0) }}</span>
-                        @if($book->quantity > 0)
-                            @auth
-                            <a href="{{ route('user.rent', $book->id) }}" class="ss-btn ss-btn-primary ss-btn-sm">
-                                <i class="fas fa-bookmark"></i> Rent
-                            </a>
-                            @else
-                            <a href="{{ route('login') }}" class="ss-btn ss-btn-ghost ss-btn-sm">Login</a>
-                            @endauth
-                        @else
-                            <button disabled class="ss-btn ss-btn-ghost ss-btn-sm" style="opacity:0.4;cursor:not-allowed;">
-                                Unavailable
-                            </button>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-        @endif
+    <!-- Header -->
+    <div class="page-header anim-fade-up" style="margin-bottom:32px;">
+        <div class="ss-section-label">Catalog</div>
+        <h1 class="ss-page-title">Book Collection</h1>
+        <p class="ss-page-subtitle">Browse and rent from our library</p>
     </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar anim-fade-up-1">
+        <form action="{{ route('user.books') }}" method="GET" style="display:contents;" id="filter-form">
+            <div class="search-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="book-search" name="search" value="{{ request('search') }}"
+                    class="ss-input" placeholder="Search title, author, category…">
+            </div>
+            <select name="category" id="cat-filter" class="ss-input" style="flex:0 0 180px;" onchange="this.form.submit()">
+                <option value="">All Categories</option>
+                @foreach($categories as $cat)
+                    <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected':'' }}>{{ $cat->name }}</option>
+                @endforeach
+            </select>
+            <button type="submit" class="ss-btn ss-btn-primary ss-btn-sm"><i class="fas fa-filter"></i> Filter</button>
+            @if(request('search') || request('category'))
+            <a href="{{ route('user.books') }}" class="ss-btn ss-btn-ghost ss-btn-sm"><i class="fas fa-times"></i></a>
+            @endif
+        </form>
+        <span class="books-count" id="result-count">{{ $books->count() }} books</span>
+    </div>
+
+    <!-- Books Grid -->
+    <div class="books-grid anim-fade-up-2" id="books-grid">
+        @forelse($books as $book)
+        @php $wished = in_array($book->id, $wishlistIds ?? []); @endphp
+        <div class="book-card" data-name="{{ strtolower($book->name) }}" data-author="{{ strtolower($book->author ?? '') }}" data-cat="{{ strtolower($book->category->name ?? '') }}" onmousemove="spotCard(event,this)">
+
+            <!-- Cover -->
+            <div class="book-card-cover">
+                @if($book->image)
+                    <img src="{{ asset('products/'.$book->image) }}" alt="{{ $book->name }}">
+                @else
+                    <i class="fas fa-book no-cover"></i>
+                @endif
+
+                <!-- Wishlist toggle (auth only) -->
+                @auth
+                <button class="wish-toggle{{ $wished ? ' wishlisted' : '' }}"
+                    data-book-id="{{ $book->id }}"
+                    title="{{ $wished ? 'Remove from wishlist' : 'Add to wishlist' }}">
+                    <i class="fas fa-heart"></i>
+                </button>
+                @endauth
+
+                <!-- Qty badge -->
+                @if($book->quantity <= 0)
+                    <div class="book-qty-badge out">Out of Stock</div>
+                @elseif($book->quantity <= 3)
+                    <div class="book-qty-badge low">⚠ {{ $book->quantity }} left</div>
+                @else
+                    <div class="book-qty-badge">{{ $book->quantity }} left</div>
+                @endif
+
+                @if($book->created_at && $book->created_at->diffInDays() <= 14)
+                <div style="position:absolute;bottom:10px;left:10px;">
+                    <span class="ss-badge ss-badge-new" style="font-size:0.6rem;padding:2px 8px;">New</span>
+                </div>
+                @endif
+            </div>
+
+            <!-- Body -->
+            <div class="book-card-body">
+                <div class="book-card-cat">{{ $book->category->name ?? 'General' }}</div>
+                <div class="book-card-title" title="{{ $book->name }}">{{ $book->name }}</div>
+                <div class="book-card-author">{{ $book->author ?? 'Unknown Author' }}</div>
+                <div class="book-card-footer">
+                    <span class="book-card-price">৳{{ number_format($book->price, 0) }}</span>
+                    @if($book->quantity > 0)
+                        @auth
+                        <a href="{{ route('user.rent', $book->id) }}" class="ss-btn ss-btn-primary ss-btn-sm">
+                            <i class="fas fa-bookmark"></i> Rent
+                        </a>
+                        @else
+                        <a href="{{ route('login') }}" class="ss-btn ss-btn-ghost ss-btn-sm">Login</a>
+                        @endauth
+                    @else
+                        <button disabled class="ss-btn ss-btn-ghost ss-btn-sm" style="opacity:.4;cursor:not-allowed;">Unavailable</button>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @empty
+        <div style="grid-column:1/-1;text-align:center;padding:80px 0;">
+            <div style="font-size:3rem;margin-bottom:16px;color:var(--ss-text-3);">📚</div>
+            <p style="color:var(--ss-text-2);">No books found.</p>
+        </div>
+        @endforelse
+    </div>
+
+    <div id="no-results">
+        <div style="font-size:3rem;margin-bottom:16px;color:var(--ss-text-3);">🔍</div>
+        <p style="color:var(--ss-text-2);">No books match your search.</p>
+        <button onclick="clearSearch()" class="ss-btn ss-btn-ghost ss-btn-sm mt-2">Clear search</button>
+    </div>
+
+</div>
 </div>
 
 <script>
-function spotlightCard(e, card) {
+// ── Spotlight card effect ──────────────────────────────
+function spotCard(e, card) {
     const r = card.getBoundingClientRect();
     card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
     card.style.setProperty('--my', (e.clientY - r.top) + 'px');
 }
+
+// ── Real-time search filter ──────────────────────────
+const searchInput = document.getElementById('book-search');
+const grid = document.getElementById('books-grid');
+const noResults = document.getElementById('no-results');
+const countEl = document.getElementById('result-count');
+const allCards = () => grid.querySelectorAll('.book-card');
+
+function filterBooks() {
+    const q = searchInput.value.toLowerCase().trim();
+    let visible = 0;
+    allCards().forEach(card => {
+        const match = !q ||
+            card.dataset.name.includes(q) ||
+            card.dataset.author.includes(q) ||
+            card.dataset.cat.includes(q);
+        card.style.display = match ? '' : 'none';
+        if (match) visible++;
+    });
+    countEl.textContent = visible + ' books';
+    noResults.style.display = visible === 0 && q ? 'block' : 'none';
+    grid.style.display = visible === 0 && q ? 'none' : 'grid';
+}
+function clearSearch() {
+    searchInput.value = '';
+    filterBooks();
+}
+if (searchInput) {
+    searchInput.addEventListener('input', filterBooks);
+}
+
+// ── Wishlist AJAX toggle ────────────────────────────
+@auth
+const csrfToken = '{{ csrf_token() }}';
+document.querySelectorAll('.wish-toggle').forEach(btn => {
+    btn.addEventListener('click', async function(e) {
+        e.preventDefault();
+        const bookId = this.dataset.bookId;
+        this.classList.add('pop');
+        this.addEventListener('animationend', () => this.classList.remove('pop'), {once: true});
+
+        try {
+            const res = await fetch(`/wishlist/toggle/${bookId}`, {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' }
+            });
+            const data = await res.json();
+            this.classList.toggle('wishlisted', data.wishlisted);
+            this.title = data.wishlisted ? 'Remove from wishlist' : 'Add to wishlist';
+        } catch(err) {
+            console.error('Wishlist toggle failed:', err);
+        }
+    });
+});
+@endauth
 </script>
 </x-user-layout>
