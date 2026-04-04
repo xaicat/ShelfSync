@@ -19,6 +19,7 @@ class Rental extends Model
         'return_date',
         'quantity',
         'status',
+        'approval_status',
     ];
 
     /**

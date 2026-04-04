@@ -1,146 +1,69 @@
 <x-admin-layout>
-    <style>
-        .member-section h2 {
-            color: #fff;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
 
-        /* Glassmorphism Card for Table */
-        .member-card {
-            background: rgba(8, 22, 39, 0.8);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .table {
-            color: #d3d3d3;
-        }
-
-        .table thead th {
-            border-top: none;
-            border-bottom: 2px solid rgba(30, 144, 255, 0.3);
-            color: #fff;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-        }
-
-        .table td {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            vertical-align: middle;
-            padding: 15px 10px;
-        }
-
-        /* User Icon Styling - Switched to Icon */
-        .user-avatar {
-            width: 48px;
-            height: 48px;
-            background: rgba(30, 144, 255, 0.2);
-            color: var(--primary-blue);
-            border: 1px solid rgba(30, 144, 255, 0.4);
-            border-radius: 12px; /* Square-ish rounded look */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-
-        .member-name-cell {
-            display: flex;
-            align-items: center;
-        }
-
-        /* Improved Info Stack */
-        .member-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .status-badge {
-            background: rgba(40, 167, 69, 0.1);
-            color: #2ecc71;
-            border: 1px solid rgba(46, 204, 113, 0.3);
-            padding: 1px 8px;
-            border-radius: 4px; /* Matches the new avatar style */
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            width: fit-content;
-            letter-spacing: 0.5px;
-        }
-    </style>
-
-    <div class="row justify-content-center mt-4">
-        <div class="col-lg-10">
-            <div class="member-section">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2><i class="fas fa-users-cog mr-2"></i>Registered Members</h2>
-                    <span class="badge badge-info px-3 py-2 shadow-sm" style="border-radius: 20px; background: var(--primary-blue);">
-                        Total Students: {{ $users->count() }}
-                    </span>
-                </div>
-                
-                <div class="member-card">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th width="10%">ID</th>
-                                    <th width="35%">Member Details</th>
-                                    <th width="25%">Email Address</th>
-                                    <th width="30%">Residential Address</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($users as $user)
-                                <tr>
-                                    <td class="text-white-50 font-weight-bold">#{{ $user->id }}</td>
-                                    <td>
-                                        <div class="member-name-cell">
-                                            <div class="user-avatar shadow-sm">
-                                                <i class="fas fa-user-graduate"></i>
-                                            </div>
-                                            <div class="member-info">
-                                                <div class="text-white font-weight-bold" style="font-size: 1.05rem;">
-                                                    {{ $user->name }}
-                                                </div>
-                                                <span class="status-badge">Student Member</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="text-info">
-                                            <i class="fas fa-envelope mr-2 small opacity-50"></i>{{ $user->email }}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div style="max-width: 250px; color: #bbb; line-height: 1.4; font-size: 0.9rem;">
-                                            <i class="fas fa-map-marker-alt mr-2 small text-danger opacity-75"></i>
-                                            {{ $user->address ?? 'No Address Provided' }}
-                                        </div>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="text-center py-5 text-muted">
-                                        <i class="fas fa-user-slash fa-3x mb-3 d-block opacity-25"></i>
-                                        No registered members found in the library database.
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;" class="anim-fade-up">
+    <div>
+        <div class="ss-section-label">Members</div>
+        <h1 class="ss-page-title">Registered Members</h1>
+        <p class="ss-page-subtitle">{{ $users->count() }} registered library members</p>
     </div>
+</div>
+
+<div class="ss-card anim-fade-up-1" style="overflow:hidden;">
+    <div class="table-responsive">
+        <table class="table table-hover" style="margin-bottom:0;">
+            <thead>
+                <tr>
+                    <th width="8%">#</th>
+                    <th>Member</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Joined</th>
+                    <th>Rentals</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($users as $user)
+                <tr>
+                    <td style="color:var(--ss-text-3);font-size:0.78rem;">#{{ $user->id }}</td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(37,99,235,0.15));color:var(--ss-cyan);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;font-family:var(--ss-font-display);font-weight:800;border:1px solid rgba(0,212,255,0.2);">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <div style="font-weight:700;color:#fff;">{{ $user->name }}</div>
+                                <span class="ss-badge ss-badge-approved" style="padding:1px 8px;font-size:0.62rem;">Active Member</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="color:var(--ss-text-2);font-size:0.84rem;">
+                        <i class="fas fa-envelope" style="color:var(--ss-text-3);margin-right:6px;font-size:0.75rem;"></i>
+                        {{ $user->email }}
+                    </td>
+                    <td style="color:var(--ss-text-2);font-size:0.82rem;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        {{ $user->address ?? '—' }}
+                    </td>
+                    <td style="color:var(--ss-text-2);font-size:0.82rem;">
+                        {{ $user->created_at->format('d M Y') }}
+                    </td>
+                    <td>
+                        @php $rcount = \App\Models\Rental::where('user_id', $user->id)->count(); @endphp
+                        <span style="font-weight:700;color:{{ $rcount > 0 ? 'var(--ss-electric)' : 'var(--ss-text-3)' }};">
+                            {{ $rcount }}
+                        </span>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="6" style="text-align:center;padding:60px;color:var(--ss-text-3);">
+                        <i class="fas fa-users" style="font-size:2rem;display:block;margin-bottom:12px;"></i>
+                        No members registered yet.
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
 </x-admin-layout>

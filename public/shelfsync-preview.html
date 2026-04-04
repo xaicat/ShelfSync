@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShelfSync — Component Library Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
+<style>
+/* ════════════════════════════════════════════════════════════
+   ShelfSync Design System v2.0 — Component Library Preview
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Token Definitions ──────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --ss-bg:            #0a0a0b;
+  --ss-bg-alt:        #0f0f12;
+  --ss-surface:       rgba(255,255,255,0.042);
+  --ss-surface-2:     rgba(255,255,255,0.07);
+  --ss-surface-3:     rgba(255,255,255,0.10);
+
+  /* Borders */
+  --ss-border:        rgba(255,255,255,0.08);
+  --ss-border-strong: rgba(255,255,255,0.14);
+  --ss-border-focus:  rgba(0,212,255,0.50);
+
+  /* Brand Colors */
+  --ss-cyan:          #00d4ff;
+  --ss-blue:          #2563eb;
+  --ss-violet:        #7c3aed;
+  --ss-electric:      #06d6a0;
+  --ss-amber:         #f59e0b;
+  --ss-rose:          #f43f5e;
+
+  /* Glow variants */
+  --ss-cyan-glow:     rgba(0, 212, 255, 0.25);
+  --ss-blue-glow:     rgba(37, 99, 235, 0.30);
+  --ss-violet-glow:   rgba(124, 58, 237, 0.25);
+  --ss-electric-glow: rgba(6, 214, 160, 0.25);
+  --ss-rose-glow:     rgba(244, 63, 94, 0.25);
+  --ss-amber-glow:    rgba(245, 158, 11, 0.25);
+
+  /* Text */
+  --ss-text:          rgba(255,255,255,0.90);
+  --ss-text-2:        rgba(255,255,255,0.60);
+  --ss-text-3:        rgba(255,255,255,0.35);
+
+  /* Typography */
+  --ss-font:          'Inter', system-ui, sans-serif;
+  --ss-font-display:  'Montserrat', 'Inter', sans-serif;
+
+  /* Radii */
+  --ss-r-sm:  8px;
+  --ss-r-md:  14px;
+  --ss-r-lg:  20px;
+  --ss-r-xl:  28px;
+  --ss-r-pill:50px;
+
+  /* Blur */
+  --ss-blur:  blur(40px) saturate(1.8);
+}
+
+/* ── Global Reset ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--ss-bg);
+  color: var(--ss-text);
+  font-family: var(--ss-font);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ambient mesh background */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 90% 60% at 10% 10%, rgba(0,212,255,0.055) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 85% 20%, rgba(124,58,237,0.045) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 70% at 50% 95%, rgba(6,214,160,0.035) 0%, transparent 55%);
+}
+
+/* ── Preview Layout ─────────────────────────────────────── */
+.preview-page { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 60px 24px 120px; }
+
+.section-label {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ss-cyan); margin-bottom: 12px;
+}
+.section-label::before {
+  content: ''; width: 24px; height: 1.5px;
+  background: linear-gradient(90deg, var(--ss-cyan), transparent);
+}
+
+.section-title {
+  font-family: var(--ss-font-display);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  background: linear-gradient(135deg, #fff 40%, rgba(255,255,255,0.55));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 8px;
+}
+.section-sub { color: var(--ss-text-2); font-size: 0.9rem; margin-bottom: 40px; line-height: 1.6; }
+
+.sep { height: 1px; background: var(--ss-border); margin: 72px 0; }
+
+/* ═══════════════════════════════════════════════════════════
+   1. HERO HEADER
+═══════════════════════════════════════════════════════════ */
+.lib-header {
+  text-align: center;
+  padding: 80px 0 60px;
+}
+.lib-header .brand-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 18px; border-radius: var(--ss-r-pill);
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.18);
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.10em;
+  text-transform: uppercase; color: var(--ss-cyan);
+  margin-bottom: 24px;
+}
+.lib-header .brand-chip::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ss-cyan);
+  box-shadow: 0 0 10px var(--ss-cyan-glow);
+  animation: pulse-dot 2.2s ease-in-out infinite;
+}
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(0.7);} }
+
+.lib-header h1 {
+  font-family: var(--ss-font-display);
+  font-size: clamp(2.8rem, 6vw, 4.8rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.04;
+  margin-bottom: 20px;
+}
+.lib-header h1 .gradient-text {
+  background: linear-gradient(135deg, var(--ss-cyan) 0%, var(--ss-blue) 50%, var(--ss-violet) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.lib-header p {
+  color: var(--ss-text-2); font-size: 1.05rem; max-width: 560px; margin: 0 auto 36px; line-height: 1.7;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   2. PALETTE SWATCHES
+═══════════════════════════════════════════════════════════ */
+.palette-grid { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.swatch {
+  flex: 1; min-width: 100px; height: 70px; border-radius: var(--ss-r-md);
+  border: 1px solid var(--ss-border);
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  padding: 10px;
+}
+.swatch span { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; margin-top: 4px; }
+
+/* ═══════════════════════════════════════════════════════════
+   3. BUTTONS ◀ THE COMPONENT
+═══════════════════════════════════════════════════════════ */
+.btn-grid { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+
+/* Primary — Cyan-to-Blue gradient pill */
+.ss-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--ss-font); font-size: 0.83rem; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none;
+  border: none; cursor: pointer; white-space: nowrap;
+  border-radius: var(--ss-r-pill);
+  transition: transform 0.25s cubic-bezier(.16,1,.3,1),
+              box-shadow 0.25s cubic-bezier(.16,1,.3,1),
+              opacity 0.2s ease;
+  position: relative; overflow: hidden;
+}
+/* Shimmer sweep on hover */
+.ss-btn::after {
+  content: '';
+  position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  transition: left 0.55s ease;
+}
+.ss-btn:hover::after { left: 100%; }
+.ss-btn:hover { transform: translateY(-2px) scale(1.02); }
+.ss-btn:active { transform: scale(0.975); }
+
+.ss-btn-primary {
+  padding: 11px 28px;
+  background: linear-gradient(135deg, var(--ss-cyan) 0%, var(--ss-blue) 60%, var(--ss-violet) 100%);
+  color: #fff;
+  box-shadow: 0 5px 20px var(--ss-cyan-glow), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.ss-btn-primary:hover { box-shadow: 0 10px 36px var(--ss-cyan-glow), inset 0 1px 0 rgba(255,255,255,0.15); color:#fff; }
+
+.ss-btn-ghost {
+  padding: 10px 26px;
+  background: transparent;
+  border: 1px solid var(--ss-border-strong) !important;
+  color: var(--ss-text);
+}
+.ss-btn-ghost:hover { border-color: var(--ss-cyan) !important; color: var(--ss-cyan); background: rgba(0,212,255,0.06); }
+
+.ss-btn-danger {
+  padding: 10px 26px;
+  background: linear-gradient(135deg, var(--ss-rose), #b91c4a);
+  color: #fff;
+  box-shadow: 0 4px 16px var(--ss-rose-glow);
+}
+.ss-btn-danger:hover { box-shadow: 0 8px 28px var(--ss-rose-glow); color:#fff; }
+
+.ss-btn-success {
+  padding: 10px 26px;
+  background: linear-gradient(135deg, var(--ss-electric), #048a67);
+  color: #fff;
+  box-shadow: 0 4px 16px var(--ss-electric-glow);
+}
+.ss-btn-success:hover { box-shadow: 0 8px 28px var(--ss-electric-glow); color:#fff; }
+
+.ss-btn-sm { padding: 7px 18px; font-size: 0.75rem; }
+.ss-btn-lg { padding: 14px 38px; font-size: 0.9rem; }
+
+/* ═══════════════════════════════════════════════════════════
+   4. BADGES
+═══════════════════════════════════════════════════════════ */
+.badge-grid { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.ss-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 13px; border-radius: var(--ss-r-pill);
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.ss-badge::before { content: '●'; font-size: 0.5rem; }
+.ss-badge-pending  { background: rgba(245,158,11,0.12);  color: var(--ss-amber);   border: 1px solid rgba(245,158,11,0.28); }
+.ss-badge-approved { background: rgba(6,214,160,0.12);   color: var(--ss-electric); border: 1px solid rgba(6,214,160,0.28); }
+.ss-badge-returned { background: rgba(124,58,237,0.12);  color: #a78bfa;           border: 1px solid rgba(124,58,237,0.28); }
+.ss-badge-overdue  { background: rgba(244,63,94,0.12);   color: var(--ss-rose);    border: 1px solid rgba(244,63,94,0.28); }
+.ss-badge-new      { background: rgba(0,212,255,0.10);   color: var(--ss-cyan);    border: 1px solid rgba(0,212,255,0.25); }
+
+/* ═══════════════════════════════════════════════════════════
+   5. BOOK CARD ◀ THE COMPONENT
+═══════════════════════════════════════════════════════════ */
+.book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+
+.book-card {
+  position: relative;
+  background: var(--ss-surface);
+  backdrop-filter: var(--ss-blur); -webkit-backdrop-filter: var(--ss-blur);
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-r-lg);
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+}
+.book-card:hover {
+  border-color: var(--ss-border-strong);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 80px rgba(0,212,255,0.04);
+  transform: translateY(-4px);
+}
+/* Spotlight on hover */
+.book-card::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: inherit;
+  background: radial-gradient(circle 200px at var(--mx,50%) var(--my,50%), rgba(0,212,255,0.06), transparent 70%);
+  opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+}
+.book-card:hover::before { opacity: 1; }
+
+/* Top cyan accent line that grows on hover */
+.book-card::after {
+  content: ''; position: absolute; top: 0; left: 20%; right: 20%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--ss-cyan), var(--ss-blue), transparent);
+  border-radius: 0 0 4px 4px; opacity: 0;
+  transition: opacity 0.3s ease, left 0.4s ease, right 0.4s ease;
+}
+.book-card:hover::after { opacity: 1; left: 8%; right: 8%; }
+
+/* Cover image area */
+.book-card-cover {
+  position: relative; aspect-ratio: 2/3;
+  background: linear-gradient(135deg, rgba(37,99,235,0.15), rgba(124,58,237,0.12));
+  border-bottom: 1px solid var(--ss-border);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.book-card-cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+.book-card:hover .book-card-cover img { transform: scale(1.05); }
+.book-card-cover .no-cover {
+  font-size: 3rem; color: rgba(255,255,255,0.15);
+}
+
+/* Quantity badge floating top-right */
+.book-card-qty {
+  position: absolute; top: 10px; right: 10px;
+  background: rgba(10,10,11,0.75); backdrop-filter: blur(10px);
+  border: 1px solid var(--ss-border-strong);
+  border-radius: var(--ss-r-pill);
+  padding: 3px 10px; font-size: 0.7rem; font-weight: 700;
+  color: #fff;
+}
+.book-card-qty.low { color: var(--ss-amber); border-color: rgba(245,158,11,0.35); }
+.book-card-qty.out { color: var(--ss-rose);  border-color: rgba(244,63,94,0.35); }
+
+/* Body */
+.book-card-body { padding: 16px; }
+.book-card-category {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ss-cyan); margin-bottom: 6px;
+}
+.book-card-title {
+  font-family: var(--ss-font-display);
+  font-size: 0.92rem; font-weight: 700; color: #fff; line-height: 1.3; margin-bottom: 4px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.book-card-author {
+  font-size: 0.78rem; color: var(--ss-text-2); margin-bottom: 14px;
+}
+.book-card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.book-card-price {
+  font-family: var(--ss-font-display);
+  font-size: 1rem; font-weight: 700; color: var(--ss-electric);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   6. STAT CARD ◀ THE COMPONENT (Admin Dashboard)
+═══════════════════════════════════════════════════════════ */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+
+.stat-card {
+  position: relative; overflow: hidden;
+  background: var(--ss-surface);
+  backdrop-filter: var(--ss-blur); -webkit-backdrop-filter: var(--ss-blur);
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-r-lg);
+  padding: 24px 22px;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.stat-card:hover { border-color: var(--ss-border-strong); transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
+
+/* Colored left border accent */
+.stat-card-cyan   { border-left: 3px solid var(--ss-cyan); }
+.stat-card-violet { border-left: 3px solid var(--ss-violet); }
+.stat-card-electric{ border-left: 3px solid var(--ss-electric); }
+.stat-card-amber  { border-left: 3px solid var(--ss-amber); }
+.stat-card-rose   { border-left: 3px solid var(--ss-rose); }
+
+/* Glow corner blob */
+.stat-card::after {
+  content: ''; position: absolute;
+  top: -40px; right: -40px; width: 140px; height: 140px;
+  border-radius: 50%; pointer-events: none; opacity: 0.45;
+  filter: blur(40px);
+}
+.stat-card-cyan::after   { background: var(--ss-cyan); }
+.stat-card-violet::after { background: var(--ss-violet); }
+.stat-card-electric::after { background: var(--ss-electric); }
+.stat-card-amber::after  { background: var(--ss-amber); }
+.stat-card-rose::after   { background: var(--ss-rose); }
+
+.stat-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; margin-bottom: 16px;
+  transition: transform 0.4s cubic-bezier(.34,1.56,.64,1);
+}
+.stat-card:hover .stat-icon { transform: scale(1.15) rotate(-8deg); }
+
+.stat-icon-cyan    { background: rgba(0,212,255,0.12);   color: var(--ss-cyan);    box-shadow: 0 4px 14px rgba(0,212,255,0.15); }
+.stat-icon-violet  { background: rgba(124,58,237,0.12);  color: #a78bfa;           box-shadow: 0 4px 14px rgba(124,58,237,0.15); }
+.stat-icon-electric{ background: rgba(6,214,160,0.12);   color: var(--ss-electric);box-shadow: 0 4px 14px rgba(6,214,160,0.15); }
+.stat-icon-amber   { background: rgba(245,158,11,0.12);  color: var(--ss-amber);   box-shadow: 0 4px 14px rgba(245,158,11,0.15); }
+.stat-icon-rose    { background: rgba(244,63,94,0.12);   color: var(--ss-rose);    box-shadow: 0 4px 14px rgba(244,63,94,0.15); }
+
+.stat-number {
+  font-family: var(--ss-font-display);
+  font-size: 2.4rem; font-weight: 800; letter-spacing: -0.04em;
+  line-height: 1; color: #fff; margin-bottom: 4px;
+}
+.stat-label { font-size: 0.8rem; color: var(--ss-text-2); font-weight: 500; }
+.stat-delta { font-size: 0.75rem; color: var(--ss-electric); margin-top: 10px; font-weight: 600; }
+
+/* ═══════════════════════════════════════════════════════════
+   7. INPUT & FORM FIELDS
+═══════════════════════════════════════════════════════════ */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 600px; }
+
+.ss-field { display: flex; flex-direction: column; gap: 7px; }
+.ss-label {
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--ss-text-2);
+}
+.ss-input {
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid var(--ss-border-strong) !important;
+  border-radius: var(--ss-r-sm) !important;
+  color: var(--ss-text) !important;
+  padding: 12px 16px !important;
+  font-family: var(--ss-font) !important;
+  font-size: 0.9rem !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
+  width: 100%;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.ss-input:focus {
+  border-color: var(--ss-cyan) !important;
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.12) !important;
+  background: rgba(255,255,255,0.08) !important;
+}
+.ss-input::placeholder { color: var(--ss-text-3); }
+
+/* ═══════════════════════════════════════════════════════════
+   8. SIDEBAR COMPONENT (Admin)
+═══════════════════════════════════════════════════════════ */
+.sidebar-preview {
+  width: 240px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: var(--ss-blur); -webkit-backdrop-filter: var(--ss-blur);
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-r-xl);
+  padding: 24px 16px;
+}
+.sidebar-brand {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 8px; margin-bottom: 28px;
+}
+.sidebar-brand-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--ss-cyan), var(--ss-blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; color: #fff;
+  box-shadow: 0 4px 14px var(--ss-cyan-glow);
+}
+.sidebar-brand-name {
+  font-family: var(--ss-font-display); font-weight: 800; font-size: 1rem; color: #fff; letter-spacing: -0.01em;
+}
+
+.sidebar-section-label {
+  font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ss-text-3); padding: 0 8px; margin-bottom: 8px;
+}
+.sidebar-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 10px; border-radius: var(--ss-r-sm);
+  font-size: 0.85rem; font-weight: 500; color: var(--ss-text-2);
+  cursor: pointer; margin-bottom: 2px;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.sidebar-item:hover { background: var(--ss-surface-2); color: #fff; }
+.sidebar-item.active {
+  background: linear-gradient(135deg, rgba(0,212,255,0.14), rgba(37,99,235,0.10));
+  border: 1px solid rgba(0,212,255,0.18);
+  color: var(--ss-cyan);
+}
+.sidebar-item .si-icon { width: 18px; text-align: center; font-size: 0.85rem; }
+
+/* ═══════════════════════════════════════════════════════════
+   9. NAVBAR
+═══════════════════════════════════════════════════════════ */
+.navbar-preview {
+  background: rgba(10,10,11,0.88);
+  backdrop-filter: var(--ss-blur); -webkit-backdrop-filter: var(--ss-blur);
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-r-lg);
+  padding: 14px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.navbar-brand-preview {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--ss-font-display); font-weight: 800; font-size: 1.05rem;
+  color: #fff; text-decoration: none;
+}
+.navbar-logo-icon {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--ss-cyan), var(--ss-blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; color: #fff;
+  box-shadow: 0 3px 12px var(--ss-cyan-glow);
+}
+.navbar-links { display: flex; align-items: center; gap: 4px; }
+.navbar-link {
+  padding: 7px 14px; border-radius: var(--ss-r-sm);
+  font-size: 0.84rem; font-weight: 500; color: var(--ss-text-2);
+  cursor: pointer; transition: all 0.2s ease; text-decoration: none;
+}
+.navbar-link:hover { background: var(--ss-surface-2); color: #fff; }
+.navbar-link.active { color: var(--ss-cyan); background: rgba(0,212,255,0.08); }
+.navbar-actions { display: flex; align-items: center; gap: 10px; }
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.35); }
+
+/* ── Fade-in anim ───────────────────────────────────────── */
+@keyframes fadeUp { from {opacity:0;transform:translateY(20px);} to {opacity:1;transform:translateY(0);} }
+.preview-section { animation: fadeUp 0.6s ease both; }
+.preview-section:nth-child(2) { animation-delay: 0.1s; }
+.preview-section:nth-child(3) { animation-delay: 0.2s; }
+.preview-section:nth-child(4) { animation-delay: 0.3s; }
+</style>
+</head>
+<body>
+<div class="preview-page">
+
+  <!-- ── Page Header ── -->
+  <div class="lib-header preview-section">
+    <div class="brand-chip">ShelfSync Design System v2.0</div>
+    <h1>Component <span class="gradient-text">Library</span><br>Preview</h1>
+    <p>This preview demonstrates every reusable UI component before it is applied across all 19+ pages. Review and approve to begin the mass rewrite.</p>
+  </div>
+
+  <!-- ── 1. Color Palette ── -->
+  <div class="preview-section">
+    <div class="section-label">01 — Color Palette</div>
+    <h2 class="section-title">Design Tokens</h2>
+    <p class="section-sub">All colors are CSS custom properties. Every component references these tokens — change one token, update the entire system.</p>
+    <div class="palette-grid">
+      <div class="swatch" style="background:#0a0a0b;"><span style="color:#fff">#0a0a0b<br><small style="opacity:.5">Base BG</small></span></div>
+      <div class="swatch" style="background:rgba(255,255,255,0.042);border:1px solid rgba(255,255,255,0.12)"><span style="color:#fff">#surface<br><small style="opacity:.5">Cards</small></span></div>
+      <div class="swatch" style="background:#00d4ff;"><span style="color:#000">#00d4ff<br><small>Cyan Primary</small></span></div>
+      <div class="swatch" style="background:#2563eb;"><span style="color:#fff">#2563eb<br><small>Royal Blue</small></span></div>
+      <div class="swatch" style="background:#7c3aed;"><span style="color:#fff">#7c3aed<br><small>Violet</small></span></div>
+      <div class="swatch" style="background:#06d6a0;"><span style="color:#000">#06d6a0<br><small>Electric</small></span></div>
+      <div class="swatch" style="background:#f59e0b;"><span style="color:#000">#f59e0b<br><small>Amber</small></span></div>
+      <div class="swatch" style="background:#f43f5e;"><span style="color:#fff">#f43f5e<br><small>Rose</small></span></div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── 2. Typography ── -->
+  <div class="preview-section">
+    <div class="section-label">02 — Typography</div>
+    <h2 class="section-title">Inter + Montserrat</h2>
+    <p class="section-sub">Montserrat for display headings, Inter for body text. Both at 100% variable weight range.</p>
+    <div style="padding:28px;background:var(--ss-surface);border:1px solid var(--ss-border);border-radius:var(--ss-r-lg);display:flex;flex-direction:column;gap:16px;">
+      <p style="font-family:'Montserrat';font-size:2.8rem;font-weight:900;letter-spacing:-0.04em;color:#fff;">Library System</p>
+      <p style="font-family:'Montserrat';font-size:1.5rem;font-weight:700;color:rgba(255,255,255,0.85);">Section Heading H2 — Montserrat 700</p>
+      <p style="font-family:'Inter';font-size:1rem;color:rgba(255,255,255,0.65);line-height:1.7;max-width:560px;">Body text uses Inter for maximum readability at all sizes. The quick brown fox jumps over the lazy dog. 0123456789.</p>
+      <p style="font-family:'Inter';font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ss-cyan);">Label / Eyebrow Text — Inter 600 Uppercase</p>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── 3. Buttons ── -->
+  <div class="preview-section">
+    <div class="section-label">03 — Buttons</div>
+    <h2 class="section-title">Button System</h2>
+    <p class="section-sub">All buttons use a pill shape, shimmer sweep on hover, and lift transform. Four semantic variants.</p>
+
+    <div style="padding:32px;background:var(--ss-surface);border:1px solid var(--ss-border);border-radius:var(--ss-r-lg);display:flex;flex-direction:column;gap:24px;">
+      <div>
+        <p style="font-size:0.75rem;color:var(--ss-text-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;">Sizes</p>
+        <div class="btn-grid">
+          <a href="#" class="ss-btn ss-btn-primary ss-btn-sm"><i class="fas fa-book"></i> Small</a>
+          <a href="#" class="ss-btn ss-btn-primary"><i class="fas fa-book-open"></i> Default Rent Now</a>
+          <a href="#" class="ss-btn ss-btn-primary ss-btn-lg"><i class="fas fa-arrow-right"></i> Large CTA</a>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:0.75rem;color:var(--ss-text-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;">Variants</p>
+        <div class="btn-grid">
+          <a href="#" class="ss-btn ss-btn-primary"><i class="fas fa-check"></i> Approve</a>
+          <a href="#" class="ss-btn ss-btn-success"><i class="fas fa-undo"></i> Mark Returned</a>
+          <a href="#" class="ss-btn ss-btn-danger"><i class="fas fa-times"></i> Reject</a>
+          <a href="#" class="ss-btn ss-btn-ghost"><i class="fas fa-eye"></i> View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── 4. Badges ── -->
+  <div class="preview-section">
+    <div class="section-label">04 — Status Badges</div>
+    <h2 class="section-title">Rental Workflow States</h2>
+    <p class="section-sub">Every rental has exactly one of these states. Used in the user "My Rents" table and the admin rental console.</p>
+    <div class="badge-grid">
+      <span class="ss-badge ss-badge-pending">Pending Approval</span>
+      <span class="ss-badge ss-badge-approved">Approved / Active</span>
+      <span class="ss-badge ss-badge-returned">Returned</span>
+      <span class="ss-badge ss-badge-overdue">Overdue</span>
+      <span class="ss-badge ss-badge-new">New Arrival</span>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── 5. Book Card ── -->
+  <div class="preview-section">
+    <div class="section-label">05 — Book Card (Grid View)</div>
+    <h2 class="section-title">Book Catalog Card</h2>
+    <p class="section-sub">Replaces the old HTML table on /user/books. Hover to see the spotlight effect, accent line, and cover zoom. The qty badge auto-changes color (white → amber → red) based on stock level.</p>
+    <div class="book-grid">
+
+      <!-- Card 1 — normal stock -->
+      <div class="book-card" onmousemove="spotlightCard(event,this)">
+        <div class="book-card-cover">
+          <i class="fas fa-book no-cover"></i>
+          <div class="book-card-qty">✕ 12 left</div>
+        </div>
+        <div class="book-card-body">
+          <div class="book-card-category">Computer Science</div>
+          <div class="book-card-title">Clean Code: A Handbook of Agile Software Craftsmanship</div>
+          <div class="book-card-author">Robert C. Martin</div>
+          <div class="book-card-footer">
+            <span class="book-card-price">৳ 80</span>
+            <a href="#" class="ss-btn ss-btn-primary ss-btn-sm"><i class="fas fa-bookmark"></i> Rent</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 — low stock -->
+      <div class="book-card" onmousemove="spotlightCard(event,this)">
+        <div class="book-card-cover" style="background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(244,63,94,0.10))">
+          <i class="fas fa-atom no-cover"></i>
+          <div class="book-card-qty low">⚠ 2 left</div>
+        </div>
+        <div class="book-card-body">
+          <div class="book-card-category">Physics</div>
+          <div class="book-card-title">A Brief History of Time</div>
+          <div class="book-card-author">Stephen Hawking</div>
+          <div class="book-card-footer">
+            <span class="book-card-price">৳ 60</span>
+            <a href="#" class="ss-btn ss-btn-primary ss-btn-sm"><i class="fas fa-bookmark"></i> Rent</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 — out of stock -->
+      <div class="book-card" onmousemove="spotlightCard(event,this)" style="opacity:0.65;">
+        <div class="book-card-cover" style="background:linear-gradient(135deg,rgba(244,63,94,0.12),rgba(124,58,237,0.10))">
+          <i class="fas fa-flask no-cover"></i>
+          <div class="book-card-qty out">Out of Stock</div>
+        </div>
+        <div class="book-card-body">
+          <div class="book-card-category">Chemistry</div>
+          <div class="book-card-title">Organic Chemistry</div>
+          <div class="book-card-author">Paula Yurkanis Bruice</div>
+          <div class="book-card-footer">
+            <span class="book-card-price">৳ 120</span>
+            <button disabled class="ss-btn ss-btn-ghost ss-btn-sm" style="opacity:.5;cursor:not-allowed;">Unavailable</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 — new arrival -->
+      <div class="book-card" onmousemove="spotlightCard(event,this)">
+        <div class="book-card-cover" style="background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(37,99,235,0.12))">
+          <i class="fas fa-brain no-cover"></i>
+          <div class="book-card-qty">✕ 8 left</div>
+          <div style="position:absolute;top:10px;left:10px;">
+            <span class="ss-badge ss-badge-new" style="padding:2px 8px;font-size:0.62rem;">New</span>
+          </div>
+        </div>
+        <div class="book-card-body">
+          <div class="book-card-category">Neuroscience</div>
+          <div class="book-card-title">Thinking, Fast and Slow</div>
+          <div class="book-card-author">Daniel Kahneman</div>
+          <div class="book-card-footer">
+            <span class="book-card-price">৳ 95</span>
+            <a href="#" class="ss-btn ss-btn-primary ss-btn-sm"><i class="fas fa-bookmark"></i> Rent</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 - with wishlist heart -->
+      <div class="book-card" onmousemove="spotlightCard(event,this)">
+        <div class="book-card-cover" style="background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(6,214,160,0.08))">
+          <i class="fas fa-globe no-cover"></i>
+          <div class="book-card-qty">✕ 5 left</div>
+          <div style="position:absolute;top:10px;left:10px;">
+            <button onclick="this.style.color=this.style.color==='#f43f5e'?'rgba(255,255,255,0.3)':'#f43f5e'" style="background:rgba(10,10,11,0.7);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:4px 7px;color:rgba(255,255,255,0.3);cursor:pointer;transition:color 0.2s;font-size:0.8rem;">♡</button>
+          </div>
+        </div>
+        <div class="book-card-body">
+          <div class="book-card-category">Geography</div>
+          <div class="book-card-title">Sapiens: A Brief History of Humankind</div>
+          <div class="book-card-author">Yuval Noah Harari</div>
+          <div class="book-card-footer">
+            <span class="book-card-price">৳ 75</span>
+            <a href="#" class="ss-btn ss-btn-primary ss-btn-sm"><i class="fas fa-bookmark"></i> Rent</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── 6. Stat Cards ── -->
+  <div class="preview-section">
+    <div class="section-label">06 — Stat Cards (Admin Dashboard)</div>
+    <h2 class="section-title">Control Center Tiles</h2>
+    <p class="section-sub">These will replace the current admin dashboard tiles. Each card pulls a live count from the controller.</p>
+    <div class="stat-grid">
+      <div class="stat-card stat-card-cyan">
+        <div class="stat-icon stat-icon-cyan"><i class="fas fa-book"></i></div>
+        <div class="stat-number">248</div>
+        <div class="stat-label">Total Books</div>
+        <div class="stat-delta">↑ +12 this month</div>
+      </div>
+      <div class="stat-card stat-card-electric">
+        <div class="stat-icon stat-icon-electric"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-number">34</div>
+        <div class="stat-label">Active Rentals</div>
+        <div class="stat-delta" style="color:var(--ss-electric);">All on time</div>
+      </div>
+      <div class="stat-card stat-card-amber">
+        <div class="stat-icon stat-icon-amber"><i class="fas fa-clock"></i></div>
+        <div class="stat-number">7</div>
+        <div class="stat-label">Pending Approvals</div>
+        <div class="stat-delta" style="color:var(--ss-amber);">⚠ Action required</div>
+      </div>
+      <div class="stat-card stat-card-rose">
+        <div class="stat-icon stat-icon-rose"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="stat-number">3</div>
+        <div class="stat-label">Overdue Returns</div>
+        <div class="stat-delta" style="color:var(--ss-rose);">Alerts sent</div>
+      </div>
+      <div class="stat-card stat-card-violet">
+        <div class="stat-icon stat-icon-violet"><i class="fas fa-users"></i></div>
+        <div class="stat-number">182</div>
+        <div class="stat-label">Registered Members</div>
+        <div class="stat-delta" style="color:#a78bfa;">↑ +8 this week</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── 7. Form Inputs ── -->
+  <div class="preview-section">
+    <div class="section-label">07 — Form Inputs</div>
+    <h2 class="section-title">Dark Input System</h2>
+    <p class="section-sub">Subtle surface background, strong visible border, and a cyan glow on focus. Click any field to see the focus state.</p>
+    <div class="form-grid">
+      <div class="ss-field">
+        <label class="ss-label">Book Title</label>
+        <input class="ss-input" type="text" placeholder="e.g. Clean Code">
+      </div>
+      <div class="ss-field">
+        <label class="ss-label">Author</label>
+        <input class="ss-input" type="text" placeholder="e.g. Robert C. Martin">
+      </div>
+      <div class="ss-field">
+        <label class="ss-label">Return Date</label>
+        <input class="ss-input" type="date">
+      </div>
+      <div class="ss-field">
+        <label class="ss-label">Category</label>
+        <select class="ss-input">
+          <option>Computer Science</option>
+          <option>Physics</option>
+          <option>Chemistry</option>
+        </select>
+      </div>
+      <div class="ss-field" style="grid-column:1/-1">
+        <label class="ss-label">Description</label>
+        <textarea class="ss-input" rows="3" placeholder="A short summary of the book..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── 8. Navbar + Sidebar ── -->
+  <div class="preview-section">
+    <div class="section-label">08 — Navigation</div>
+    <h2 class="section-title">Navbar & Sidebar</h2>
+    <p class="section-sub">Glassmorphic navbar for the user portal. Slim dark sidebar for the admin panel.</p>
+
+    <div style="display:flex;flex-direction:column;gap:28px;">
+      <!-- Navbar -->
+      <div>
+        <p style="font-size:0.75rem;color:var(--ss-text-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;">User Portal Navbar</p>
+        <div class="navbar-preview">
+          <a href="#" class="navbar-brand-preview">
+            <div class="navbar-logo-icon"><i class="fas fa-book-open"></i></div>
+            ShelfSync
+          </a>
+          <div class="navbar-links">
+            <a class="navbar-link active" href="#">Home</a>
+            <a class="navbar-link" href="#">Books</a>
+            <a class="navbar-link" href="#">My Rents</a>
+            <a class="navbar-link" href="#">Wishlist</a>
+            <a class="navbar-link" href="#">Contact</a>
+          </div>
+          <div class="navbar-actions">
+            <button class="ss-btn ss-btn-ghost ss-btn-sm"><i class="fas fa-search"></i></button>
+            <a href="#" class="ss-btn ss-btn-primary ss-btn-sm">Logout</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div>
+        <p style="font-size:0.75rem;color:var(--ss-text-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;">Admin Panel Sidebar</p>
+        <div class="sidebar-preview">
+          <div class="sidebar-brand">
+            <div class="sidebar-brand-icon"><i class="fas fa-shield-alt"></i></div>
+            <span class="sidebar-brand-name">Admin Panel</span>
+          </div>
+          <div class="sidebar-section-label" style="margin-bottom:8px;">Main</div>
+          <a href="#" class="sidebar-item active"><span class="si-icon"><i class="fas fa-tachometer-alt"></i></span> Dashboard</a>
+          <a href="#" class="sidebar-item"><span class="si-icon"><i class="fas fa-book"></i></span> Books</a>
+          <a href="#" class="sidebar-item"><span class="si-icon"><i class="fas fa-exchange-alt"></i></span> Rentals <span style="margin-left:auto;background:rgba(245,158,11,0.15);color:var(--ss-amber);border-radius:20px;padding:1px 8px;font-size:0.65rem;font-weight:700;">7</span></a>
+          <a href="#" class="sidebar-item"><span class="si-icon"><i class="fas fa-tags"></i></span> Categories</a>
+          <a href="#" class="sidebar-item"><span class="si-icon"><i class="fas fa-users"></i></span> Members</a>
+          <div class="sidebar-section-label" style="margin-top:16px;margin-bottom:8px;">Account</div>
+          <a href="#" class="sidebar-item"><span class="si-icon"><i class="fas fa-sign-out-alt"></i></span> Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── 9. Approval Decision ── -->
+  <div class="preview-section">
+    <div class="section-label">09 — Approval CTA</div>
+    <h2 class="section-title" style="-webkit-text-fill-color:unset;background:none;color:#fff">Ready to Apply?</h2>
+    <p class="section-sub">Once you approve this component library, I will apply this exact design system across all 19+ pages simultaneously. The mass-rewrite will include the approval workflow buttons, the book grid, and the admin sidebar.</p>
+    <div class="btn-grid">
+      <a href="#" class="ss-btn ss-btn-primary ss-btn-lg"><i class="fas fa-rocket"></i> Approved — Begin Mass Rewrite</a>
+      <a href="#" class="ss-btn ss-btn-ghost ss-btn-lg"><i class="fas fa-comment"></i> Request Adjustments</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function spotlightCard(e, card) {
+  const r = card.getBoundingClientRect();
+  card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+  card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+}
+</script>
+</body>
+</html>

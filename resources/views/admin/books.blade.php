@@ -1,150 +1,91 @@
 <x-admin-layout>
-    <style>
-        .books-section h2 {
-            color: #fff;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
 
-        /* Glassmorphism Table Container */
-        .table-container {
-            background: rgba(8, 22, 39, 0.8);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .table { color: #d3d3d3; margin-bottom: 0; }
-        .table thead th {
-            border-top: none;
-            border-bottom: 2px solid rgba(30, 144, 255, 0.3);
-            color: #fff;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            white-space: nowrap;
-        }
-
-        .table td {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            vertical-align: middle;
-            padding: 12px 8px;
-        }
-
-        /* FIXED PREVIEW BOX */
-        .book-preview-box {
-            width: 60px;  /* Fixed Width */
-            height: 80px; /* Fixed Height (Book Aspect Ratio) */
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .book-preview-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* This crops the image to fill the box without stretching */
-            transition: transform 0.3s ease;
-        }
-
-        .book-preview-box:hover img {
-            transform: scale(1.1);
-        }
-
-        /* Badge Styling */
-        .qty-badge {
-            background: rgba(30, 144, 255, 0.1);
-            color: var(--primary-blue);
-            border: 1px solid rgba(30, 144, 255, 0.3);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-
-        .btn-action {
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 5px 15px;
-            text-transform: uppercase;
-        }
-    </style>
-
-    <div class="row justify-content-center">
-        <div class="col-lg-12">
-            <div class="books-section">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2><i class="fas fa-book-open mr-2 text-primary"></i>Books / Journals</h2>
-                    <a href="{{ route('admin.books.create') }}" class="btn btn-modern">
-                        <i class="fas fa-plus mr-2"></i>Add New Book
-                    </a>
-                </div>
-
-                <div class="table-container">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>SN</th>
-                                    <th>Product Name</th>
-                                    <th>Category</th>
-                                    <th class="text-center">Preview</th>
-                                    <th>Qty</th>
-                                    <th>Price</th>
-                                    <th>Weight</th>
-                                    <th>Description</th>
-                                    <th class="text-center">Delete</th>
-                                    <th class="text-center">Update</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($books as $book)
-                                <tr>
-                                    <td class="text-white-50">#{{ $loop->iteration }}</td>
-                                    <td class="text-white font-weight-bold">{{ $book->name }}</td>
-                                    <td><span class="text-info small">{{ $book->category->name ?? 'N/A' }}</span></td>
-                                    <td class="text-center">
-                                        <div class="book-preview-box mx-auto shadow-sm">
-                                            @if($book->image)
-                                                <img src="{{ asset('products/' . $book->image) }}" alt="Cover">
-                                            @else
-                                                <i class="fas fa-image text-white-50"></i>
-                                            @endif
-                                        </div>
-                                    </td>
-                                    <td><span class="qty-badge">{{ $book->quantity }}</span></td>
-                                    <td class="text-success font-weight-bold">৳{{ number_format($book->price, 0) }}</td>
-                                    <td class="small">{{ $book->weight }}g</td>
-                                    <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.85rem;" title="{{ $book->description }}">
-                                        {{ $book->description }}
-                                    </td>
-                                    <td class="text-center">
-                                        <form action="{{ route('admin.books.delete', $book->id) }}" method="POST" onsubmit="return confirm('Delete this book?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-outline-danger btn-action">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="{{ route('admin.books.edit', $book->id) }}" class="btn btn-outline-warning btn-action">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;" class="anim-fade-up">
+    <div>
+        <div class="ss-section-label">Catalog</div>
+        <h1 class="ss-page-title">Books / Journals</h1>
+        <p class="ss-page-subtitle">Manage all books in the system</p>
     </div>
+    <a href="{{ route('admin.books.create') }}" class="ss-btn ss-btn-primary">
+        <i class="fas fa-plus"></i> Add New Book
+    </a>
+</div>
+
+<div class="ss-card anim-fade-up-1" style="overflow:hidden;">
+    <div class="table-responsive">
+        <table class="table table-hover" style="margin-bottom:0;">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Cover</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th style="text-align:center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($books as $book)
+                <tr>
+                    <td style="color:var(--ss-text-3);font-size:0.78rem;">{{ $loop->iteration }}</td>
+                    <td>
+                        <div style="width:44px;height:58px;border-radius:7px;overflow:hidden;border:1px solid var(--ss-border);background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;">
+                            @if($book->image)
+                                <img src="{{ asset('products/' . $book->image) }}" style="width:100%;height:100%;object-fit:cover;">
+                            @else
+                                <i class="fas fa-image" style="color:var(--ss-text-3);font-size:0.9rem;"></i>
+                            @endif
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight:700;color:#fff;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{{ $book->name }}">
+                            {{ $book->name }}
+                        </div>
+                        @if($book->description)
+                        <div style="font-size:0.74rem;color:var(--ss-text-3);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{{ $book->description }}">
+                            {{ $book->description }}
+                        </div>
+                        @endif
+                    </td>
+                    <td style="color:var(--ss-text-2);font-size:0.84rem;">{{ $book->author ?? '—' }}</td>
+                    <td>
+                        <span style="background:rgba(0,212,255,0.08);color:var(--ss-cyan);border:1px solid rgba(0,212,255,0.2);border-radius:var(--ss-r-pill);padding:3px 12px;font-size:0.74rem;font-weight:600;white-space:nowrap;">
+                            {{ $book->category->name ?? 'N/A' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span style="font-weight:700;color:{{ $book->quantity <= 0 ? 'var(--ss-rose)' : ($book->quantity <= 3 ? 'var(--ss-amber)' : 'var(--ss-electric)') }};">
+                            {{ $book->quantity }}
+                        </span>
+                    </td>
+                    <td style="font-weight:700;color:var(--ss-electric);">৳{{ number_format($book->price, 0) }}</td>
+                    <td style="text-align:center;white-space:nowrap;">
+                        <div style="display:inline-flex;gap:8px;">
+                            <a href="{{ route('admin.books.edit', $book->id) }}" class="ss-btn ss-btn-ghost ss-btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('admin.books.delete', $book->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Delete this book?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="ss-btn ss-btn-danger ss-btn-sm">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="8" style="text-align:center;padding:60px;color:var(--ss-text-3);">
+                        <i class="fas fa-book" style="font-size:2rem;display:block;margin-bottom:12px;"></i>
+                        No books found. <a href="{{ route('admin.books.create') }}" style="color:var(--ss-cyan);">Add the first one.</a>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
 </x-admin-layout>
