@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Home' }} - Diu Library Portal</title>
+    <title>{{ $title ?? 'Home' }} - {{ config('app.name') }}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -18,9 +18,9 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Poppins', sans-serif;
-            background: var(--dark-blue);
+            background: #f3f4f6;
             color: var(--text-color);
-            background-image: url('{{ asset('images/diuBG.jpg') }}'); /* Ensure this image is in public/images/ */
+            /* background-image: url('{{ asset('images/diuBG.jpg') }}'); */ /* Ensure this image is in public/images/ */
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -31,7 +31,7 @@
         .btn-modern:hover { background: #187bcd; transform: translateY(-2px); color: white; }
         #back-to-top { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background: var(--primary-blue); border: none; border-radius: 50%; color: var(--white); opacity: 0; transition: 0.3s; z-index: 1000; }
         #back-to-top.visible { opacity: 1; }
-        body::after { content: ''; position: fixed; width: 20px; height: 20px; background: radial-gradient(circle, rgba(30, 144, 255, 0.3), transparent); border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); z-index: 9999; }
+
         .nav-link { font-weight: 500; }
     </style>
 </head>
@@ -39,8 +39,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <a class="navbar-brand mx-auto" href="{{ route('home') }}">
-                <span style="padding-right: 20px;">Diu Library Portal</span>
-                <!--<img src="" width="160" height="42" alt="Diu Library Portal">-->
+                <img src="{{ asset('img/shelfsync.svg') }}" height="42" alt="{{ config('app.name') }}">
+                <!--<img src="" width="160" height="42" alt="{{ config('app.name') }}">-->
                 
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#userNavbar">
@@ -52,7 +52,12 @@
                     <h4 class="text-white mx-auto d-none d-lg-block" style="font-size: 1rem; font-family:'Syne', sans-serif; background: linear-gradient(135deg, #fff 30%, #06d6a0 70%, #3b82f6) !important; background-clip: text !important; -webkit-background-clip: text !important;-webkit-text-fill-color: transparent !important; line-height: 1 !important; margin: 0;padding: 0;box-sizing: border-box;">User: {{ Auth::user()->name }}</h4>
                 @endauth
                 
-                <ul class="navbar-nav ml-auto">
+                <ul class="navbar-nav ml-auto d-flex align-items-center">
+                    <li class="nav-item mr-4">
+                        <button id="nav-search-btn" class="nav-link bg-transparent border-0 d-flex align-items-center" aria-label="Search" style="padding: 0; box-shadow: none; outline: none; cursor: pointer;">
+                            <i class="fas fa-search text-white" style="font-size: 1.1rem; opacity: 0.8; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"></i>
+                        </button>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('user.books') }}">Books</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>

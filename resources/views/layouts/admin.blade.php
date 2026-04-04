@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Diu Library Portal</title>
+    <title>Admin Panel - {{ config('app.name') }}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -84,8 +84,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
-                <span>Diu Library Portal</span>
-                <!--<img src="https://i.imgur.com/xnfrPes.png" width="160" height="42" alt="Diu Library Portal">-->
+                <img src="{{ asset('img/shelfsync.svg') }}" height="42" alt="{{ config('app.name') }}">
+                <!--<img src="https://i.imgur.com/xnfrPes.png" width="160" height="42" alt="{{ config('app.name') }}">-->
             </a>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto">

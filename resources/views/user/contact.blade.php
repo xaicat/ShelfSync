@@ -114,7 +114,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group text-left">
                                         <label><i class="fas fa-envelope mr-2"></i>Email ID</label>
-                                        <input type="email" name="Email" class="form-control" value="{{ Auth::check() ? Auth::user()->email : '' }}" required placeholder="your-email@diu.edu.bd">
+                                        <input type="email" name="Email" class="form-control" value="{{ Auth::check() ? Auth::user()->email : '' }}" required placeholder="your-email@shelfsync.com">
                                     </div>
                                 </div>
                                 <div class="col-md-6">

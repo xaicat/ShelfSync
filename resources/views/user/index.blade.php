@@ -209,21 +209,7 @@
             text-decoration: none !important;
             flex-shrink: 0;
         }
-        .navbar-brand::before {
-            content: '\f518';
-            font-family: 'Font Awesome 5 Free', 'Font Awesome 6 Free';
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px; height: 36px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--azure), var(--violet));
-            color: #fff;
-            font-size: 0.85rem;
-            box-shadow: 0 4px 20px var(--azure-glow), inset 0 1px 0 rgba(255,255,255,0.2);
-            flex-shrink: 0;
-        }
+
         .navbar-brand,
         .navbar-brand * {
             font-family: var(--font-display) !important;
@@ -554,22 +540,7 @@
             font-family: var(--font-body); font-size: 0.72rem;
             color: rgba(255,255,255,0.4);
         }
-        /* ── SEARCH BUTTON ───────────────────────────── */
-        #nav-search-btn {
-            width: 36px; height: 36px; border-radius: 10px;
-            background: var(--surface); border: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: center;
-            color: rgba(255,255,255,0.4); font-size: 0.82rem; cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
-            flex-shrink: 0; margin-right: 8px;
-        }
-        #nav-search-btn:hover {
-            background: var(--surface-hover);
-            border-color: rgba(59,130,246,0.3);
-            color: #fff;
-            transform: scale(1.1);
-            box-shadow: 0 0 16px rgba(59,130,246,0.2);
-        }
+
         /* Body padding for fixed nav */
         body { padding-top: 88px !important; }
         /* ══════════════════════════════════════════════════
@@ -1208,18 +1179,9 @@
                 });
             }
         }
-        // Inject search button
-        if (navInner) {
-            const searchBtn = document.createElement('button');
-            searchBtn.id = 'nav-search-btn';
-            searchBtn.setAttribute('aria-label', 'Search');
-            searchBtn.innerHTML = '<i class="fas fa-search"></i>';
-            const toggler = navInner.querySelector('.navbar-toggler');
-            if (toggler) {
-                navInner.insertBefore(searchBtn, toggler);
-            } else {
-                navInner.appendChild(searchBtn);
-            }
+        // Setup search button
+        const searchBtn = document.getElementById('nav-search-btn');
+        if (searchBtn) {
             searchBtn.addEventListener('click', openSearch);
         }
         // Nav indicator

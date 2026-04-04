@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Diu Library Portal</title>
+    <title>Login - {{ config('app.name') }}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
@@ -72,7 +72,7 @@
     <div class="login-card">
         <div class="text-center mb-4">
             <a href="/">
-                <img src="https://i.imgur.com/xnfrPes.png" width="180" alt="Diu Library Logo">
+                <img src="{{ asset('img/shelfsync.svg') }}" width="180" alt="{{ config('app.name') }} Logo">
             </a>
             <h3 class="mt-4 font-weight-bold">User Login</h3>
         </div>

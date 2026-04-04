@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Diu Library Portal</title>
+    <title>Register - {{ config('app.name') }}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
@@ -65,7 +65,7 @@
 
     <div class="register-card">
         <div class="text-center mb-4">
-            <img src="https://i.imgur.com/xnfrPes.png" width="160" alt="Logo">
+            <img src="{{ asset('img/shelfsync.svg') }}" width="160" alt="{{ config('app.name') }} Logo">
             <h4 class="mt-3 font-weight-bold">Sign Up Now</h4>
             <p class="text-muted small">Please fill out this form to register</p>
         </div>
