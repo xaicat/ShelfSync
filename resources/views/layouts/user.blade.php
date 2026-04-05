@@ -276,5 +276,6 @@ if (avatarBtn && avatarDropdown) {
 }
 </script>
 {{ $scripts ?? '' }}
+@include('components.global-fx')
 </body>
 </html>
