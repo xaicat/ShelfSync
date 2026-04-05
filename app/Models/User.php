@@ -57,6 +57,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's rentals
+     */
+    public function rentals()
+    {
+        return $this->hasMany(Rental::class);
+    }
+
+    /**
      * Get real-time card status with auto-expiry engine
      */
     public function getCardStatusAttribute()

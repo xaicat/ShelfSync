@@ -11,10 +11,23 @@
     <!-- Header -->
     <div class="anim-fade-up" style="margin-bottom:32px;">
         <div class="ss-section-label">Student Portal</div>
-        <h1 class="ss-page-title">
-            Welcome back, <span class="gradient-text">{{ explode(' ', $user->name)[0] }}</span> 👋
-        </h1>
-        <p class="ss-page-subtitle">Here's your reading activity at a glance</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+            <div>
+                <h1 class="ss-page-title">
+                    Welcome back, <span class="gradient-text">{{ explode(' ', $user->name)[0] }}</span> 👋
+                </h1>
+                <p class="ss-page-subtitle">Here's your reading activity at a glance</p>
+            </div>
+            @if(isset($totalFines) && $totalFines > 0)
+            <div style="background:rgba(239, 68, 68, 0.15);border:1px solid rgba(239,68,68,0.4);border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 0 15px rgba(239, 68, 68, 0.2);">
+                <i class="fas fa-exclamation-triangle" style="color:var(--ss-rose);font-size:1.5rem;"></i>
+                <div>
+                    <div style="font-size:0.75rem;color:var(--ss-rose);text-transform:uppercase;font-weight:800;letter-spacing:1px;">Active Fine</div>
+                    <div style="font-family:monospace;font-size:1.2rem;font-weight:700;color:#fff;">-{{ number_format($totalFines, 0) }} BDT</div>
+                </div>
+            </div>
+            @endif
+        </div>
     </div>
 
     <!-- Stat Tiles -->

@@ -27,8 +27,12 @@
             elseif ($s === 'approved') $badgeClass = 'ss-badge-approved';
             elseif ($s === 'returned') $badgeClass = 'ss-badge-returned';
             else                  $badgeClass = 'ss-badge-rejected';
+
+            $fineStyle = ($rental->fine_amount > 0 || $isOverdue)
+                         ? 'box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); border-color: red;' 
+                         : '';
         @endphp
-        <div class="ss-card anim-fade-up-1" style="padding:22px;display:flex;gap:18px;align-items:flex-start;">
+        <div class="ss-card anim-fade-up-1" style="padding:22px;display:flex;gap:18px;align-items:flex-start;{{ $fineStyle }}">
             <!-- Cover thumbnail -->
             <div style="width:52px;height:70px;border-radius:8px;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,rgba(37,99,235,0.2),rgba(124,58,237,0.15));display:flex;align-items:center;justify-content:center;border:1px solid var(--ss-border);">
                 <img src="{{ isset($rental->book) && $rental->book->image ? $rental->book->image : asset('img/no-cover.svg') }}" 
@@ -53,6 +57,11 @@
                         @elseif($s === 'returned') 📦 Returned
                         @else ✕ Rejected @endif
                     </span>
+                    @if($rental->fine_amount > 0)
+                    <span class="ss-badge" style="background:rgba(239,68,68,0.15);color:var(--ss-rose);">
+                        -{{ number_format($rental->fine_amount, 0) }} BDT Fine
+                    </span>
+                    @endif
                 </div>
                 <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:0.8rem;color:var(--ss-text-2);margin-bottom:12px;">
                     <span><i class="fas fa-hashtag" style="color:var(--ss-text-3);margin-right:4px;"></i>Qty: <strong style="color:#fff;">{{ $rental->quantity }}</strong></span>
@@ -66,6 +75,11 @@
                         <button class="ss-btn ss-btn-sm" style="background:rgba(0,212,255,0.1);color:var(--ss-cyan);border:1px solid rgba(0,212,255,0.25);" onclick="document.getElementById('qrModal{{ $rental->id }}').style.display='flex'">
                             <i class="fas fa-qrcode"></i> Show Return QR
                         </button>
+                        @if($rental->fine_amount > 0)
+                            <button class="ss-btn ss-btn-sm ss-btn-danger" onclick="document.getElementById('appealModal{{ $rental->id }}').style.display='flex'">
+                                <i class="fas fa-gavel"></i> Request Fine Removal
+                            </button>
+                        @endif
                         @if(!$isOverdue)
                             <div style="font-size:0.78rem;color:var(--ss-electric);">
                                 <i class="fas fa-hourglass-half mr-1"></i> {{ $rd->diffForHumans() }} remaining
@@ -79,6 +93,14 @@
                 @elseif($s === 'pending')
                     <div style="font-size:0.78rem;color:var(--ss-amber);">
                         <i class="fas fa-info-circle mr-1"></i> Awaiting admin approval
+                    </div>
+                @endif
+                
+                @if($s === 'returned' && $rental->fine_amount > 0)
+                    <div style="margin-top:10px;">
+                        <button class="ss-btn ss-btn-sm ss-btn-danger" onclick="document.getElementById('appealModal{{ $rental->id }}').style.display='flex'">
+                            <i class="fas fa-gavel"></i> Request Fine Removal
+                        </button>
                     </div>
                 @endif
             </div>
@@ -97,6 +119,26 @@
                 <div style="font-family:monospace;font-size:1.2rem;color:var(--ss-cyan);letter-spacing:1px;">RENTAL-{{ $rental->id }}</div>
             </div>
         </div>
+
+        <!-- Appeal Modal -->
+        @if($rental->fine_amount > 0)
+        <div id="appealModal{{ $rental->id }}" class="modal" tabindex="-1" style="display:none;position:fixed;inset:0;background:rgba(10,10,11,0.9);z-index:9999;align-items:center;justify-content:center;">
+            <div style="background:#16161d;padding:32px;border-radius:16px;border:1px solid rgba(239,68,68,0.4);box-shadow:0 0 20px rgba(239,68,68,0.1);max-width:400px;width:100%;position:relative;">
+                <button onclick="document.getElementById('appealModal{{ $rental->id }}').style.display='none'" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--ss-text-3);font-size:1.5rem;cursor:pointer;">&times;</button>
+                <h4 style="color:#fff;font-size:1.1rem;margin-bottom:8px;font-weight:700;">Request Fine Removal</h4>
+                <p style="color:var(--ss-text-2);font-size:0.85rem;margin-bottom:20px;">Please state your reason for appealing the {{ number_format($rental->fine_amount, 0) }} BDT fine.</p>
+                
+                <form action="{{ route('user.fine.appeal') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="rental_id" value="{{ $rental->id }}">
+                    <div class="mb-3">
+                        <textarea name="reason" rows="4" class="ss-input" placeholder="e.g., I was unable to return the book due to a medical emergency..." required style="width:100%;padding:12px;"></textarea>
+                    </div>
+                    <button type="submit" class="ss-btn ss-btn-danger" style="width:100%;">Submit Appeal</button>
+                </form>
+            </div>
+        </div>
+        @endif
         @endif
 
         @endforeach

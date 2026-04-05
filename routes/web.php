@@ -45,6 +45,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/library-card/apply', [UserController::class, 'applyCard'])->name('user.card.apply');
     Route::post('/library-card/renew', [UserController::class, 'renewCard'])->name('user.card.renew');
 
+    // Fine Appeals
+    Route::post('/fine/appeal', [UserController::class, 'submitAppeal'])->name('user.fine.appeal');
+
     // Wishlist Toggle (AJAX)
     Route::post('/wishlist/toggle/{bookId}', [UserController::class, 'toggleWishlist'])->name('user.wishlist.toggle');
 });
@@ -66,10 +69,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/returns/scan', [AdminController::class, 'processScan'])->name('returns.processScan');
 
     // Card Requests & Admin Actions
-    Route::get('/cards',         [AdminController::class, 'displayCards'])->name('cards');
+    Route::get('/cards', [AdminController::class, 'displayCards'])->name('cards');
     Route::patch('/cards/{id}/approve', [AdminController::class, 'approveCard'])->name('cards.approve');
     Route::patch('/cards/{id}/reject', [AdminController::class, 'rejectCard'])->name('cards.reject');
     Route::patch('/user/{id}/revoke', [AdminController::class, 'revokeCard'])->name('revoke.card');
+
+    // Fines & Appeals
+    Route::get('/fines', [AdminController::class, 'fines'])->name('fines');
+    Route::patch('/fines/{id}/clear', [AdminController::class, 'clearFine'])->name('fines.clear');
+    Route::patch('/fines/{id}/adjust', [AdminController::class, 'adjustFine'])->name('fines.adjust');
+    Route::patch('/appeals/{id}/resolve', [AdminController::class, 'resolveAppeal'])->name('appeals.resolve');
 
     // Categories
     Route::get('/categories',        [AdminController::class, 'categories'])->name('categories');

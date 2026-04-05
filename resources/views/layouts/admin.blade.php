@@ -60,6 +60,17 @@
             @endif
         </a>
 
+        <a href="{{ route('admin.fines') }}"
+           class="sidebar-item {{ request()->routeIs('admin.fines') ? 'active' : '' }}">
+            <span class="si-icon"><i class="fas fa-gavel"></i></span> Fines & Appeals
+            @php 
+                $pendingAppeals = \App\Models\FineAppeal::where('status', 'pending')->count(); 
+            @endphp
+            @if($pendingAppeals > 0)
+                <span class="sidebar-badge" style="background:var(--ss-rose);">{{ $pendingAppeals }}</span>
+            @endif
+        </a>
+
         <div class="sidebar-section-label">Account</div>
         <a href="{{ route('profile.edit') }}" class="sidebar-item">
             <span class="si-icon"><i class="fas fa-user-cog"></i></span> Profile
@@ -157,6 +168,6 @@
 </div>{{-- /admin-shell --}}
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

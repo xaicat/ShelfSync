@@ -1,6 +1,16 @@
 <x-admin-layout>
 
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;" class="anim-fade-up">
+
+<style>
+.dropdown-item:hover {
+    background-color: var(--ss-surface-light) !important;
+    color: #fff !important;
+}
+.dropdown-divider {
+    margin: 0.25rem 0;
+}
+</style>
     <div>
         <div class="ss-section-label">Members</div>
         <h1 class="ss-page-title">User Management</h1>
@@ -54,31 +64,34 @@
                         @endif
                     </td>
                     <td style="text-align:center;white-space:nowrap;">
-                        <div style="display:inline-flex;gap:6px;">
-                        @if($user->role === 'user')
-                            <form action="{{ route('admin.members.promote', $user->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Promote {{ addslashes($user->name) }} to Admin?')">
-                                @csrf @method('PATCH')
-                                <button type="submit" class="ss-btn ss-btn-success ss-btn-sm" title="Promote to Admin">
-                                    <i class="fas fa-arrow-up"></i> Promote
-                                </button>
-                            </form>
-                            
-                            @if($user->libraryCard && in_array($user->libraryCard->status, ['approved', 'pending']))
-                                <form action="{{ route('revoke.card', $user->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Revoke Library Card for {{ addslashes($user->name) }}?')">
-                                    @csrf @method('PATCH')
-                                    <button type="submit" class="ss-btn ss-btn-danger ss-btn-sm" title="Revoke Card">
-                                        <i class="fas fa-id-card-alt"></i> Revoke
-                                    </button>
-                                </form>
-                            @endif
-                        @else
-                            <form action="{{ route('admin.members.demote', $user->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Demote {{ addslashes($user->name) }} to User?')">
-                                @csrf @method('PATCH')
-                                <button type="submit" class="ss-btn ss-btn-warn ss-btn-sm" title="Demote to User">
-                                    <i class="fas fa-arrow-down"></i> Demote
-                                </button>
-                            </form>
-                        @endif
+                        <div class="dropdown">
+                            <button class="ss-btn dropdown-toggle" style="background:var(--ss-surface-light);color:var(--ss-text-2);border:1px solid var(--ss-border);padding:6px 14px;display:inline-flex;align-items:center;gap:8px;font-size:0.75rem;" type="button" id="dropdownMenuButton_{{ $user->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-cog"></i> Actions
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton_{{ $user->id }}" style="background:#16161d;border:1px solid var(--ss-border);box-shadow:0 10px 30px rgba(0,0,0,0.5);min-width:180px;">
+                                @if($user->role === 'user')
+                                    <form action="{{ route('admin.members.promote', $user->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Promote {{ addslashes($user->name) }} to Admin?')">
+                                        @csrf @method('PATCH')
+                                        <button type="submit" class="dropdown-item py-2" style="color:var(--ss-cyan);background:transparent;outline:none;font-size:0.8rem;font-weight:600;"><i class="fas fa-arrow-up fa-fw mr-2"></i> Promote Admin</button>
+                                    </form>
+                                    
+                                    @if(!$user->libraryCard || $user->libraryCard->status !== 'revoked')
+                                        <div class="dropdown-divider" style="border-top-color:var(--ss-border);"></div>
+                                        <form action="{{ route('admin.revoke.card', $user->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Revoke Library Card access for {{ addslashes($user->name) }}? This will restrict them from borrowing.')">
+                                            @csrf @method('PATCH')
+                                            <button type="submit" class="dropdown-item py-2" style="color:var(--ss-rose);background:transparent;outline:none;font-size:0.8rem;font-weight:600;"><i class="fas fa-ban fa-fw mr-2"></i> Revoke Card</button>
+                                        </form>
+                                    @else
+                                        <div class="dropdown-divider" style="border-top-color:var(--ss-border);"></div>
+                                        <div class="dropdown-item disabled py-2" style="color:#666;background:transparent;font-size:0.8rem;font-weight:600;"><i class="fas fa-user-slash fa-fw mr-2"></i> Card Revoked</div>
+                                    @endif
+                                @else
+                                    <form action="{{ route('admin.members.demote', $user->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Demote {{ addslashes($user->name) }} to User?')">
+                                        @csrf @method('PATCH')
+                                        <button type="submit" class="dropdown-item py-2" style="color:var(--ss-amber);background:transparent;outline:none;font-size:0.8rem;font-weight:600;"><i class="fas fa-arrow-down fa-fw mr-2"></i> Demote to User</button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
                     </td>
                 </tr>

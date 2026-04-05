@@ -97,10 +97,17 @@
                         @elseif($rental->approval_status === 'approved')
                             <form action="{{ route('admin.rentals.return', $rental->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Mark as returned? This will restock the book.')">
                                 @csrf @method('PATCH')
-                                <button type="submit" class="ss-btn ss-btn-primary ss-btn-sm">
-                                    <i class="fas fa-undo"></i> Return
+                                <button type="submit" class="ss-btn ss-btn-primary ss-btn-sm" title="Return Book">
+                                    <i class="fas fa-undo"></i>
                                 </button>
                             </form>
+                            <button type="button" class="ss-btn ss-btn-danger ss-btn-sm" onclick="document.getElementById('fineModal_{{ $rental->id }}').style.display='flex'" title="Add Fine">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </button>
+                        @elseif($rental->approval_status === 'returned')
+                            <button type="button" class="ss-btn ss-btn-danger ss-btn-sm" onclick="document.getElementById('fineModal_{{ $rental->id }}').style.display='flex'" title="Add Fine">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </button>
                         @else
                             <span style="color:var(--ss-text-3);font-size:0.78rem;">No action</span>
                         @endif
@@ -119,6 +126,28 @@
         </table>
     </div>
 </div>
+
+@foreach($rentals as $rental)
+    @if(in_array($rental->approval_status, ['approved', 'returned']))
+    <!-- Fine Modal -->
+    <div id="fineModal_{{ $rental->id }}" class="modal" tabindex="-1" style="display:none;position:fixed;inset:0;background:rgba(10,10,11,0.9);z-index:9999;align-items:center;justify-content:center;">
+        <div style="background:#16161d;padding:32px;border-radius:16px;border:1px solid rgba(239,68,68,0.4);max-width:400px;width:100%;position:relative;">
+            <button onclick="document.getElementById('fineModal_{{ $rental->id }}').style.display='none'" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--ss-text-3);font-size:1.5rem;cursor:pointer;">&times;</button>
+            <h4 style="color:#fff;font-size:1.1rem;margin-bottom:8px;font-weight:700;">Apply Fine</h4>
+            <p style="color:var(--ss-text-2);font-size:0.85rem;margin-bottom:20px;">Assign a penalty to <strong>{{ $rental->user->name ?? 'User' }}</strong> for this rental.</p>
+            
+            <form action="{{ route('admin.fines.adjust', $rental->id) }}" method="POST">
+                @csrf @method('PATCH')
+                <input type="hidden" name="action" value="add">
+                <div class="mb-3">
+                    <input type="number" name="amount" required class="ss-input" placeholder="Amount (e.g. 50)" style="width:100%;padding:12px;">
+                </div>
+                <button type="submit" class="ss-btn ss-btn-danger" style="width:100%;">Apply Fine</button>
+            </form>
+        </div>
+    </div>
+    @endif
+@endforeach
 
 @if($rentals->hasPages())
 <div style="margin-top:20px;display:flex;justify-content:center;" class="anim-fade-up-3">

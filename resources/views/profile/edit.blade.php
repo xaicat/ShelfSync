@@ -16,6 +16,13 @@
     <div class="alert alert-success anim-fade-up mb-4"><i class="fas fa-check-circle mr-2"></i> {{ session('success') }}</div>
     @endif
 
+    @php $totalFine = Auth::user()->rentals ? Auth::user()->rentals->sum('fine_amount') : 0; @endphp
+    @if($totalFine > 0)
+    <div class="alert alert-danger shadow-sm border-danger anim-fade-up mb-4" style="box-shadow:0 0 15px rgba(239, 68, 68, 0.2) !important;">
+        ⚠️ You have an active fine balance of -{{ $totalFine }} BDT. Please resolve this to keep your account in good standing.
+    </div>
+    @endif
+
     <!-- Digital ID Card Section -->
     <div class="ss-card anim-fade-up-1" style="padding:32px;margin-bottom:20px;">
         <div style="margin-bottom:22px;">
@@ -61,7 +68,7 @@
             @endphp
             
             <div style="display:flex;justify-content:center;margin-bottom:20px;">
-                <div style="width:350px;height:200px;border-radius:16px;background:linear-gradient(135deg, rgba(30,30,40,0.8), rgba(15,15,20,0.95));border:1px solid {{ $borderClass }};box-shadow:0 0 25px {{ $glowClass }};position:relative;overflow:hidden;padding:24px;filter: {{ $filter }};{{ $cStatus === 'revoked' ? 'animation: pulse-red 2s infinite;' : '' }}">
+                <div style="max-width:350px;width:100%;min-height:220px;border-radius:18px;position:relative;background:linear-gradient(135deg,rgba(0,0,0,0.8),rgba(15,15,20,0.95));border:1px solid rgba(255,255,255,0.1);box-shadow:0 10px 30px rgba(0,0,0,0.5);overflow:hidden;" class="p-4 mx-auto id-card-glow {{ $cStatus === 'expired' ? 'card-expired' : '' }}">
                     
                     <!-- SVG Overlay Pattern -->
                     <svg style="position:absolute;top:0;right:0;width:150px;height:100%;opacity:0.05;" viewBox="0 0 100 100">
@@ -72,7 +79,7 @@
                     <!-- Header -->
                     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
                         <div>
-                            <div style="font-family:var(--ss-font-display);font-size:0.75rem;font-weight:800;letter-spacing:1px;color:var(--ss-cyan);text-transform:uppercase;">ShelfSync Member</div>
+                            <div style="font-family:var(--ss-font-display);font-size:0.75rem;font-weight:800;letter-spacing:1px;color:var(--ss-cyan);text-transform:uppercase;">DIU Student</div>
                             <div style="font-size:0.65rem;color:var(--ss-text-3);">Digital Access Card</div>
                         </div>
                     </div>
@@ -80,13 +87,13 @@
                     <!-- Details -->
                     <div style="margin-bottom:16px;">
                         <div style="font-family:monospace;font-size:1.1rem;color:#fff;letter-spacing:2px;margin-bottom:4px;text-shadow: 0 0 4px rgba(255,255,255,0.2);">UID: {{ $card->student_id }}</div>
-                        <div style="font-size:0.95rem;font-weight:700;color:#fff;">{{ Auth::user()->name }}</div>
-                        <div style="font-size:0.75rem;color:var(--ss-text-2);">{{ $card->department }}</div>
+                        <div style="font-size:1.25rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;width:100%;">{{ Auth::user()->name }}</div>
+                        <div style="font-size:0.85rem;color:var(--ss-text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;width:100%;">{{ $card->department }}</div>
                     </div>
 
                     <!-- Footer -->
-                    <div style="display:flex;justify-content:space-between;align-items:flex-end;">
-                        <div>
+                    <div class="d-flex justify-content-between align-items-end mt-3">
+                        <div class="text-truncate">
                             <div style="font-size:0.6rem;color:var(--ss-text-3);text-transform:uppercase;">Valid Thru</div>
                             <div style="font-size:0.8rem;color:#fff;font-weight:600;">
                                 {{ $card->expires_at ? $card->expires_at->format('m/Y') : 'Lifetime' }}

@@ -28,11 +28,12 @@ class UserController extends Controller
         $wishlistCount   = Wishlist::where('user_id', $user->id)->count();
         $currentlyReading = ReadingProgress::with('book')->where('user_id', $user->id)->where('status', 'reading')->orderByDesc('updated_at')->get();
         $readingHistory   = ReadingProgress::with('book')->where('user_id', $user->id)->where('status', 'completed')->orderByDesc('completed_at')->limit(5)->get();
+        $totalFines       = Rental::where('user_id', $user->id)->sum('fine_amount');
 
         return view('user.dashboard', compact(
             'user', 'activeRentals', 'pendingRentals',
             'completedBooks', 'wishlistCount',
-            'currentlyReading', 'readingHistory'
+            'currentlyReading', 'readingHistory', 'totalFines'
         ));
     }
 
@@ -198,6 +199,26 @@ class UserController extends Controller
             $card->update(['status' => 'pending']);
         }
         return redirect()->back()->with('success', 'Renewal request submitted.');
+    }
+
+    // ═══════════════════════════════════════════════
+    // FINE APPEALS
+    // ═══════════════════════════════════════════════
+    public function submitAppeal(Request $request)
+    {
+        $request->validate([
+            'rental_id' => 'required|exists:rentals,id',
+            'reason'    => 'required|string|min:10',
+        ]);
+
+        \App\Models\FineAppeal::create([
+            'rental_id' => $request->rental_id,
+            'user_id'   => Auth::id(),
+            'reason'    => $request->reason,
+            'status'    => 'pending',
+        ]);
+
+        return redirect()->back()->with('success', 'Your fine appeal has been submitted to the admin queue.');
     }
 
     public function submitContact(Request $request)

@@ -271,12 +271,19 @@ class AdminController extends Controller
 
     public function revokeCard($id)
     {
-        $user = User::findOrFail($id);
-        if ($user->libraryCard) {
-            $user->libraryCard->update(['status' => 'revoked']);
-            return redirect()->back()->with('success', "Library card for {$user->name} has been revoked.");
-        }
-        return redirect()->back()->with('error', 'No library card found to revoke.');
+        $user = \App\Models\User::findOrFail($id);
+        
+        \App\Models\LibraryCard::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'student_id' => $user->libraryCard->student_id ?? 'REVOKED-' . $user->id,
+                'department' => $user->libraryCard->department ?? 'N/A',
+                'status' => 'revoked',
+                'expires_at' => now()->subDay()
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Library Access Revoked for ' . $user->name);
     }
 
     // ═══════════════════════════════════════════════
@@ -304,5 +311,58 @@ class AdminController extends Controller
         $card = \App\Models\LibraryCard::findOrFail($id);
         $card->update(['status' => 'rejected']);
         return redirect()->back()->with('success', 'Library Card Rejected.');
+    }
+
+    // ═══════════════════════════════════════════════
+    // FINES & APPEALS
+    // ═══════════════════════════════════════════════
+    public function fines()
+    {
+        // Get rentals that either have a fine or an active appeal
+        $rentals = \App\Models\Rental::with(['user', 'book', 'fineAppeal'])
+            ->where('fine_amount', '>', 0)
+            ->orWhereHas('fineAppeal', function($q) {
+                $q->where('status', 'pending');
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.fines', compact('rentals'));
+    }
+
+    public function clearFine($id)
+    {
+        $rental = \App\Models\Rental::findOrFail($id);
+        $rental->update(['fine_amount' => 0]);
+        return redirect()->back()->with('success', 'Fine cleared successfully.');
+    }
+
+    public function adjustFine(Request $request, $id)
+    {
+        $request->validate([
+            'amount' => 'required|numeric',
+            'action' => 'required|in:add,reduce'
+        ]);
+        $rental = \App\Models\Rental::findOrFail($id);
+        
+        if ($request->action === 'add') {
+            $rental->update(['fine_amount' => $rental->fine_amount + $request->amount]);
+            $msg = 'Fine increased successfully.';
+        } else {
+            $newAmount = max(0, $rental->fine_amount - $request->amount);
+            $rental->update(['fine_amount' => $newAmount]);
+            $msg = 'Fine reduced successfully.';
+        }
+        
+        return redirect()->back()->with('success', $msg);
+    }
+
+    public function resolveAppeal(Request $request, $id)
+    {
+        $request->validate(['status' => 'required|in:resolved,rejected']);
+        $appeal = \App\Models\FineAppeal::findOrFail($id);
+        $appeal->update(['status' => $request->status]);
+        
+        return redirect()->back()->with('success', 'Appeal ticket ' . $request->status . '.');
     }
 }
