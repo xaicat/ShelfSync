@@ -1,71 +1,150 @@
 <x-user-layout>
-    <div class="container-fostrap mt-5">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-12">
-                    <div class="books-section" style="background: rgba(8, 22, 39, 0.7); border-radius: 15px; padding: 30px; backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1);">
-                        <h2 class="text-white mb-4 font-weight-bold">My Rented Books</h2>
 
-                        <div class="table-responsive">
-                            <table class="table table-borderless">
-                                <thead style="border-bottom: 2px solid rgba(255, 255, 255, 0.1);">
-                                    <tr class="text-white text-uppercase" style="font-size: 0.85rem; letter-spacing: 1px;">
-                                        <th scope="col">#</th>
-                                        <th scope="col">Book Name</th>
-                                        <th scope="col">Rent Date</th>
-                                        <th scope="col">Return Date</th>
-                                        <th scope="col">Quantity</th>
-                                        <th scope="col" class="text-center">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="text-light">
-                                    @forelse($rentals as $rental)
-                                    <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
-                                        <td class="align-middle">{{ $loop->iteration }}</td>
-                                        <td class="align-middle text-white font-weight-bold" style="font-size: 1.1rem;">
-                                            {{ $rental->book->name ?? 'Deleted Book' }}
-                                        </td>
-                                        <td class="align-middle">{{ $rental->created_at->format('d M, Y') }}</td>
-                                        <td class="align-middle {{ \Carbon\Carbon::parse($rental->return_date)->isPast() ? 'text-danger font-weight-bold' : 'text-info' }}">
-                                            {{ \Carbon\Carbon::parse($rental->return_date)->format('d M, Y') }}
-                                        </td>
-                                        <td class="align-middle text-center">{{ $rental->quantity }}</td>
-                                        <td class="align-middle text-center">
-                                            @php
-                                                $isOverdue = \Carbon\Carbon::parse($rental->return_date)->isPast();
-                                            @endphp
-                                            <span class="badge {{ $isOverdue ? 'badge-danger' : 'badge-primary' }} px-3 py-2 shadow-sm" style="border-radius: 20px; font-weight: 600;">
-                                                <i class="fas {{ $isOverdue ? 'fa-exclamation-circle' : 'fa-check-circle' }} mr-1"></i>
-                                                {{ $isOverdue ? 'Overdue' : 'Active' }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center py-5 text-muted">
-                                            <i class="fas fa-book-open fa-3x mb-3 d-block"></i>
-                                            You haven't rented any books yet.
-                                        </td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div style="padding:50px 0 80px;">
+<div class="container" style="max-width:700px;">
+
+    <div class="anim-fade-up" style="margin-bottom:28px;">
+        <div class="ss-section-label">Borrowing</div>
+        <h1 class="ss-page-title">My Rentals</h1>
+        <p class="ss-page-subtitle">Track the status of your library rental requests</p>
     </div>
 
-    <style>
-        /* Modern hover effect for table rows */
-        tbody tr:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            transition: 0.3s ease;
-        }
-        
-        .badge-primary {
-            background-color: var(--primary-blue) !important;
-        }
-    </style>
+    @if($rentals->isEmpty())
+        <div class="ss-card anim-fade-up-1" style="padding:60px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:16px;">📚</div>
+            <p style="color:var(--ss-text-2);margin-bottom:20px;">You haven't rented any books yet.</p>
+            <a href="{{ route('user.books') }}" class="ss-btn ss-btn-primary"><i class="fas fa-book-open"></i> Browse Books</a>
+        </div>
+    @else
+        <div style="display:flex;flex-direction:column;gap:14px;">
+        @foreach($rentals as $rental)
+        @php
+            $s = $rental->approval_status;
+            $rd = \Carbon\Carbon::parse($rental->return_date);
+            $isOverdue = ($s === 'approved') && $rd->isPast();
+            if ($isOverdue)       $badgeClass = 'ss-badge-overdue';
+            elseif ($s === 'pending')  $badgeClass = 'ss-badge-pending';
+            elseif ($s === 'approved') $badgeClass = 'ss-badge-approved';
+            elseif ($s === 'returned') $badgeClass = 'ss-badge-returned';
+            else                  $badgeClass = 'ss-badge-rejected';
+
+            $fineStyle = ($rental->fine_amount > 0 || $isOverdue)
+                         ? 'box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); border-color: red;' 
+                         : '';
+        @endphp
+        <div class="ss-card anim-fade-up-1" style="padding:22px;display:flex;gap:18px;align-items:flex-start;{{ $fineStyle }}">
+            <!-- Cover thumbnail -->
+            <div style="width:52px;height:70px;border-radius:8px;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,rgba(37,99,235,0.2),rgba(124,58,237,0.15));display:flex;align-items:center;justify-content:center;border:1px solid var(--ss-border);">
+                <img src="{{ isset($rental->book) && $rental->book->image ? $rental->book->image : asset('img/no-cover.svg') }}" 
+                     onerror="this.onerror=null;this.src='{{ asset('img/no-cover.svg') }}';"
+                     style="width:100%;height:100%;object-fit:cover;">
+            </div>
+            <!-- Details -->
+            <div style="flex:1;min-width:0;">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+                    <div>
+                        <div style="font-family:var(--ss-font-display);font-weight:700;color:#fff;font-size:0.95rem;margin-bottom:3px;">
+                            {{ $rental->book->name ?? 'Deleted Book' }}
+                        </div>
+                        @if($rental->book && $rental->book->author)
+                        <div style="font-size:0.78rem;color:var(--ss-text-2);margin-bottom:8px;">{{ $rental->book->author }}</div>
+                        @endif
+                    </div>
+                    <span class="ss-badge {{ $badgeClass }}">
+                        @if($isOverdue) ⚠ Overdue
+                        @elseif($s === 'pending') ⏳ Pending
+                        @elseif($s === 'approved') ✅ Active
+                        @elseif($s === 'returned') 📦 Returned
+                        @else ✕ Rejected @endif
+                    </span>
+                    @if($rental->fine_amount > 0)
+                    <span class="ss-badge" style="background:rgba(239,68,68,0.15);color:var(--ss-rose);">
+                        -{{ number_format($rental->fine_amount, 0) }} BDT Fine
+                    </span>
+                    @endif
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:0.8rem;color:var(--ss-text-2);margin-bottom:12px;">
+                    <span><i class="fas fa-hashtag" style="color:var(--ss-text-3);margin-right:4px;"></i>Qty: <strong style="color:#fff;">{{ $rental->quantity }}</strong></span>
+                    <span><i class="fas fa-calendar" style="color:var(--ss-text-3);margin-right:4px;"></i>Return: <strong style="color:{{ $isOverdue ? 'var(--ss-rose)' : '#fff' }};">{{ $rd->format('d M Y') }}</strong></span>
+                    <span><i class="fas fa-wifi" style="color:var(--ss-text-3);margin-right:4px;"></i>{{ $rental->status }}</span>
+                    <span><i class="fas fa-clock" style="color:var(--ss-text-3);margin-right:4px;"></i>Requested {{ $rental->created_at->diffForHumans() }}</span>
+                </div>
+                
+                @if($s === 'approved')
+                    <div style="display:flex;align-items:center;gap:16px;">
+                        <button class="ss-btn ss-btn-sm" style="background:rgba(0,212,255,0.1);color:var(--ss-cyan);border:1px solid rgba(0,212,255,0.25);" onclick="document.getElementById('qrModal{{ $rental->id }}').style.display='flex'">
+                            <i class="fas fa-qrcode"></i> Show Return QR
+                        </button>
+                        @if($rental->fine_amount > 0)
+                            <button class="ss-btn ss-btn-sm ss-btn-danger" onclick="document.getElementById('appealModal{{ $rental->id }}').style.display='flex'">
+                                <i class="fas fa-gavel"></i> Request Fine Removal
+                            </button>
+                        @endif
+                        @if(!$isOverdue)
+                            <div style="font-size:0.78rem;color:var(--ss-electric);">
+                                <i class="fas fa-hourglass-half mr-1"></i> {{ $rd->diffForHumans() }} remaining
+                            </div>
+                        @else
+                            <div style="font-size:0.78rem;color:var(--ss-rose);">
+                                <i class="fas fa-exclamation-triangle mr-1"></i> {{ $rd->diffForHumans() }} — please return immediately
+                            </div>
+                        @endif
+                    </div>
+                @elseif($s === 'pending')
+                    <div style="font-size:0.78rem;color:var(--ss-amber);">
+                        <i class="fas fa-info-circle mr-1"></i> Awaiting admin approval
+                    </div>
+                @endif
+                
+                @if($s === 'returned' && $rental->fine_amount > 0)
+                    <div style="margin-top:10px;">
+                        <button class="ss-btn ss-btn-sm ss-btn-danger" onclick="document.getElementById('appealModal{{ $rental->id }}').style.display='flex'">
+                            <i class="fas fa-gavel"></i> Request Fine Removal
+                        </button>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        @if($s === 'approved')
+        <!-- QR Code Modal -->
+        <div id="qrModal{{ $rental->id }}" class="modal" tabindex="-1" style="display:none;position:fixed;inset:0;background:rgba(10,10,11,0.9);z-index:9999;align-items:center;justify-content:center;">
+            <div style="background:#0f0f14;padding:32px;border-radius:16px;border:1px solid var(--ss-border);text-align:center;max-width:320px;width:100%;position:relative;">
+                <button onclick="document.getElementById('qrModal{{ $rental->id }}').style.display='none'" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--ss-text-3);font-size:1.5rem;cursor:pointer;">&times;</button>
+                <h4 style="color:#fff;font-size:1.1rem;margin-bottom:8px;font-weight:700;">Return Code</h4>
+                <p style="color:var(--ss-text-2);font-size:0.85rem;margin-bottom:24px;">Show this QR code to the librarian.</p>
+                <div style="background:#fff;padding:12px;border-radius:8px;display:inline-block;margin-bottom:16px;">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=000000&bgcolor=ffffff&data=RENTAL-{{ $rental->id }}" alt="QR">
+                </div>
+                <div style="font-family:monospace;font-size:1.2rem;color:var(--ss-cyan);letter-spacing:1px;">RENTAL-{{ $rental->id }}</div>
+            </div>
+        </div>
+
+        <!-- Appeal Modal -->
+        @if($rental->fine_amount > 0)
+        <div id="appealModal{{ $rental->id }}" class="modal" tabindex="-1" style="display:none;position:fixed;inset:0;background:rgba(10,10,11,0.9);z-index:9999;align-items:center;justify-content:center;">
+            <div style="background:#16161d;padding:32px;border-radius:16px;border:1px solid rgba(239,68,68,0.4);box-shadow:0 0 20px rgba(239,68,68,0.1);max-width:400px;width:100%;position:relative;">
+                <button onclick="document.getElementById('appealModal{{ $rental->id }}').style.display='none'" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--ss-text-3);font-size:1.5rem;cursor:pointer;">&times;</button>
+                <h4 style="color:#fff;font-size:1.1rem;margin-bottom:8px;font-weight:700;">Request Fine Removal</h4>
+                <p style="color:var(--ss-text-2);font-size:0.85rem;margin-bottom:20px;">Please state your reason for appealing the {{ number_format($rental->fine_amount, 0) }} BDT fine.</p>
+                
+                <form action="{{ route('user.fine.appeal') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="rental_id" value="{{ $rental->id }}">
+                    <div class="mb-3">
+                        <textarea name="reason" rows="4" class="ss-input" placeholder="e.g., I was unable to return the book due to a medical emergency..." required style="width:100%;padding:12px;"></textarea>
+                    </div>
+                    <button type="submit" class="ss-btn ss-btn-danger" style="width:100%;">Submit Appeal</button>
+                </form>
+            </div>
+        </div>
+        @endif
+        @endif
+
+        @endforeach
+        </div>
+    @endif
+</div>
+</div>
+
 </x-user-layout>

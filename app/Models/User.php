@@ -47,4 +47,36 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get the user's library card
+     */
+    public function libraryCard()
+    {
+        return $this->hasOne(LibraryCard::class);
+    }
+
+    /**
+     * Get the user's rentals
+     */
+    public function rentals()
+    {
+        return $this->hasMany(Rental::class);
+    }
+
+    /**
+     * Get real-time card status with auto-expiry engine
+     */
+    public function getCardStatusAttribute()
+    {
+        $card = $this->libraryCard;
+        if (!$card) return 'none';
+
+        if ($card->status === 'approved' && $card->expires_at && now()->greaterThan($card->expires_at)) {
+            $card->update(['status' => 'expired']);
+            return 'expired';
+        }
+
+        return $card->status;
+    }
 }

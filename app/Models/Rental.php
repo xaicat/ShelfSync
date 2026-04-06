@@ -19,6 +19,13 @@ class Rental extends Model
         'return_date',
         'quantity',
         'status',
+        'approval_status',
+        'fine_amount',
+        'due_date',
+    ];
+
+    protected $casts = [
+        'due_date' => 'datetime',
     ];
 
     /**
@@ -35,5 +42,13 @@ class Rental extends Model
     public function book(): BelongsTo
     {
         return $this->belongsTo(Book::class);
+    }
+
+    /**
+     * Get the fine appeal associated with the rental.
+     */
+    public function fineAppeal()
+    {
+        return $this->hasOne(FineAppeal::class);
     }
 }

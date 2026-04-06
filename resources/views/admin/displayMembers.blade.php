@@ -1,146 +1,111 @@
 <x-admin-layout>
-    <style>
-        .member-section h2 {
-            color: #fff;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
 
-        /* Glassmorphism Card for Table */
-        .member-card {
-            background: rgba(8, 22, 39, 0.8);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;" class="anim-fade-up">
 
-        .table {
-            color: #d3d3d3;
-        }
-
-        .table thead th {
-            border-top: none;
-            border-bottom: 2px solid rgba(30, 144, 255, 0.3);
-            color: #fff;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-        }
-
-        .table td {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            vertical-align: middle;
-            padding: 15px 10px;
-        }
-
-        /* User Icon Styling - Switched to Icon */
-        .user-avatar {
-            width: 48px;
-            height: 48px;
-            background: rgba(30, 144, 255, 0.2);
-            color: var(--primary-blue);
-            border: 1px solid rgba(30, 144, 255, 0.4);
-            border-radius: 12px; /* Square-ish rounded look */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-
-        .member-name-cell {
-            display: flex;
-            align-items: center;
-        }
-
-        /* Improved Info Stack */
-        .member-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .status-badge {
-            background: rgba(40, 167, 69, 0.1);
-            color: #2ecc71;
-            border: 1px solid rgba(46, 204, 113, 0.3);
-            padding: 1px 8px;
-            border-radius: 4px; /* Matches the new avatar style */
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            width: fit-content;
-            letter-spacing: 0.5px;
-        }
-    </style>
-
-    <div class="row justify-content-center mt-4">
-        <div class="col-lg-10">
-            <div class="member-section">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2><i class="fas fa-users-cog mr-2"></i>Registered Members</h2>
-                    <span class="badge badge-info px-3 py-2 shadow-sm" style="border-radius: 20px; background: var(--primary-blue);">
-                        Total Students: {{ $users->count() }}
-                    </span>
-                </div>
-                
-                <div class="member-card">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th width="10%">ID</th>
-                                    <th width="35%">Member Details</th>
-                                    <th width="25%">Email Address</th>
-                                    <th width="30%">Residential Address</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($users as $user)
-                                <tr>
-                                    <td class="text-white-50 font-weight-bold">#{{ $user->id }}</td>
-                                    <td>
-                                        <div class="member-name-cell">
-                                            <div class="user-avatar shadow-sm">
-                                                <i class="fas fa-user-graduate"></i>
-                                            </div>
-                                            <div class="member-info">
-                                                <div class="text-white font-weight-bold" style="font-size: 1.05rem;">
-                                                    {{ $user->name }}
-                                                </div>
-                                                <span class="status-badge">Student Member</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="text-info">
-                                            <i class="fas fa-envelope mr-2 small opacity-50"></i>{{ $user->email }}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div style="max-width: 250px; color: #bbb; line-height: 1.4; font-size: 0.9rem;">
-                                            <i class="fas fa-map-marker-alt mr-2 small text-danger opacity-75"></i>
-                                            {{ $user->address ?? 'No Address Provided' }}
-                                        </div>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="text-center py-5 text-muted">
-                                        <i class="fas fa-user-slash fa-3x mb-3 d-block opacity-25"></i>
-                                        No registered members found in the library database.
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+<style>
+.dropdown-item:hover {
+    background-color: var(--ss-surface-light) !important;
+    color: #fff !important;
+}
+.dropdown-divider {
+    margin: 0.25rem 0;
+}
+</style>
+    <div>
+        <div class="ss-section-label">Members</div>
+        <h1 class="ss-page-title">User Management</h1>
+        <p class="ss-page-subtitle">{{ $users->count() }} members — manage roles and permissions</p>
     </div>
+</div>
+
+<div class="ss-card anim-fade-up-1" style="overflow:hidden;">
+    <div class="table-responsive">
+        <table class="table table-hover" style="margin-bottom:0;">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Member</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Joined</th>
+                    <th>Rentals</th>
+                    <th>Role</th>
+                    <th style="text-align:center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($users as $user)
+                <tr>
+                    <td style="color:var(--ss-text-3);font-size:0.78rem;">#{{ $user->id }}</td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,rgba(0,212,255,0.12),rgba(37,99,235,0.10));color:var(--ss-cyan);display:flex;align-items:center;justify-content:center;font-family:var(--ss-font-display);font-weight:800;font-size:0.9rem;flex-shrink:0;border:1px solid rgba(0,212,255,0.18);">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <div style="font-weight:700;color:#fff;font-size:0.88rem;">{{ $user->name }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="color:var(--ss-text-2);font-size:0.82rem;">{{ $user->email }}</td>
+                    <td style="color:var(--ss-text-2);font-size:0.82rem;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        {{ $user->address ?? '—' }}
+                    </td>
+                    <td style="color:var(--ss-text-2);font-size:0.82rem;">{{ $user->created_at->format('d M Y') }}</td>
+                    <td>
+                        @php $rc = \App\Models\Rental::where('user_id', $user->id)->count(); @endphp
+                        <span style="font-weight:700;color:{{ $rc > 0 ? 'var(--ss-electric)' : 'var(--ss-text-3)' }};">{{ $rc }}</span>
+                    </td>
+                    <td>
+                        @if($user->role === 'admin')
+                            <span class="role-badge-admin">Admin</span>
+                        @else
+                            <span class="role-badge-user">User</span>
+                        @endif
+                    </td>
+                    <td style="text-align:center;white-space:nowrap;">
+                        <div class="dropdown">
+                            <button class="ss-btn dropdown-toggle" style="background:var(--ss-surface-light);color:var(--ss-text-2);border:1px solid var(--ss-border);padding:6px 14px;display:inline-flex;align-items:center;gap:8px;font-size:0.75rem;" type="button" id="dropdownMenuButton_{{ $user->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-cog"></i> Actions
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton_{{ $user->id }}" style="background:#16161d;border:1px solid var(--ss-border);box-shadow:0 10px 30px rgba(0,0,0,0.5);min-width:180px;">
+                                @if($user->role === 'user')
+                                    <form action="{{ route('admin.members.promote', $user->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Promote {{ addslashes($user->name) }} to Admin?')">
+                                        @csrf @method('PATCH')
+                                        <button type="submit" class="dropdown-item py-2" style="color:var(--ss-cyan);background:transparent;outline:none;font-size:0.8rem;font-weight:600;"><i class="fas fa-arrow-up fa-fw mr-2"></i> Promote Admin</button>
+                                    </form>
+                                    
+                                    @if(!$user->libraryCard || $user->libraryCard->status !== 'revoked')
+                                        <div class="dropdown-divider" style="border-top-color:var(--ss-border);"></div>
+                                        <form action="{{ route('admin.revoke.card', $user->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Revoke Library Card access for {{ addslashes($user->name) }}? This will restrict them from borrowing.')">
+                                            @csrf @method('PATCH')
+                                            <button type="submit" class="dropdown-item py-2" style="color:var(--ss-rose);background:transparent;outline:none;font-size:0.8rem;font-weight:600;"><i class="fas fa-ban fa-fw mr-2"></i> Revoke Card</button>
+                                        </form>
+                                    @else
+                                        <div class="dropdown-divider" style="border-top-color:var(--ss-border);"></div>
+                                        <div class="dropdown-item disabled py-2" style="color:#666;background:transparent;font-size:0.8rem;font-weight:600;"><i class="fas fa-user-slash fa-fw mr-2"></i> Card Revoked</div>
+                                    @endif
+                                @else
+                                    <form action="{{ route('admin.members.demote', $user->id) }}" method="POST" style="margin:0;" onsubmit="return confirm('Demote {{ addslashes($user->name) }} to User?')">
+                                        @csrf @method('PATCH')
+                                        <button type="submit" class="dropdown-item py-2" style="color:var(--ss-amber);background:transparent;outline:none;font-size:0.8rem;font-weight:600;"><i class="fas fa-arrow-down fa-fw mr-2"></i> Demote to User</button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="8" style="text-align:center;padding:60px;color:var(--ss-text-3);">
+                        <i class="fas fa-users" style="font-size:2rem;display:block;margin-bottom:12px;"></i>
+                        No other members found.
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
 </x-admin-layout>

@@ -3,98 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Home' }} - Diu Library Portal</title>
+    <title>{{ $title ?? '' }}{{ isset($title) ? ' — ' : '' }}{{ config('app.name') }}</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/fivicon.svg') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-blue: #1e90ff;
-            --dark-blue: #0a1a2e;
-            --light-blue: #4da8da;
-            --white: #fff;
-            --text-color: #d3d3d3;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--dark-blue);
-            color: var(--text-color);
-            background-image: url('{{ asset('images/diuBG.jpg') }}'); /* Ensure this image is in public/images/ */
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            text-align: center;
-        }
-        .navbar { background: linear-gradient(90deg, var(--dark-blue), #1c2f4f); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .btn-modern { background: var(--primary-blue); color: var(--white); border-radius: 25px; transition: all 0.3s ease; border:none; padding: 10px 25px; text-transform: uppercase; }
-        .btn-modern:hover { background: #187bcd; transform: translateY(-2px); color: white; }
-        #back-to-top { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background: var(--primary-blue); border: none; border-radius: 50%; color: var(--white); opacity: 0; transition: 0.3s; z-index: 1000; }
-        #back-to-top.visible { opacity: 1; }
-        body::after { content: ''; position: fixed; width: 20px; height: 20px; background: radial-gradient(circle, rgba(30, 144, 255, 0.3), transparent); border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); z-index: 9999; }
-        .nav-link { font-weight: 500; }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/shelfsync.css') }}">
+    {{ $styles ?? '' }}
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-        <div class="container">
-            <a class="navbar-brand mx-auto" href="{{ route('home') }}">
-                <span style="padding-right: 20px;">Diu Library Portal</span>
-                <!--<img src="" width="160" height="42" alt="Diu Library Portal">-->
-                
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#userNavbar">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="userNavbar">
+<body class="ss-body-offset">
+
+{{-- ════════════════════════════════════════════════════════
+     FLOATING PILL NAVBAR
+     Wrapper: positions pill; pill has glass + blur
+════════════════════════════════════════════════════════ --}}
+<div class="ss-nav-float-wrap">
+    <nav class="ss-navbar-pill navbar navbar-expand-lg navbar-dark">
+
+        {{-- ── LEFT: Logo only ── --}}
+        <a class="navbar-brand" href="{{ route('home') }}">
+            <img src="{{ asset('img/shelfsync.svg') }}" height="30" alt="{{ config('app.name') }}"
+                 style="display:block;">
+        </a>
+
+        {{-- ── Mobile toggler ── --}}
+        <button class="navbar-toggler" type="button"
+                data-toggle="collapse" data-target="#mainNav"
+                aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        {{-- ── RIGHT: Everything else in ONE ml-auto group ── --}}
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ml-auto align-items-center" style="gap:2px;">
+
+                {{-- Search Icon (leftmost of right group) --}}
+                <li class="nav-item">
+                    <button id="nav-search-btn" aria-label="Search"
+                            style="background:none;border:1px solid rgba(255,255,255,0.12);border-radius:8px;
+                                   width:34px;height:34px;color:var(--ss-text-2);cursor:pointer;
+                                   display:flex;align-items:center;justify-content:center;
+                                   transition:border-color 0.2s,color 0.2s;margin-right:6px;">
+                        <i class="fas fa-search" style="font-size:0.78rem;"></i>
+                    </button>
+                </li>
+
+                {{-- Nav Links --}}
+                <li class="nav-item">
+                    <a class="ss-nav-link nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
+                       href="{{ route('home') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="ss-nav-link nav-link {{ request()->routeIs('user.books') ? 'active' : '' }}"
+                       href="{{ route('user.books') }}">Books</a>
+                </li>
+                <li class="nav-item">
+                    <a class="ss-nav-link nav-link {{ request()->routeIs('contact') ? 'active' : '' }}"
+                       href="{{ route('contact') }}">Contact</a>
+                </li>
                 @auth
-                    <h4 class="text-white mx-auto d-none d-lg-block" style="font-size: 1rem; font-family:'Syne', sans-serif; background: linear-gradient(135deg, #fff 30%, #06d6a0 70%, #3b82f6) !important; background-clip: text !important; -webkit-background-clip: text !important;-webkit-text-fill-color: transparent !important; line-height: 1 !important; margin: 0;padding: 0;box-sizing: border-box;">User: {{ Auth::user()->name }}</h4>
+                <li class="nav-item">
+                    <a class="ss-nav-link nav-link {{ request()->routeIs('user.my_rents') ? 'active' : '' }}"
+                       href="{{ route('user.my_rents') }}">My Rents</a>
+                </li>
                 @endauth
-                
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('user.books') }}">Books</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
-                    
-                    @auth
-                        <li class="nav-item"><a class="nav-link" href="{{ route('user.my_rents') }}">My Rents</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('profile.edit') }}">Profile</a></li>
-                        <li class="nav-item">
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button class="nav-link btn btn-link py-2" type="submit" style="text-decoration: none;">Logout</button>
-                            </form>
-                        </li>
-                    @else
-                        <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Register</a></li>
-                    @endauth
-                </ul>
+
+                {{-- Vertical separator --}}
+                <li class="nav-item d-none d-lg-flex align-items-center">
+                    <div class="ss-nav-sep"></div>
+                </li>
+
+                {{-- ── Auth area ── --}}
+                @auth
+                {{-- Avatar Dropdown --}}
+                <li class="nav-item dropdown">
+                    <button id="avatarBtn" class="ss-avatar-btn" aria-haspopup="true" aria-expanded="false">
+                        <div class="ss-avatar-ring">
+                            <div class="ss-avatar-inner">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down ss-avatar-chevron"></i>
+                    </button>
+
+                    {{-- Glassmorphic Dropdown --}}
+                    <div id="avatarDropdown" class="ss-dropdown">
+                        <div class="ss-dropdown-header">
+                            <div class="ss-dropdown-avatar">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <div class="ss-dropdown-name">{{ Auth::user()->name }}</div>
+                                <div class="ss-dropdown-email">{{ Auth::user()->email }}</div>
+                            </div>
+                        </div>
+                        <div class="ss-dropdown-divider"></div>
+
+                        @if(Auth::user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="ss-dropdown-item ss-dropdown-item-special">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Control Panel</span>
+                            <i class="fas fa-external-link-alt ss-dropdown-item-arrow"></i>
+                        </a>
+                        <div class="ss-dropdown-divider"></div>
+                        @endif
+
+                        <a href="{{ route('user.dashboard') }}"
+                           class="ss-dropdown-item {{ request()->routeIs('user.dashboard') ? 'active' : '' }}">
+                            <i class="fas fa-th-large"></i><span>My Dashboard</span>
+                        </a>
+                        <a href="{{ route('profile.edit') }}"
+                           class="ss-dropdown-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                            <i class="fas fa-user-cog"></i><span>Profile Settings</span>
+                        </a>
+                        <a href="{{ route('user.my_rents') }}" class="ss-dropdown-item">
+                            <i class="fas fa-book-open"></i><span>My Rentals</span>
+                        </a>
+
+                        <div class="ss-dropdown-divider"></div>
+
+                        <form method="POST" action="{{ route('logout') }}" style="margin:0;">
+                            @csrf
+                            <button type="submit" class="ss-dropdown-item ss-dropdown-item-danger">
+                                <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+                            </button>
+                        </form>
+                    </div>
+                </li>
+                @else
+                <li class="nav-item" style="margin-left:4px;">
+                    <a class="ss-btn ss-btn-ghost ss-btn-sm" href="{{ route('login') }}">Login</a>
+                </li>
+                <li class="nav-item" style="margin-left:4px;">
+                    <a class="ss-btn ss-btn-primary ss-btn-sm" href="{{ route('register') }}">Register</a>
+                </li>
+                @endauth
+
+            </ul>
+        </div>{{-- /navbar-collapse --}}
+
+    </nav>
+</div>{{-- /ss-nav-float-wrap --}}
+
+
+{{-- Search Overlay --}}
+<div id="search-overlay"
+     style="display:none;position:fixed;inset:0;z-index:9999;
+            background:rgba(10,10,11,0.94);backdrop-filter:blur(18px);
+            align-items:flex-start;justify-content:center;padding-top:130px;">
+    <div style="width:100%;max-width:640px;padding:0 20px;">
+        <div style="position:relative;">
+            <i class="fas fa-search"
+               style="position:absolute;left:20px;top:50%;transform:translateY(-50%);
+                      color:var(--ss-text-3);font-size:1rem;pointer-events:none;"></i>
+            <input id="search-input" type="text" class="ss-input"
+                   placeholder="Search books, authors, categories…"
+                   style="font-size:1rem;padding:16px 22px 16px 48px !important;border-radius:16px !important;">
+        </div>
+        <p style="font-size:0.78rem;color:var(--ss-text-3);margin-top:14px;text-align:center;">
+            Press <kbd style="background:rgba(255,255,255,0.08);border:1px solid var(--ss-border);border-radius:4px;padding:1px 6px;font-family:monospace;">Esc</kbd>
+            to close &nbsp;·&nbsp;
+            Press <kbd style="background:rgba(255,255,255,0.08);border:1px solid var(--ss-border);border-radius:4px;padding:1px 6px;font-family:monospace;">Enter</kbd>
+            to search
+        </p>
+    </div>
+</div>
+
+
+{{-- Page Content --}}
+<main>
+    @if (session('success'))
+        <div class="container mt-3">
+            <div class="alert alert-success alert-dismissible">
+                <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
+                <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
             </div>
         </div>
-    </nav>
+    @endif
+    @if (session('error'))
+        <div class="container mt-3">
+            <div class="alert alert-danger alert-dismissible">
+                <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
+                <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+            </div>
+        </div>
+    @endif
+    {{ $slot }}
+</main>
 
-    <main>
-        {{ $slot }}
-    </main>
 
-    <button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
+{{-- Back to top --}}
+<button id="back-to-top"
+        style="position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:50%;
+               background:linear-gradient(135deg,var(--ss-cyan),var(--ss-blue));border:none;
+               color:#fff;opacity:0;transition:opacity 0.3s,transform 0.3s;z-index:1000;
+               cursor:pointer;box-shadow:0 4px 16px var(--ss-cyan-glow);">
+    <i class="fas fa-arrow-up" style="font-size:0.85rem;"></i>
+</button>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-    <script>
-        document.addEventListener('mousemove', (e) => {
-            const cursor = document.body.querySelector(':after');
-            if(cursor) {
-                cursor.style.left = `${e.clientX}px`;
-                cursor.style.top = `${e.clientY}px`;
-            }
-        });
-        window.addEventListener('scroll', () => {
-            document.getElementById('back-to-top').classList.toggle('visible', window.scrollY > 300);
-        });
-        document.getElementById('back-to-top').addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
-    </script>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script>
+// ── Mobile: when pill nav expands, soften border-radius ───────
+$('#mainNav').on('show.bs.collapse', function () {
+    document.querySelector('.ss-navbar-pill').style.borderRadius = '20px';
+}).on('hide.bs.collapse', function () {
+    document.querySelector('.ss-navbar-pill').style.borderRadius = '100px';
+});
+
+// ── Back to top ────────────────────────────────────────────────
+window.addEventListener('scroll', function () {
+    document.getElementById('back-to-top').style.opacity = window.scrollY > 300 ? '1' : '0';
+});
+document.getElementById('back-to-top').addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ── Search overlay ─────────────────────────────────────────────
+var overlay     = document.getElementById('search-overlay');
+var searchInput = document.getElementById('search-input');
+var searchBtn   = document.getElementById('nav-search-btn');
+if (searchBtn) {
+    searchBtn.addEventListener('click', function () {
+        overlay.style.display = 'flex';
+        setTimeout(function () { searchInput.focus(); }, 60);
+    });
+    searchBtn.addEventListener('mouseenter', function () {
+        this.style.borderColor = 'rgba(0,212,255,0.45)';
+        this.style.color       = 'var(--ss-cyan)';
+    });
+    searchBtn.addEventListener('mouseleave', function () {
+        this.style.borderColor = 'rgba(255,255,255,0.12)';
+        this.style.color       = 'var(--ss-text-2)';
+    });
+}
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') overlay.style.display = 'none';
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        overlay.style.display = 'flex';
+        setTimeout(function () { searchInput.focus(); }, 60);
+    }
+});
+overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) overlay.style.display = 'none';
+});
+if (searchInput) {
+    searchInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && searchInput.value.trim()) {
+            window.location.href = '{{ route("user.books") }}?search=' + encodeURIComponent(searchInput.value.trim());
+        }
+    });
+}
+
+// ── Avatar dropdown ────────────────────────────────────────────
+var avatarBtn      = document.getElementById('avatarBtn');
+var avatarDropdown = document.getElementById('avatarDropdown');
+if (avatarBtn && avatarDropdown) {
+    avatarBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = avatarDropdown.classList.contains('open');
+        avatarDropdown.classList.toggle('open', !isOpen);
+        var chevron = avatarBtn.querySelector('.ss-avatar-chevron');
+        if (chevron) chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+    });
+    document.addEventListener('click', function () {
+        avatarDropdown.classList.remove('open');
+        var chevron = avatarBtn.querySelector('.ss-avatar-chevron');
+        if (chevron) chevron.style.transform = 'rotate(0deg)';
+    });
+    avatarDropdown.addEventListener('click', function (e) { e.stopPropagation(); });
+}
+</script>
+{{ $scripts ?? '' }}
 </body>
 </html>
