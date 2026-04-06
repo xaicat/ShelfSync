@@ -1,133 +1,1162 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShelfSync — Your University Digital Library</title>
+    <meta name="description" content="Search books, get a Digital ID Card, and rent from the DIU library — all in one place.">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/favicon.svg') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
+    <!-- Poppins — clean geometric sans for the entire landing page -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/shelfsync.css') }}">
+    <style>
+    /* ═══════════════════════════════════════════════════
+       LANDING — DESIGN SYSTEM
+    ═══════════════════════════════════════════════════ */
+    /* ── Landing-page luxury font variables (override shelfsync globals) ── */
+    :root {
+        --gold:   #f59e0b;
+        --r-card: 24px;
+        --r-pill: 100px;
+        --r-input: 18px;
+        /* Poppins everywhere */
+        --lp-font: 'Poppins', system-ui, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    /* ── Core font rendering — beats shelfsync.css ── */
+    body.welcome-page {
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+        text-rendering: optimizeLegibility !important;
+        font-family: var(--lp-font) !important;
+        font-weight: 400 !important;
+        line-height: 1.7 !important;
+        padding-top: 0 !important;
+    }
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+    /* Heading weight hierarchy — Poppins everywhere */
+    body.welcome-page h1 { font-family: var(--lp-font) !important; font-weight: 700 !important; letter-spacing: -0.02em !important; }
+    body.welcome-page h2 { font-family: var(--lp-font) !important; font-weight: 600 !important; letter-spacing: -0.02em !important; }
+    body.welcome-page h3 { font-family: var(--lp-font) !important; font-weight: 500 !important; }
+    body.welcome-page h4 { font-family: var(--lp-font) !important; font-weight: 500 !important; }
+    body.welcome-page p  { font-family: var(--lp-font) !important; font-weight: 400 !important; line-height: 1.75 !important; color: rgba(255,255,255,0.6); }
 
-        <!-- Styles / Scripts -->
-        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-            @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @else
-            <style>
-                /*! tailwindcss v4.0.7 | MIT License | https://tailwindcss.com */@layer theme{:root,:host{--font-sans:'Instrument Sans',ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";--font-serif:ui-serif,Georgia,Cambria,"Times New Roman",Times,serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;--color-red-50:oklch(.971 .013 17.38);--color-red-100:oklch(.936 .032 17.717);--color-red-200:oklch(.885 .062 18.334);--color-red-300:oklch(.808 .114 19.571);--color-red-400:oklch(.704 .191 22.216);--color-red-500:oklch(.637 .237 25.331);--color-red-600:oklch(.577 .245 27.325);--color-red-700:oklch(.505 .213 27.518);--color-red-800:oklch(.444 .177 26.899);--color-red-900:oklch(.396 .141 25.723);--color-red-950:oklch(.258 .092 26.042);--color-orange-50:oklch(.98 .016 73.684);--color-orange-100:oklch(.954 .038 75.164);--color-orange-200:oklch(.901 .076 70.697);--color-orange-300:oklch(.837 .128 66.29);--color-orange-400:oklch(.75 .183 55.934);--color-orange-500:oklch(.705 .213 47.604);--color-orange-600:oklch(.646 .222 41.116);--color-orange-700:oklch(.553 .195 38.402);--color-orange-800:oklch(.47 .157 37.304);--color-orange-900:oklch(.408 .123 38.172);--color-orange-950:oklch(.266 .079 36.259);--color-amber-50:oklch(.987 .022 95.277);--color-amber-100:oklch(.962 .059 95.617);--color-amber-200:oklch(.924 .12 95.746);--color-amber-300:oklch(.879 .169 91.605);--color-amber-400:oklch(.828 .189 84.429);--color-amber-500:oklch(.769 .188 70.08);--color-amber-600:oklch(.666 .179 58.318);--color-amber-700:oklch(.555 .163 48.998);--color-amber-800:oklch(.473 .137 46.201);--color-amber-900:oklch(.414 .112 45.904);--color-amber-950:oklch(.279 .077 45.635);--color-yellow-50:oklch(.987 .026 102.212);--color-yellow-100:oklch(.973 .071 103.193);--color-yellow-200:oklch(.945 .129 101.54);--color-yellow-300:oklch(.905 .182 98.111);--color-yellow-400:oklch(.852 .199 91.936);--color-yellow-500:oklch(.795 .184 86.047);--color-yellow-600:oklch(.681 .162 75.834);--color-yellow-700:oklch(.554 .135 66.442);--color-yellow-800:oklch(.476 .114 61.907);--color-yellow-900:oklch(.421 .095 57.708);--color-yellow-950:oklch(.286 .066 53.813);--color-lime-50:oklch(.986 .031 120.757);--color-lime-100:oklch(.967 .067 122.328);--color-lime-200:oklch(.938 .127 124.321);--color-lime-300:oklch(.897 .196 126.665);--color-lime-400:oklch(.841 .238 128.85);--color-lime-500:oklch(.768 .233 130.85);--color-lime-600:oklch(.648 .2 131.684);--color-lime-700:oklch(.532 .157 131.589);--color-lime-800:oklch(.453 .124 130.933);--color-lime-900:oklch(.405 .101 131.063);--color-lime-950:oklch(.274 .072 132.109);--color-green-50:oklch(.982 .018 155.826);--color-green-100:oklch(.962 .044 156.743);--color-green-200:oklch(.925 .084 155.995);--color-green-300:oklch(.871 .15 154.449);--color-green-400:oklch(.792 .209 151.711);--color-green-500:oklch(.723 .219 149.579);--color-green-600:oklch(.627 .194 149.214);--color-green-700:oklch(.527 .154 150.069);--color-green-800:oklch(.448 .119 151.328);--color-green-900:oklch(.393 .095 152.535);--color-green-950:oklch(.266 .065 152.934);--color-emerald-50:oklch(.979 .021 166.113);--color-emerald-100:oklch(.95 .052 163.051);--color-emerald-200:oklch(.905 .093 164.15);--color-emerald-300:oklch(.845 .143 164.978);--color-emerald-400:oklch(.765 .177 163.223);--color-emerald-500:oklch(.696 .17 162.48);--color-emerald-600:oklch(.596 .145 163.225);--color-emerald-700:oklch(.508 .118 165.612);--color-emerald-800:oklch(.432 .095 166.913);--color-emerald-900:oklch(.378 .077 168.94);--color-emerald-950:oklch(.262 .051 172.552);--color-teal-50:oklch(.984 .014 180.72);--color-teal-100:oklch(.953 .051 180.801);--color-teal-200:oklch(.91 .096 180.426);--color-teal-300:oklch(.855 .138 181.071);--color-teal-400:oklch(.777 .152 181.912);--color-teal-500:oklch(.704 .14 182.503);--color-teal-600:oklch(.6 .118 184.704);--color-teal-700:oklch(.511 .096 186.391);--color-teal-800:oklch(.437 .078 188.216);--color-teal-900:oklch(.386 .063 188.416);--color-teal-950:oklch(.277 .046 192.524);--color-cyan-50:oklch(.984 .019 200.873);--color-cyan-100:oklch(.956 .045 203.388);--color-cyan-200:oklch(.917 .08 205.041);--color-cyan-300:oklch(.865 .127 207.078);--color-cyan-400:oklch(.789 .154 211.53);--color-cyan-500:oklch(.715 .143 215.221);--color-cyan-600:oklch(.609 .126 221.723);--color-cyan-700:oklch(.52 .105 223.128);--color-cyan-800:oklch(.45 .085 224.283);--color-cyan-900:oklch(.398 .07 227.392);--color-cyan-950:oklch(.302 .056 229.695);--color-sky-50:oklch(.977 .013 236.62);--color-sky-100:oklch(.951 .026 236.824);--color-sky-200:oklch(.901 .058 230.902);--color-sky-300:oklch(.828 .111 230.318);--color-sky-400:oklch(.746 .16 232.661);--color-sky-500:oklch(.685 .169 237.323);--color-sky-600:oklch(.588 .158 241.966);--color-sky-700:oklch(.5 .134 242.749);--color-sky-800:oklch(.443 .11 240.79);--color-sky-900:oklch(.391 .09 240.876);--color-sky-950:oklch(.293 .066 243.157);--color-blue-50:oklch(.97 .014 254.604);--color-blue-100:oklch(.932 .032 255.585);--color-blue-200:oklch(.882 .059 254.128);--color-blue-300:oklch(.809 .105 251.813);--color-blue-400:oklch(.707 .165 254.624);--color-blue-500:oklch(.623 .214 259.815);--color-blue-600:oklch(.546 .245 262.881);--color-blue-700:oklch(.488 .243 264.376);--color-blue-800:oklch(.424 .199 265.638);--color-blue-900:oklch(.379 .146 265.522);--color-blue-950:oklch(.282 .091 267.935);--color-indigo-50:oklch(.962 .018 272.314);--color-indigo-100:oklch(.93 .034 272.788);--color-indigo-200:oklch(.87 .065 274.039);--color-indigo-300:oklch(.785 .115 274.713);--color-indigo-400:oklch(.673 .182 276.935);--color-indigo-500:oklch(.585 .233 277.117);--color-indigo-600:oklch(.511 .262 276.966);--color-indigo-700:oklch(.457 .24 277.023);--color-indigo-800:oklch(.398 .195 277.366);--color-indigo-900:oklch(.359 .144 278.697);--color-indigo-950:oklch(.257 .09 281.288);--color-violet-50:oklch(.969 .016 293.756);--color-violet-100:oklch(.943 .029 294.588);--color-violet-200:oklch(.894 .057 293.283);--color-violet-300:oklch(.811 .111 293.571);--color-violet-400:oklch(.702 .183 293.541);--color-violet-500:oklch(.606 .25 292.717);--color-violet-600:oklch(.541 .281 293.009);--color-violet-700:oklch(.491 .27 292.581);--color-violet-800:oklch(.432 .232 292.759);--color-violet-900:oklch(.38 .189 293.745);--color-violet-950:oklch(.283 .141 291.089);--color-purple-50:oklch(.977 .014 308.299);--color-purple-100:oklch(.946 .033 307.174);--color-purple-200:oklch(.902 .063 306.703);--color-purple-300:oklch(.827 .119 306.383);--color-purple-400:oklch(.714 .203 305.504);--color-purple-500:oklch(.627 .265 303.9);--color-purple-600:oklch(.558 .288 302.321);--color-purple-700:oklch(.496 .265 301.924);--color-purple-800:oklch(.438 .218 303.724);--color-purple-900:oklch(.381 .176 304.987);--color-purple-950:oklch(.291 .149 302.717);--color-fuchsia-50:oklch(.977 .017 320.058);--color-fuchsia-100:oklch(.952 .037 318.852);--color-fuchsia-200:oklch(.903 .076 319.62);--color-fuchsia-300:oklch(.833 .145 321.434);--color-fuchsia-400:oklch(.74 .238 322.16);--color-fuchsia-500:oklch(.667 .295 322.15);--color-fuchsia-600:oklch(.591 .293 322.896);--color-fuchsia-700:oklch(.518 .253 323.949);--color-fuchsia-800:oklch(.452 .211 324.591);--color-fuchsia-900:oklch(.401 .17 325.612);--color-fuchsia-950:oklch(.293 .136 325.661);--color-pink-50:oklch(.971 .014 343.198);--color-pink-100:oklch(.948 .028 342.258);--color-pink-200:oklch(.899 .061 343.231);--color-pink-300:oklch(.823 .12 346.018);--color-pink-400:oklch(.718 .202 349.761);--color-pink-500:oklch(.656 .241 354.308);--color-pink-600:oklch(.592 .249 .584);--color-pink-700:oklch(.525 .223 3.958);--color-pink-800:oklch(.459 .187 3.815);--color-pink-900:oklch(.408 .153 2.432);--color-pink-950:oklch(.284 .109 3.907);--color-rose-50:oklch(.969 .015 12.422);--color-rose-100:oklch(.941 .03 12.58);--color-rose-200:oklch(.892 .058 10.001);--color-rose-300:oklch(.81 .117 11.638);--color-rose-400:oklch(.712 .194 13.428);--color-rose-500:oklch(.645 .246 16.439);--color-rose-600:oklch(.586 .253 17.585);--color-rose-700:oklch(.514 .222 16.935);--color-rose-800:oklch(.455 .188 13.697);--color-rose-900:oklch(.41 .159 10.272);--color-rose-950:oklch(.271 .105 12.094);--color-slate-50:oklch(.984 .003 247.858);--color-slate-100:oklch(.968 .007 247.896);--color-slate-200:oklch(.929 .013 255.508);--color-slate-300:oklch(.869 .022 252.894);--color-slate-400:oklch(.704 .04 256.788);--color-slate-500:oklch(.554 .046 257.417);--color-slate-600:oklch(.446 .043 257.281);--color-slate-700:oklch(.372 .044 257.287);--color-slate-800:oklch(.279 .041 260.031);--color-slate-900:oklch(.208 .042 265.755);--color-slate-950:oklch(.129 .042 264.695);--color-gray-50:oklch(.985 .002 247.839);--color-gray-100:oklch(.967 .003 264.542);--color-gray-200:oklch(.928 .006 264.531);--color-gray-300:oklch(.872 .01 258.338);--color-gray-400:oklch(.707 .022 261.325);--color-gray-500:oklch(.551 .027 264.364);--color-gray-600:oklch(.446 .03 256.802);--color-gray-700:oklch(.373 .034 259.733);--color-gray-800:oklch(.278 .033 256.848);--color-gray-900:oklch(.21 .034 264.665);--color-gray-950:oklch(.13 .028 261.692);--color-zinc-50:oklch(.985 0 0);--color-zinc-100:oklch(.967 .001 286.375);--color-zinc-200:oklch(.92 .004 286.32);--color-zinc-300:oklch(.871 .006 286.286);--color-zinc-400:oklch(.705 .015 286.067);--color-zinc-500:oklch(.552 .016 285.938);--color-zinc-600:oklch(.442 .017 285.786);--color-zinc-700:oklch(.37 .013 285.805);--color-zinc-800:oklch(.274 .006 286.033);--color-zinc-900:oklch(.21 .006 285.885);--color-zinc-950:oklch(.141 .005 285.823);--color-neutral-50:oklch(.985 0 0);--color-neutral-100:oklch(.97 0 0);--color-neutral-200:oklch(.922 0 0);--color-neutral-300:oklch(.87 0 0);--color-neutral-400:oklch(.708 0 0);--color-neutral-500:oklch(.556 0 0);--color-neutral-600:oklch(.439 0 0);--color-neutral-700:oklch(.371 0 0);--color-neutral-800:oklch(.269 0 0);--color-neutral-900:oklch(.205 0 0);--color-neutral-950:oklch(.145 0 0);--color-stone-50:oklch(.985 .001 106.423);--color-stone-100:oklch(.97 .001 106.424);--color-stone-200:oklch(.923 .003 48.717);--color-stone-300:oklch(.869 .005 56.366);--color-stone-400:oklch(.709 .01 56.259);--color-stone-500:oklch(.553 .013 58.071);--color-stone-600:oklch(.444 .011 73.639);--color-stone-700:oklch(.374 .01 67.558);--color-stone-800:oklch(.268 .007 34.298);--color-stone-900:oklch(.216 .006 56.043);--color-stone-950:oklch(.147 .004 49.25);--color-black:#000;--color-white:#fff;--spacing:.25rem;--breakpoint-sm:40rem;--breakpoint-md:48rem;--breakpoint-lg:64rem;--breakpoint-xl:80rem;--breakpoint-2xl:96rem;--container-3xs:16rem;--container-2xs:18rem;--container-xs:20rem;--container-sm:24rem;--container-md:28rem;--container-lg:32rem;--container-xl:36rem;--container-2xl:42rem;--container-3xl:48rem;--container-4xl:56rem;--container-5xl:64rem;--container-6xl:72rem;--container-7xl:80rem;--text-xs:.75rem;--text-xs--line-height:calc(1/.75);--text-sm:.875rem;--text-sm--line-height:calc(1.25/.875);--text-base:1rem;--text-base--line-height: 1.5 ;--text-lg:1.125rem;--text-lg--line-height:calc(1.75/1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75/1.25);--text-2xl:1.5rem;--text-2xl--line-height:calc(2/1.5);--text-3xl:1.875rem;--text-3xl--line-height: 1.2 ;--text-4xl:2.25rem;--text-4xl--line-height:calc(2.5/2.25);--text-5xl:3rem;--text-5xl--line-height:1;--text-6xl:3.75rem;--text-6xl--line-height:1;--text-7xl:4.5rem;--text-7xl--line-height:1;--text-8xl:6rem;--text-8xl--line-height:1;--text-9xl:8rem;--text-9xl--line-height:1;--font-weight-thin:100;--font-weight-extralight:200;--font-weight-light:300;--font-weight-normal:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--font-weight-extrabold:800;--font-weight-black:900;--tracking-tighter:-.05em;--tracking-tight:-.025em;--tracking-normal:0em;--tracking-wide:.025em;--tracking-wider:.05em;--tracking-widest:.1em;--leading-tight:1.25;--leading-snug:1.375;--leading-normal:1.5;--leading-relaxed:1.625;--leading-loose:2;--radius-xs:.125rem;--radius-sm:.25rem;--radius-md:.375rem;--radius-lg:.5rem;--radius-xl:.75rem;--radius-2xl:1rem;--radius-3xl:1.5rem;--radius-4xl:2rem;--shadow-2xs:0 1px #0000000d;--shadow-xs:0 1px 2px 0 #0000000d;--shadow-sm:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;--shadow-md:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;--shadow-lg:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;--shadow-xl:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;--shadow-2xl:0 25px 50px -12px #00000040;--inset-shadow-2xs:inset 0 1px #0000000d;--inset-shadow-xs:inset 0 1px 1px #0000000d;--inset-shadow-sm:inset 0 2px 4px #0000000d;--drop-shadow-xs:0 1px 1px #0000000d;--drop-shadow-sm:0 1px 2px #00000026;--drop-shadow-md:0 3px 3px #0000001f;--drop-shadow-lg:0 4px 4px #00000026;--drop-shadow-xl:0 9px 7px #0000001a;--drop-shadow-2xl:0 25px 25px #00000026;--ease-in:cubic-bezier(.4,0,1,1);--ease-out:cubic-bezier(0,0,.2,1);--ease-in-out:cubic-bezier(.4,0,.2,1);--animate-spin:spin 1s linear infinite;--animate-ping:ping 1s cubic-bezier(0,0,.2,1)infinite;--animate-pulse:pulse 2s cubic-bezier(.4,0,.6,1)infinite;--animate-bounce:bounce 1s infinite;--blur-xs:4px;--blur-sm:8px;--blur-md:12px;--blur-lg:16px;--blur-xl:24px;--blur-2xl:40px;--blur-3xl:64px;--perspective-dramatic:100px;--perspective-near:300px;--perspective-normal:500px;--perspective-midrange:800px;--perspective-distant:1200px;--aspect-video:16/9;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4,0,.2,1);--default-font-family:var(--font-sans);--default-font-feature-settings:var(--font-sans--font-feature-settings);--default-font-variation-settings:var(--font-sans--font-variation-settings);--default-mono-font-family:var(--font-mono);--default-mono-font-feature-settings:var(--font-mono--font-feature-settings);--default-mono-font-variation-settings:var(--font-mono--font-variation-settings)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}body{line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1;color:color-mix(in oklab,currentColor 50%,transparent)}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){-webkit-appearance:button;-moz-appearance:button;appearance:button}::file-selector-button{-webkit-appearance:button;-moz-appearance:button;appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.absolute{position:absolute}.relative{position:relative}.static{position:static}.inset-0{inset:calc(var(--spacing)*0)}.-mt-\[4\.9rem\]{margin-top:-4.9rem}.-mb-px{margin-bottom:-1px}.mb-1{margin-bottom:calc(var(--spacing)*1)}.mb-2{margin-bottom:calc(var(--spacing)*2)}.mb-4{margin-bottom:calc(var(--spacing)*4)}.mb-6{margin-bottom:calc(var(--spacing)*6)}.-ml-8{margin-left:calc(var(--spacing)*-8)}.flex{display:flex}.hidden{display:none}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.table{display:table}.aspect-\[335\/376\]{aspect-ratio:335/376}.h-1{height:calc(var(--spacing)*1)}.h-1\.5{height:calc(var(--spacing)*1.5)}.h-2{height:calc(var(--spacing)*2)}.h-2\.5{height:calc(var(--spacing)*2.5)}.h-3{height:calc(var(--spacing)*3)}.h-3\.5{height:calc(var(--spacing)*3.5)}.h-14{height:calc(var(--spacing)*14)}.h-14\.5{height:calc(var(--spacing)*14.5)}.min-h-screen{min-height:100vh}.w-1{width:calc(var(--spacing)*1)}.w-1\.5{width:calc(var(--spacing)*1.5)}.w-2{width:calc(var(--spacing)*2)}.w-2\.5{width:calc(var(--spacing)*2.5)}.w-3{width:calc(var(--spacing)*3)}.w-3\.5{width:calc(var(--spacing)*3.5)}.w-\[448px\]{width:448px}.w-full{width:100%}.max-w-\[335px\]{max-width:335px}.max-w-none{max-width:none}.flex-1{flex:1}.shrink-0{flex-shrink:0}.translate-y-0{--tw-translate-y:calc(var(--spacing)*0);translate:var(--tw-translate-x)var(--tw-translate-y)}.transform{transform:var(--tw-rotate-x)var(--tw-rotate-y)var(--tw-rotate-z)var(--tw-skew-x)var(--tw-skew-y)}.flex-col{flex-direction:column}.flex-col-reverse{flex-direction:column-reverse}.items-center{align-items:center}.justify-center{justify-content:center}.justify-end{justify-content:flex-end}.gap-3{gap:calc(var(--spacing)*3)}.gap-4{gap:calc(var(--spacing)*4)}:where(.space-x-1>:not(:last-child)){--tw-space-x-reverse:0;margin-inline-start:calc(calc(var(--spacing)*1)*var(--tw-space-x-reverse));margin-inline-end:calc(calc(var(--spacing)*1)*calc(1 - var(--tw-space-x-reverse)))}.overflow-hidden{overflow:hidden}.rounded-full{border-radius:3.40282e38px}.rounded-sm{border-radius:var(--radius-sm)}.rounded-t-lg{border-top-left-radius:var(--radius-lg);border-top-right-radius:var(--radius-lg)}.rounded-br-lg{border-bottom-right-radius:var(--radius-lg)}.rounded-bl-lg{border-bottom-left-radius:var(--radius-lg)}.border{border-style:var(--tw-border-style);border-width:1px}.border-\[\#19140035\]{border-color:#19140035}.border-\[\#e3e3e0\]{border-color:#e3e3e0}.border-black{border-color:var(--color-black)}.border-transparent{border-color:#0000}.bg-\[\#1b1b18\]{background-color:#1b1b18}.bg-\[\#FDFDFC\]{background-color:#fdfdfc}.bg-\[\#dbdbd7\]{background-color:#dbdbd7}.bg-\[\#fff2f2\]{background-color:#fff2f2}.bg-white{background-color:var(--color-white)}.p-6{padding:calc(var(--spacing)*6)}.px-5{padding-inline:calc(var(--spacing)*5)}.py-1{padding-block:calc(var(--spacing)*1)}.py-1\.5{padding-block:calc(var(--spacing)*1.5)}.py-2{padding-block:calc(var(--spacing)*2)}.pb-12{padding-bottom:calc(var(--spacing)*12)}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-\[13px\]{font-size:13px}.leading-\[20px\]{--tw-leading:20px;line-height:20px}.leading-normal{--tw-leading:var(--leading-normal);line-height:var(--leading-normal)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.text-\[\#1b1b18\]{color:#1b1b18}.text-\[\#706f6c\]{color:#706f6c}.text-\[\#F53003\],.text-\[\#f53003\]{color:#f53003}.text-white{color:var(--color-white)}.underline{text-decoration-line:underline}.underline-offset-4{text-underline-offset:4px}.opacity-100{opacity:1}.shadow-\[0px_0px_1px_0px_rgba\(0\,0\,0\,0\.03\)\,0px_1px_2px_0px_rgba\(0\,0\,0\,0\.06\)\]{--tw-shadow:0px 0px 1px 0px var(--tw-shadow-color,#00000008),0px 1px 2px 0px var(--tw-shadow-color,#0000000f);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-\[inset_0px_0px_0px_1px_rgba\(26\,26\,0\,0\.16\)\]{--tw-shadow:inset 0px 0px 0px 1px var(--tw-shadow-color,#1a1a0029);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.\!filter{filter:var(--tw-blur,)var(--tw-brightness,)var(--tw-contrast,)var(--tw-grayscale,)var(--tw-hue-rotate,)var(--tw-invert,)var(--tw-saturate,)var(--tw-sepia,)var(--tw-drop-shadow,)!important}.filter{filter:var(--tw-blur,)var(--tw-brightness,)var(--tw-contrast,)var(--tw-grayscale,)var(--tw-hue-rotate,)var(--tw-invert,)var(--tw-saturate,)var(--tw-sepia,)var(--tw-drop-shadow,)}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-opacity{transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.delay-300{transition-delay:.3s}.duration-750{--tw-duration:.75s;transition-duration:.75s}.not-has-\[nav\]\:hidden:not(:has(:is(nav))){display:none}.before\:absolute:before{content:var(--tw-content);position:absolute}.before\:top-0:before{content:var(--tw-content);top:calc(var(--spacing)*0)}.before\:top-1\/2:before{content:var(--tw-content);top:50%}.before\:bottom-0:before{content:var(--tw-content);bottom:calc(var(--spacing)*0)}.before\:bottom-1\/2:before{content:var(--tw-content);bottom:50%}.before\:left-\[0\.4rem\]:before{content:var(--tw-content);left:.4rem}.before\:border-l:before{content:var(--tw-content);border-left-style:var(--tw-border-style);border-left-width:1px}.before\:border-\[\#e3e3e0\]:before{content:var(--tw-content);border-color:#e3e3e0}@media (hover:hover){.hover\:border-\[\#1915014a\]:hover{border-color:#1915014a}.hover\:border-\[\#19140035\]:hover{border-color:#19140035}.hover\:border-black:hover{border-color:var(--color-black)}.hover\:bg-black:hover{background-color:var(--color-black)}}@media (width>=64rem){.lg\:-mt-\[6\.6rem\]{margin-top:-6.6rem}.lg\:mb-0{margin-bottom:calc(var(--spacing)*0)}.lg\:mb-6{margin-bottom:calc(var(--spacing)*6)}.lg\:-ml-px{margin-left:-1px}.lg\:ml-0{margin-left:calc(var(--spacing)*0)}.lg\:block{display:block}.lg\:aspect-auto{aspect-ratio:auto}.lg\:w-\[438px\]{width:438px}.lg\:max-w-4xl{max-width:var(--container-4xl)}.lg\:grow{flex-grow:1}.lg\:flex-row{flex-direction:row}.lg\:justify-center{justify-content:center}.lg\:rounded-t-none{border-top-left-radius:0;border-top-right-radius:0}.lg\:rounded-tl-lg{border-top-left-radius:var(--radius-lg)}.lg\:rounded-r-lg{border-top-right-radius:var(--radius-lg);border-bottom-right-radius:var(--radius-lg)}.lg\:rounded-br-none{border-bottom-right-radius:0}.lg\:p-8{padding:calc(var(--spacing)*8)}.lg\:p-20{padding:calc(var(--spacing)*20)}}@media (prefers-color-scheme:dark){.dark\:block{display:block}.dark\:hidden{display:none}.dark\:border-\[\#3E3E3A\]{border-color:#3e3e3a}.dark\:border-\[\#eeeeec\]{border-color:#eeeeec}.dark\:bg-\[\#0a0a0a\]{background-color:#0a0a0a}.dark\:bg-\[\#1D0002\]{background-color:#1d0002}.dark\:bg-\[\#3E3E3A\]{background-color:#3e3e3a}.dark\:bg-\[\#161615\]{background-color:#161615}.dark\:bg-\[\#eeeeec\]{background-color:#eeeeec}.dark\:text-\[\#1C1C1A\]{color:#1c1c1a}.dark\:text-\[\#A1A09A\]{color:#a1a09a}.dark\:text-\[\#EDEDEC\]{color:#ededec}.dark\:text-\[\#F61500\]{color:#f61500}.dark\:text-\[\#FF4433\]{color:#f43}.dark\:shadow-\[inset_0px_0px_0px_1px_\#fffaed2d\]{--tw-shadow:inset 0px 0px 0px 1px var(--tw-shadow-color,#fffaed2d);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.dark\:before\:border-\[\#3E3E3A\]:before{content:var(--tw-content);border-color:#3e3e3a}@media (hover:hover){.dark\:hover\:border-\[\#3E3E3A\]:hover{border-color:#3e3e3a}.dark\:hover\:border-\[\#62605b\]:hover{border-color:#62605b}.dark\:hover\:border-white:hover{border-color:var(--color-white)}.dark\:hover\:bg-white:hover{background-color:var(--color-white)}}}@starting-style{.starting\:translate-y-4{--tw-translate-y:calc(var(--spacing)*4);translate:var(--tw-translate-x)var(--tw-translate-y)}}@starting-style{.starting\:translate-y-6{--tw-translate-y:calc(var(--spacing)*6);translate:var(--tw-translate-x)var(--tw-translate-y)}}@starting-style{.starting\:opacity-0{opacity:0}}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes ping{75%,to{opacity:0;transform:scale(2)}}@keyframes pulse{50%{opacity:.5}}@keyframes bounce{0%,to{animation-timing-function:cubic-bezier(.8,0,1,1);transform:translateY(-25%)}50%{animation-timing-function:cubic-bezier(0,0,.2,1);transform:none}}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-rotate-x{syntax:"*";inherits:false;initial-value:rotateX(0)}@property --tw-rotate-y{syntax:"*";inherits:false;initial-value:rotateY(0)}@property --tw-rotate-z{syntax:"*";inherits:false;initial-value:rotateZ(0)}@property --tw-skew-x{syntax:"*";inherits:false;initial-value:skewX(0)}@property --tw-skew-y{syntax:"*";inherits:false;initial-value:skewY(0)}@property --tw-space-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@property --tw-content{syntax:"*";inherits:false;initial-value:""}
-            </style>
-        @endif
-    </head>
-    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex p-6 lg:p-8 items-center lg:justify-center min-h-screen flex-col">
-        <header class="w-full lg:max-w-4xl max-w-[335px] text-sm mb-6 not-has-[nav]:hidden">
-            @if (Route::has('login'))
-                <nav class="flex items-center justify-end gap-4">
-                    @auth
-                        <a
-                            href="{{ url('/dashboard') }}"
-                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
-                        >
-                            Dashboard
+    /* Ambient drifting orbs */
+    .orb {
+        position: fixed; border-radius: 50%;
+        filter: blur(110px); pointer-events: none; z-index: 0;
+        animation: driftOrb 22s infinite alternate ease-in-out;
+    }
+    .orb1{width:750px;height:750px;background:radial-gradient(circle,rgba(0,212,255,0.06),transparent);top:-180px;left:-220px;}
+    .orb2{width:600px;height:600px;background:radial-gradient(circle,rgba(124,58,237,0.05),transparent);top:35%;right:-180px;animation-delay:-10s;}
+    .orb3{width:500px;height:500px;background:radial-gradient(circle,rgba(6,214,160,0.04),transparent);bottom:5%;left:15%;animation-delay:-18s;}
+    @keyframes driftOrb{0%{transform:translate(0,0) scale(1);}100%{transform:translate(35px,25px) scale(1.12);}}
+    body>*{position:relative;z-index:1;}
+
+    /* ── Shared components ── */
+    .pill-tag{
+        display:inline-flex;align-items:center;gap:7px;
+        font-size:0.68rem;font-weight:500;text-transform:uppercase;letter-spacing:3px;
+        color:var(--ss-cyan);background:rgba(0,212,255,0.07);
+        border:1px solid rgba(0,212,255,0.2);
+        padding:5px 16px;border-radius:var(--r-pill);margin-bottom:18px;
+    }
+    .section-title{
+        font-size:clamp(1.8rem,3.8vw,2.8rem);
+        font-weight:600 !important;
+        letter-spacing:-0.02em;
+        line-height:1.15;
+        margin-bottom:14px;
+        color:#fff;
+    }
+    .section-sub{color:rgba(255,255,255,0.6);font-size:0.95rem;line-height:1.75;font-weight:400 !important;max-width:520px;}
+    .btn-primary-ss{display:inline-flex;align-items:center;gap:9px;padding:14px 32px;border-radius:var(--r-pill);font-size:0.88rem;font-weight:700;text-decoration:none;color:#fff;background:linear-gradient(135deg,var(--ss-cyan),var(--ss-blue));box-shadow:0 8px 28px rgba(0,212,255,0.28);transition:all 0.3s cubic-bezier(.16,1,.3,1);border:none;letter-spacing:0.02em;}
+    .btn-primary-ss:hover{transform:translateY(-3px);box-shadow:0 14px 38px rgba(0,212,255,0.42);color:#fff;}
+    .btn-ghost-ss{display:inline-flex;align-items:center;gap:9px;padding:14px 32px;border-radius:var(--r-pill);font-size:0.88rem;font-weight:600;text-decoration:none;color:var(--ss-text-2);border:1px solid rgba(255,255,255,0.13);background:rgba(255,255,255,0.04);transition:all 0.28s;letter-spacing:0.02em;}
+    .btn-ghost-ss:hover{border-color:var(--ss-cyan);color:var(--ss-cyan);background:rgba(0,212,255,0.05);}
+
+    /* Divider */
+    .section-divider{border:none;border-top:1px solid rgba(255,255,255,0.05);margin:0;}
+
+    /* ═══════════════════════════════════════════════════
+       § 0 — NAVBAR — exact premium glassmorphic recipe
+    ═══════════════════════════════════════════════════ */
+    .ss-nav-float-wrap{position:fixed;top:20px;left:50%;transform:translateX(-50%);width:calc(100% - 48px);max-width:1200px;z-index:9000;}
+    .ss-navbar-pill {
+        width:100% !important;
+        display:flex !important;
+        align-items:center !important;
+        flex-wrap:nowrap !important;
+        padding:9px 22px !important;
+        border-radius:9999px !important;
+        /* Exact premium recipe */
+        background:rgba(10,10,12,0.65) !important;
+        backdrop-filter:blur(24px) saturate(1.5) !important;
+        -webkit-backdrop-filter:blur(24px) saturate(1.5) !important;
+        border:none !important;
+        border-bottom:1px solid rgba(255,255,255,0.08) !important;
+        box-shadow:0 4px 30px rgba(0,0,0,0.1) !important;
+        transition:background 0.4s ease, box-shadow 0.4s ease !important;
+    }
+    .ss-navbar-pill:hover {
+        background: rgba(10,10,12,0.78) !important;
+        box-shadow: 0 6px 40px rgba(0,0,0,0.15) !important;
+    }
+    /* Elegant nav-link hover — soft fade, perfectly rounded */
+    .ss-nav-float-wrap .ss-nav-link {
+        border-radius: 99px !important;
+        padding: 6px 14px !important;
+        font-weight: 400 !important;
+        font-size: 0.85rem !important;
+        color: rgba(255,255,255,0.55) !important;
+        transition: color 0.22s ease, background 0.22s ease !important;
+        background: transparent !important;
+    }
+    .ss-nav-float-wrap .ss-nav-link:hover {
+        color: rgba(255,255,255,0.9) !important;
+        background: rgba(255,255,255,0.05) !important;
+    }
+    .ss-nav-float-wrap .ss-nav-link.active {
+        color: var(--ss-cyan) !important;
+        background: rgba(0,212,255,0.08) !important;
+    }
+    .ss-nav-sep{width:1px;height:18px;background:rgba(255,255,255,0.1);margin:0 8px;flex-shrink:0;}
+
+    /* ═══════════════════════════════════════════════════
+       § 1 — HERO
+    ═══════════════════════════════════════════════════ */
+    .hero{
+        min-height:100vh;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;
+        text-align:center;padding:130px 24px 80px;
+        position:relative;
+    }
+    .hero-kicker{
+        display:inline-flex;align-items:center;gap:8px;
+        font-size:0.7rem;font-weight:500;text-transform:uppercase;letter-spacing:3px;
+        color:var(--ss-cyan);border:1px solid rgba(0,212,255,0.22);
+        background:rgba(0,212,255,0.07);padding:7px 20px;
+        border-radius:var(--r-pill);margin-bottom:36px;
+        animation:fadeUp 0.8s ease both;
+    }
+    .hero-h1{
+        font-size: clamp(2.8rem, 6.5vw, 5rem) !important;
+        font-weight: 700 !important;
+        line-height: 1.1 !important;
+        letter-spacing: -0.02em !important;
+        margin-bottom: 24px;
+        color: #fff;
+        animation: fadeUp 0.9s ease 0.1s both;
+    }
+    .hero-h1 .grad{
+        background:linear-gradient(110deg, var(--ss-cyan), var(--ss-violet));
+        -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+        font-weight: 700 !important;
+    }
+    .hero-p{
+        max-width:520px;font-size:1rem;line-height:1.8;
+        color:rgba(255,255,255,0.6);font-weight:400 !important;
+        margin-bottom:44px;animation:fadeUp 0.9s ease 0.2s both;
+    }
+    .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;animation:fadeUp 0.9s ease 0.3s both;}
+
+    /* Live stat strip */
+    .hero-stats{margin-top:72px;display:flex;gap:52px;justify-content:center;flex-wrap:wrap;animation:fadeUp 1s ease 0.45s both;}
+    .hs{text-align:center;}
+    .hs-n{font-size:2.4rem;font-weight:600 !important;line-height:1;letter-spacing:-0.02em;}
+    .hs-l{font-size:0.65rem;color:var(--ss-text-3);letter-spacing:3px;text-transform:uppercase;margin-top:8px;font-weight:500;}
+    .hs-div{width:1px;height:50px;background:rgba(255,255,255,0.08);margin:auto 0;}
+
+    /* ═══════════════════════════════════════════════════
+       § 2 — SMART SEARCH SANDBOX
+       NOTE: shelfsync.css applies border-radius:var(--ss-r-sm)!important
+       to ALL inputs. Every rule here uses !important to win that fight.
+    ═══════════════════════════════════════════════════ */
+    .search-section{padding:100px 24px;text-align:center;}
+    .search-wrap{display:flex;flex-direction:column;align-items:center;}
+
+    /* Pill container */
+    .search-bar{
+        position:relative;width:100%;max-width:700px;
+        background:rgba(255,255,255,0.04) !important;
+        border:1px solid rgba(255,255,255,0.09) !important;
+        border-radius:9999px !important;
+        padding:5px 5px 5px 26px !important;
+        display:flex;align-items:center;gap:10px;
+        backdrop-filter:blur(20px);
+        box-shadow:none !important;
+        transition:border-color 0.28s,box-shadow 0.28s;
+    }
+    .search-bar:focus-within{
+        border-color:rgba(0,212,255,0.5) !important;
+        box-shadow:0 0 0 4px rgba(0,212,255,0.09),0 8px 40px rgba(0,0,0,0.2) !important;
+    }
+
+    /* Override shelfsync.css global input rule entirely */
+    .search-bar #live-search-input,
+    .search-bar input[type="text"] {
+        flex:1 !important;
+        background:transparent !important;
+        border:none !important;
+        outline:none !important;
+        box-shadow:none !important;
+        border-radius:0 !important;           /* flat inside pill container */
+        padding:13px 4px !important;
+        color:var(--ss-text) !important;
+        font-size:0.95rem !important;
+        font-family:var(--lp-font) !important;
+        font-weight:300 !important;
+        letter-spacing:0.01em !important;
+        width:100% !important;
+        -webkit-appearance:none !important;
+        appearance:none !important;
+    }
+    .search-bar #live-search-input:focus {
+        outline:none !important;
+        box-shadow:none !important;
+        border-color:transparent !important;
+        background:transparent !important;
+    }
+
+    .search-ico{color:var(--ss-text-3);font-size:0.9rem;flex-shrink:0;}
+
+    /* Submit pill — must also win against Bootstrap .btn */
+    .search-submit-btn {
+        background:linear-gradient(135deg,var(--ss-cyan),var(--ss-blue)) !important;
+        color:#fff !important;
+        border:none !important;
+        padding:12px 26px !important;
+        border-radius:9999px !important;
+        font-weight:600 !important;
+        font-size:0.8rem !important;
+        letter-spacing:0.04em !important;
+        flex-shrink:0 !important;
+        box-shadow:none !important;
+        transition:box-shadow 0.25s,transform 0.25s !important;
+        cursor:pointer !important;
+    }
+    .search-submit-btn:hover {
+        transform:translateY(-1px) !important;
+        box-shadow:0 6px 22px rgba(0,212,255,0.32) !important;
+        color:#fff !important;
+    }
+
+    /* Results dropdown */
+    .search-results-drop{
+        width:100%;max-width:700px;margin-top:8px;
+        background:rgba(8,8,12,0.98);
+        border:1px solid rgba(0,212,255,0.18);
+        border-radius:20px !important;
+        overflow:hidden;display:none;
+        backdrop-filter:blur(28px);
+        box-shadow:0 24px 60px rgba(0,0,0,0.55);
+    }
+    .sri{display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.2s;text-decoration:none;color:var(--ss-text);}
+    .sri:last-child{border-bottom:none;}
+    .sri:hover{background:rgba(0,212,255,0.05);}
+    .sri-thumb{width:36px;height:50px;object-fit:cover;border-radius:8px;flex-shrink:0;background:rgba(255,255,255,0.04);}
+    .sri-ph{width:36px;height:50px;border-radius:8px;flex-shrink:0;background:rgba(0,212,255,0.07);display:flex;align-items:center;justify-content:center;color:rgba(0,212,255,0.3);font-size:0.9rem;}
+    .sri-name{font-size:0.9rem;font-weight:600;color:#fff;}
+    .sri-auth{font-size:0.74rem;color:var(--ss-text-3);margin-top:2px;}
+    .sri-cta{font-size:0.68rem;padding:4px 12px;border-radius:var(--r-pill);background:linear-gradient(135deg,var(--ss-cyan),var(--ss-blue));color:#fff;font-weight:700;margin-left:auto;flex-shrink:0;white-space:nowrap;}
+
+    /* ═══════════════════════════════════════════════════
+       § 3 — LIVE AVAILABILITY FEED
+    ═══════════════════════════════════════════════════ */
+    .avail-section{padding:100px 24px 80px;}
+    .avail-inner{max-width:1200px;margin:0 auto;}
+    .avail-header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:48px;}
+    .book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:20px;}
+    .bcard{
+        background:rgba(255,255,255,0.03);
+        border:1px solid rgba(255,255,255,0.07);
+        border-radius:var(--r-card);overflow:hidden;
+        position:relative;
+        transition:transform 0.38s cubic-bezier(.16,1,.3,1),border-color 0.3s,box-shadow 0.38s;
+    }
+    .bcard:hover{transform:translateY(-10px);border-color:rgba(0,212,255,0.3);box-shadow:0 24px 60px rgba(0,0,0,0.5),0 0 40px rgba(0,212,255,0.07);}
+    .bcard-cover{width:100%;height:240px;object-fit:cover;display:block;}
+    .bcard-cover-ph{width:100%;height:240px;background:linear-gradient(160deg,rgba(0,212,255,0.09),rgba(124,58,237,0.09));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
+    .bcard-cover-ph i{font-size:2.4rem;color:rgba(0,212,255,0.22);}
+    .bcard-cover-ph span{font-size:0.7rem;color:var(--ss-text-3);text-align:center;padding:0 14px;}
+    .bcard-body{padding:16px;}
+    .bcard-title{font-size:0.88rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
+    .bcard-author{font-size:0.73rem;color:var(--ss-text-3);}
+    .bcard-qty{position:absolute;top:12px;right:12px;background:rgba(10,10,11,0.8);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r-pill);padding:3px 11px;font-size:0.65rem;font-weight:700;color:var(--ss-electric);}
+    /* Hover CTA overlay */
+    .bcard-hover-layer{position:absolute;inset:0;border-radius:var(--r-card);background:linear-gradient(to top,rgba(0,0,0,0.88) 0%,transparent 55%);display:flex;align-items:flex-end;justify-content:center;padding-bottom:18px;opacity:0;transition:opacity 0.3s;}
+    .bcard:hover .bcard-hover-layer{opacity:1;}
+    .bcard-rent-btn{background:linear-gradient(135deg,var(--ss-cyan),var(--ss-blue));color:#fff;border:none;padding:10px 24px;border-radius:var(--r-pill);font-size:0.8rem;font-weight:700;text-decoration:none;display:inline-block;}
+
+    /* ═══════════════════════════════════════════════════
+       § 4 — DIGITAL ACCESS SHOWCASE
+    ═══════════════════════════════════════════════════ */
+    .id-section{padding:120px 24px;position:relative;overflow:hidden;}
+    .id-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+    @media(max-width:900px){.id-inner{grid-template-columns:1fr;gap:48px;}.id-card-wrap{display:flex;justify-content:center;}}
+    /* Steps */
+    .id-steps{display:flex;flex-direction:column;gap:32px;}
+    .id-step{display:flex;gap:20px;align-items:flex-start;opacity:0;transform:translateX(-20px);transition:opacity 0.6s,transform 0.6s;}
+    .id-step.visible{opacity:1;transform:translateX(0);}
+    .id-step-icon{width:48px;height:48px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem;border:1px solid rgba(255,255,255,0.07);}
+    .id-step-body h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:5px;}
+    .id-step-body p{font-size:0.85rem;color:var(--ss-text-2);line-height:1.65;}
+
+    /* Glassmorphic ID Card mockup */
+    .id-card-wrap{perspective:1200px;display:flex;justify-content:center;align-items:center;}
+    .id-card{
+        width:360px;max-width:100%;
+        background:linear-gradient(135deg,rgba(0,212,255,0.12) 0%,rgba(124,58,237,0.12) 50%,rgba(0,0,0,0.2) 100%);
+        border:1px solid rgba(255,255,255,0.14);
+        border-radius:24px;padding:28px;
+        backdrop-filter:blur(20px);
+        box-shadow:0 40px 100px rgba(0,0,0,0.6),0 0 60px rgba(0,212,255,0.08),inset 0 1px 0 rgba(255,255,255,0.12);
+        position:relative;overflow:hidden;
+        /* Hardware-accelerate the tilt — composited layer, no repaints */
+        will-change:transform;
+        transform:perspective(1000px) rotateY(-8deg) rotateX(4deg);
+        /* Smooth glide in, slow elegant reset */
+        transition:transform 0.12s ease-out;
+        animation:cardFloat 6s ease-in-out infinite alternate;
+    }
+    .id-card.is-tilting { animation:none !important; }
+    .id-card.is-resetting { transition:transform 0.55s cubic-bezier(.16,1,.3,1); }
+    @keyframes cardFloat{
+        0%  {transform:perspective(1000px) rotateY(-8deg) rotateX(4deg) translateY(0);}
+        100%{transform:perspective(1000px) rotateY(-5deg) rotateX(3deg) translateY(-14px);}
+    }
+    /* Card noise texture */
+    .id-card::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;border-radius:24px;}
+    /* Card glow orb */
+    .id-card::after{content:'';position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,0.25),transparent);top:-60px;right:-60px;pointer-events:none;}
+    .card-logo-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+    .card-logo-text{font-family:var(--ss-font-display);font-size:0.75rem;font-weight:800;color:rgba(255,255,255,0.6);letter-spacing:3px;text-transform:uppercase;}
+    .card-chip{width:38px;height:28px;background:linear-gradient(135deg,rgba(245,158,11,0.6),rgba(245,158,11,0.3));border-radius:5px;border:1px solid rgba(245,158,11,0.3);}
+    .card-id-ring{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--ss-cyan),var(--ss-blue),var(--ss-violet));display:flex;align-items:center;justify-content:center;font-family:var(--ss-font-display);font-size:1.5rem;font-weight:800;color:#fff;box-shadow:0 0 20px rgba(0,212,255,0.35);margin-bottom:16px;}
+    .card-name{font-family:var(--ss-font-display);font-size:1.1rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.5px;margin-bottom:4px;}
+    .card-dept{font-size:0.78rem;color:rgba(255,255,255,0.5);letter-spacing:1px;margin-bottom:20px;}
+    .card-bottom{display:flex;justify-content:space-between;align-items:flex-end;}
+    .card-sid{font-size:0.7rem;color:rgba(255,255,255,0.4);font-family:'Courier New',monospace;letter-spacing:1px;}
+    .card-active{background:rgba(6,214,160,0.15);border:1px solid rgba(6,214,160,0.3);color:var(--ss-electric);font-size:0.65rem;font-weight:700;padding:4px 12px;border-radius:var(--r-pill);letter-spacing:1px;}
+    .card-valid{font-size:0.62rem;color:rgba(255,255,255,0.35);text-align:right;}
+    .card-valid span{display:block;color:rgba(255,255,255,0.55);font-weight:600;font-size:0.72rem;}
+
+    /* ═══════════════════════════════════════════════════
+       § 5 — DUE BACK SOON RADAR
+    ═══════════════════════════════════════════════════ */
+    .radar-section{padding:100px 24px;}
+    .radar-inner{max-width:1100px;margin:0 auto;}
+    .radar-header{margin-bottom:48px;}
+    .radar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+    .radar-card{
+        background:rgba(255,255,255,0.03);
+        border:1px solid rgba(255,255,255,0.07);
+        border-radius:var(--r-card);padding:20px;
+        display:flex;align-items:center;gap:18px;
+        transition:background 0.3s,border-color 0.3s;
+    }
+    .radar-card:hover{background:rgba(255,255,255,0.05);border-color:rgba(0,212,255,0.18);}
+    .radar-book-thumb{width:52px;height:72px;border-radius:10px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,0.04);}
+    .radar-book-ph{width:52px;height:72px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(124,58,237,0.1));display:flex;align-items:center;justify-content:center;color:rgba(0,212,255,0.3);font-size:1.2rem;}
+    .radar-info{flex:1;min-width:0;}
+    .radar-title{font-size:0.9rem;font-weight:700;color:#fff;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .radar-author{font-size:0.74rem;color:var(--ss-text-3);margin-bottom:10px;}
+    .radar-due{display:flex;align-items:center;gap:6px;font-size:0.72rem;font-weight:600;}
+    .radar-pulse{width:7px;height:7px;border-radius:50%;background:var(--ss-amber);box-shadow:0 0 8px rgba(245,158,11,0.7);animation:pulse 1.5s infinite;}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.6;transform:scale(0.75);}}
+    .radar-empty{text-align:center;padding:60px;color:var(--ss-text-3);font-size:0.9rem;}
+
+    /* ═══════════════════════════════════════════════════
+       § 6 — CONVERSION CTA BANNER
+    ═══════════════════════════════════════════════════ */
+    .cta-banner{
+        margin:60px 24px;max-width:1100px;margin-left:auto;margin-right:auto;
+        background:linear-gradient(135deg,rgba(0,212,255,0.08),rgba(124,58,237,0.08));
+        border:1px solid rgba(0,212,255,0.15);
+        border-radius:var(--r-card);padding:72px 60px;
+        text-align:center;position:relative;overflow:hidden;
+    }
+    .cta-banner::before{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,0.1),transparent);top:-150px;left:-100px;pointer-events:none;}
+    .cta-banner::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,0.1),transparent);bottom:-100px;right:-80px;pointer-events:none;}
+    .cta-banner h2{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:600 !important;letter-spacing:-0.02em;margin-bottom:16px;position:relative;color:#fff;}
+    .cta-banner p{color:rgba(255,255,255,0.6);font-size:0.95rem;line-height:1.75;font-weight:400 !important;max-width:480px;margin:0 auto 36px;position:relative;}
+    .cta-banner-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;}
+
+    /* ═══════════════════════════════════════════════════
+       § 7 — FOOTER
+    ═══════════════════════════════════════════════════ */
+    .landing-footer{border-top:1px solid rgba(255,255,255,0.05);padding:44px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-top:80px;}
+    .footer-links{display:flex;gap:24px;}
+    .footer-links a{color:var(--ss-text-3);text-decoration:none;font-size:0.82rem;transition:color 0.2s;}
+    .footer-links a:hover{color:var(--ss-cyan);}
+    @media(max-width:640px){.landing-footer{flex-direction:column;text-align:center;padding:32px 20px;}.footer-links{justify-content:center;}}
+
+    /* ═══════════════════════════════════════════════════
+       § NEW-A — INFINITE MARQUEE STRIP
+    ═══════════════════════════════════════════════════ */
+    .marquee-section{padding:0;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);background:rgba(0,212,255,0.02);}
+    .marquee-track{display:flex;width:max-content;animation:marqueeScroll 30s linear infinite;}
+    .marquee-track:hover{animation-play-state:paused;}
+    .marquee-item{display:inline-flex;align-items:center;gap:10px;padding:18px 40px;font-size:0.82rem;font-weight:500;color:rgba(255,255,255,0.5);white-space:nowrap;letter-spacing:0.02em;}
+    .marquee-item i{font-size:0.9rem;color:var(--ss-cyan);opacity:0.7;}
+    .marquee-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.15);flex-shrink:0;margin:0 8px;}
+    @keyframes marqueeScroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
+    /* ═══════════════════════════════════════════════════
+       § NEW-B — JOURNEY TIMELINE
+    ═══════════════════════════════════════════════════ */
+    .timeline-section{padding:100px 24px;text-align:center;}
+    .timeline-inner{max-width:1100px;margin:0 auto;}
+    .timeline-track{display:flex;align-items:flex-start;justify-content:center;position:relative;margin-top:56px;gap:0;}
+    /* The connecting line */
+    .timeline-track::before{content:'';position:absolute;top:32px;left:12%;right:12%;height:2px;background:linear-gradient(90deg,var(--ss-cyan),var(--ss-violet),var(--ss-electric));opacity:0.3;border-radius:2px;}
+    .timeline-node{flex:1;max-width:220px;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;padding:0 12px;cursor:default;}
+    .timeline-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:20px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);backdrop-filter:blur(12px);transition:all 0.35s cubic-bezier(.16,1,.3,1);position:relative;}
+    .timeline-circle::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px solid transparent;transition:border-color 0.35s,box-shadow 0.35s;}
+    .timeline-node:hover .timeline-circle{transform:scale(1.15);border-color:var(--ss-cyan);background:rgba(0,212,255,0.08);box-shadow:0 0 30px rgba(0,212,255,0.2);}
+    .timeline-node:hover .timeline-circle::after{border-color:rgba(0,212,255,0.2);box-shadow:0 0 20px rgba(0,212,255,0.1);}
+    .timeline-num{font-size:0.6rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--ss-text-3);margin-bottom:10px;transition:color 0.3s;}
+    .timeline-node:hover .timeline-num{color:var(--ss-cyan);}
+    .timeline-title{font-size:0.92rem;font-weight:600;color:#fff;margin-bottom:8px;transition:color 0.3s;}
+    .timeline-desc{font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:1.6;max-height:0;overflow:hidden;opacity:0;transition:max-height 0.4s ease,opacity 0.35s ease;}
+    .timeline-node:hover .timeline-desc{max-height:80px;opacity:1;}
+
+    /* ═══════════════════════════════════════════════════
+       § NEW-C — FEATURE SHOWCASE (BENTO GRID)
+    ═══════════════════════════════════════════════════ */
+    .features-section{padding:100px 24px;position:relative;overflow:hidden;}
+    .features-inner{max-width:1100px;margin:0 auto;}
+    .features-header{text-align:center;margin-bottom:56px;}
+    /* Background scrolling text */
+    .features-bg-text{position:absolute;top:50%;left:0;width:200%;white-space:nowrap;font-size:6rem;font-weight:700;color:rgba(255,255,255,0.015);letter-spacing:0.05em;pointer-events:none;animation:featureBgScroll 40s linear infinite;transform:translateY(-50%);}
+    @keyframes featureBgScroll{0%{transform:translateY(-50%) translateX(0);}100%{transform:translateY(-50%) translateX(-50%);}}
+    .bento-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-flow:dense;gap:16px;position:relative;z-index:1;}
+    .bento-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:var(--r-card);padding:28px;position:relative;overflow:hidden;transition:transform 0.35s cubic-bezier(.16,1,.3,1),border-color 0.3s,box-shadow 0.35s;}
+    .bento-card:hover{transform:translateY(-6px);border-color:rgba(0,212,255,0.25);box-shadow:0 20px 50px rgba(0,0,0,0.4),0 0 30px rgba(0,212,255,0.06);}
+    .bento-card.large{grid-column:span 2;}
+    .bento-card .bento-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:18px;border:1px solid rgba(255,255,255,0.07);transition:transform 0.3s,box-shadow 0.3s;}
+    .bento-card:hover .bento-icon{transform:scale(1.1);box-shadow:0 0 20px rgba(0,212,255,0.15);}
+    .bento-card h3{font-size:1rem;font-weight:600;color:#fff;margin-bottom:8px;}
+    .bento-card p{font-size:0.82rem;color:rgba(255,255,255,0.5);line-height:1.65;margin:0;}
+
+    /* ═══════════════════════════════════════════════════
+       § NEW-D — FAQ ACCORDION
+    ═══════════════════════════════════════════════════ */
+    .faq-section{padding:100px 24px;}
+    .faq-inner{max-width:760px;margin:0 auto;}
+    .faq-header{text-align:center;margin-bottom:48px;}
+    .faq-item{border:1px solid rgba(255,255,255,0.07);border-radius:16px;margin-bottom:10px;overflow:hidden;background:rgba(255,255,255,0.02);transition:border-color 0.3s,background 0.3s;}
+    .faq-item.open{border-color:rgba(0,212,255,0.2);background:rgba(0,212,255,0.03);}
+    .faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;cursor:pointer;gap:16px;transition:background 0.2s;}
+    .faq-q:hover{background:rgba(255,255,255,0.02);}
+    .faq-q span{font-size:0.92rem;font-weight:500;color:#fff;}
+    .faq-chevron{font-size:0.7rem;color:var(--ss-text-3);transition:transform 0.3s,color 0.3s;flex-shrink:0;}
+    .faq-item.open .faq-chevron{transform:rotate(180deg);color:var(--ss-cyan);}
+    .faq-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s ease;}
+    .faq-item.open .faq-a{max-height:200px;padding:0 24px 20px;}
+    .faq-a p{font-size:0.85rem;color:rgba(255,255,255,0.55);line-height:1.75;margin:0;}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+    @media(max-width:768px){
+        .ss-nav-float-wrap{width:calc(100% - 24px);}
+        .hero-ctas{flex-direction:column;align-items:center;}
+        .hero-stats{gap:28px;}
+        .avail-section,.search-section,.id-section,.radar-section,.timeline-section,.features-section,.faq-section{padding:70px 20px;}
+        .cta-banner{padding:48px 24px;margin:40px 16px;}
+        .book-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+        .id-card{transform:none;}
+        .timeline-track{flex-direction:column;align-items:center;gap:32px;}
+        .timeline-track::before{display:none;}
+        .timeline-desc{max-height:none;opacity:1;}
+        .bento-grid{grid-template-columns:1fr;}
+        .bento-card.large{grid-column:span 1;}
+    }
+    </style>
+</head>
+<body class="welcome-page">
+
+<!-- Ambient orbs -->
+<div style="position:fixed;inset:0;z-index:0;pointer-events:none;">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+</div>
+
+{{-- ═══════ § 0 — REAL NAVBAR (content preserved, glassmorphism enhanced) ═══════ --}}
+<div class="ss-nav-float-wrap">
+    <nav class="ss-navbar-pill navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="{{ route('home') }}">
+            <img src="{{ asset('img/shelfsync.svg') }}" height="30" alt="{{ config('app.name') }}" style="display:block;">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav"
+                aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ml-auto align-items-center" style="gap:2px;">
+                <li class="nav-item">
+                    <button id="nav-search-btn" aria-label="Search"
+                            style="background:none;border:1px solid rgba(255,255,255,0.12);border-radius:8px;width:34px;height:34px;color:var(--ss-text-2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s,color 0.2s;margin-right:6px;">
+                        <i class="fas fa-search" style="font-size:0.78rem;"></i>
+                    </button>
+                </li>
+                <li class="nav-item"><a class="ss-nav-link nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Home</a></li>
+                <li class="nav-item"><a class="ss-nav-link nav-link {{ request()->routeIs('user.books') ? 'active' : '' }}" href="{{ route('user.books') }}">Books</a></li>
+                <li class="nav-item"><a class="ss-nav-link nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">Contact</a></li>
+                @auth
+                <li class="nav-item"><a class="ss-nav-link nav-link {{ request()->routeIs('user.my_rents') ? 'active' : '' }}" href="{{ route('user.my_rents') }}">My Rents</a></li>
+                @endauth
+                <li class="nav-item d-none d-lg-flex align-items-center"><div class="ss-nav-sep"></div></li>
+                @auth
+                <li class="nav-item dropdown">
+                    <button id="avatarBtn" class="ss-avatar-btn" aria-haspopup="true" aria-expanded="false">
+                        <div class="ss-avatar-ring"><div class="ss-avatar-inner">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div></div>
+                        <i class="fas fa-chevron-down ss-avatar-chevron"></i>
+                    </button>
+                    <div id="avatarDropdown" class="ss-dropdown">
+                        <div class="ss-dropdown-header">
+                            <div class="ss-dropdown-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
+                            <div>
+                                <div class="ss-dropdown-name">{{ Auth::user()->name }}</div>
+                                <div class="ss-dropdown-email">{{ Auth::user()->email }}</div>
+                            </div>
+                        </div>
+                        <div class="ss-dropdown-divider"></div>
+                        @if(Auth::user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="ss-dropdown-item ss-dropdown-item-special">
+                            <i class="fas fa-shield-alt"></i><span>Control Panel</span><i class="fas fa-external-link-alt ss-dropdown-item-arrow"></i>
                         </a>
-                    @else
-                        <a
-                            href="{{ route('login') }}"
-                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
-                        >
-                            Log in
-                        </a>
-
-                        @if (Route::has('register'))
-                            <a
-                                href="{{ route('register') }}"
-                                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
-                                Register
-                            </a>
+                        <div class="ss-dropdown-divider"></div>
                         @endif
-                    @endauth
-                </nav>
-            @endif
-        </header>
-        <div class="flex items-center justify-center w-full transition-opacity opacity-100 duration-750 lg:grow starting:opacity-0">
-            <main class="flex max-w-[335px] w-full flex-col-reverse lg:max-w-4xl lg:flex-row">
-                <div class="text-[13px] leading-[20px] flex-1 p-6 pb-12 lg:p-20 bg-white dark:bg-[#161615] dark:text-[#EDEDEC] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d] rounded-bl-lg rounded-br-lg lg:rounded-tl-lg lg:rounded-br-none">
-                    <h1 class="mb-1 font-medium">Let's get started</h1>
-                    <p class="mb-2 text-[#706f6c] dark:text-[#A1A09A]">Laravel has an incredibly rich ecosystem. <br>We suggest starting with the following.</p>
-                    <ul class="flex flex-col mb-4 lg:mb-6">
-                        <li class="flex items-center gap-4 py-2 relative before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A] before:top-1/2 before:bottom-0 before:left-[0.4rem] before:absolute">
-                            <span class="relative py-1 bg-white dark:bg-[#161615]">
-                                <span class="flex items-center justify-center rounded-full bg-[#FDFDFC] dark:bg-[#161615] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] w-3.5 h-3.5 border dark:border-[#3E3E3A] border-[#e3e3e0]">
-                                    <span class="rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A] w-1.5 h-1.5"></span>
-                                </span>
-                            </span>
-                            <span>
-                                Read the
-                                <a href="https://laravel.com/docs" target="_blank" class="inline-flex items-center space-x-1 font-medium underline underline-offset-4 text-[#f53003] dark:text-[#FF4433] ml-1">
-                                    <span>Documentation</span>
-                                    <svg
-                                        width="10"
-                                        height="11"
-                                        viewBox="0 0 10 11"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-2.5 h-2.5"
-                                    >
-                                        <path
-                                            d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                            stroke="currentColor"
-                                            stroke-linecap="square"
-                                        />
-                                    </svg>
-                                </a>
-                            </span>
-                        </li>
-                        <li class="flex items-center gap-4 py-2 relative before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A] before:bottom-1/2 before:top-0 before:left-[0.4rem] before:absolute">
-                            <span class="relative py-1 bg-white dark:bg-[#161615]">
-                                <span class="flex items-center justify-center rounded-full bg-[#FDFDFC] dark:bg-[#161615] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] w-3.5 h-3.5 border dark:border-[#3E3E3A] border-[#e3e3e0]">
-                                    <span class="rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A] w-1.5 h-1.5"></span>
-                                </span>
-                            </span>
-                            <span>
-                                Watch video tutorials at
-                                <a href="https://laracasts.com" target="_blank" class="inline-flex items-center space-x-1 font-medium underline underline-offset-4 text-[#f53003] dark:text-[#FF4433] ml-1">
-                                    <span>Laracasts</span>
-                                    <svg
-                                        width="10"
-                                        height="11"
-                                        viewBox="0 0 10 11"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-2.5 h-2.5"
-                                    >
-                                        <path
-                                            d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                            stroke="currentColor"
-                                            stroke-linecap="square"
-                                        />
-                                    </svg>
-                                </a>
-                            </span>
-                        </li>
-                    </ul>
-                    <ul class="flex gap-3 text-sm leading-normal">
-                        <li>
-                            <a href="https://cloud.laravel.com" target="_blank" class="inline-block dark:bg-[#eeeeec] dark:border-[#eeeeec] dark:text-[#1C1C1A] dark:hover:bg-white dark:hover:border-white hover:bg-black hover:border-black px-5 py-1.5 bg-[#1b1b18] rounded-sm border border-black text-white text-sm leading-normal">
-                                Deploy now
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="bg-[#fff2f2] dark:bg-[#1D0002] relative lg:-ml-px -mb-px lg:mb-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg aspect-[335/376] lg:aspect-auto w-full lg:w-[438px] shrink-0 overflow-hidden">
-                    {{-- ShelfSync Logo --}}
-                    <img src="{{ asset('img/shelfsync.svg') }}" class="w-[80%] mx-auto mt-10 lg:mt-0 transition-all" alt="{{ config('app.name') }}">
-                    <div class="absolute inset-0 rounded-t-lg lg:rounded-t-none lg:rounded-r-lg shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]"></div>
-                </div>
-            </main>
+                        <a href="{{ route('user.dashboard') }}" class="ss-dropdown-item"><i class="fas fa-th-large"></i><span>My Dashboard</span></a>
+                        <a href="{{ route('profile.edit') }}"   class="ss-dropdown-item"><i class="fas fa-user-cog"></i><span>Profile Settings</span></a>
+                        <a href="{{ route('user.my_rents') }}"  class="ss-dropdown-item"><i class="fas fa-book-open"></i><span>My Rentals</span></a>
+                        <div class="ss-dropdown-divider"></div>
+                        <form method="POST" action="{{ route('logout') }}" style="margin:0;">
+                            @csrf
+                            <button type="submit" class="ss-dropdown-item ss-dropdown-item-danger">
+                                <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+                            </button>
+                        </form>
+                    </div>
+                </li>
+                @else
+                <li class="nav-item" style="margin-left:4px;"><a class="ss-btn ss-btn-ghost ss-btn-sm" href="{{ route('login') }}">Login</a></li>
+                <li class="nav-item" style="margin-left:4px;"><a class="ss-btn ss-btn-primary ss-btn-sm" href="{{ route('register') }}">Register</a></li>
+                @endauth
+            </ul>
+        </div>
+    </nav>
+</div>
+
+{{-- ═══════ § 1 — HERO ═══════ --}}
+<section class="hero">
+    <div class="hero-kicker"><i class="fas fa-bolt"></i> DIU Digital Library · Powered by ShelfSync</div>
+    <h1 class="hero-h1">Your university books,<br><span class="grad">one smart platform.</span></h1>
+    <p class="hero-p">Search the full catalog, get your Digital Student ID, and rent books — all without touching a physical form.</p>
+    <div class="hero-ctas">
+        @auth
+            <a href="{{ url('/dashboard') }}" class="btn-primary-ss"><i class="fas fa-rocket"></i> Go to Dashboard</a>
+        @else
+            <a href="{{ route('register') }}" class="btn-primary-ss"><i class="fas fa-rocket"></i> Register & Start Renting</a>
+            <a href="#search"                 class="btn-ghost-ss">Search Books First <i class="fas fa-arrow-down"></i></a>
+        @endauth
+    </div>
+    <div class="hero-stats">
+        <div class="hs">
+            <div class="hs-n" style="color:var(--ss-cyan);">{{ $metrics['books'] }}<span style="font-size:1.4rem;">+</span></div>
+            <div class="hs-l">Books</div>
+        </div>
+        <div class="hs-div"></div>
+        <div class="hs">
+            <div class="hs-n" style="color:#a78bfa;">{{ $metrics['students'] }}<span style="font-size:1.4rem;">+</span></div>
+            <div class="hs-l">Students</div>
+        </div>
+        <div class="hs-div"></div>
+        <div class="hs">
+            <div class="hs-n" style="color:var(--ss-electric);">{{ $metrics['rentals'] }}<span style="font-size:1.4rem;">+</span></div>
+            <div class="hs-l">Rentals Processed</div>
+        </div>
+    </div>
+</section>
+
+{{-- ═══════ INFINITE MARQUEE STRIP ═══════ --}}
+<div class="marquee-section">
+    <div class="marquee-track">
+        <div class="marquee-item"><i class="fas fa-book-open"></i> {{ $metrics['books'] }}+ Books Available</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-graduation-cap"></i> DIU Exclusive Platform</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-bolt"></i> Instant Digital Student ID</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-lock"></i> Zero Paperwork Required</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-clock"></i> 24/7 Online Access</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-id-card-alt"></i> Premium Glassmorphic Cards</div>
+        <span class="marquee-dot"></span>
+        <!-- Duplicate for seamless loop -->
+        <div class="marquee-item"><i class="fas fa-book-open"></i> {{ $metrics['books'] }}+ Books Available</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-graduation-cap"></i> DIU Exclusive Platform</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-bolt"></i> Instant Digital Student ID</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-lock"></i> Zero Paperwork Required</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-clock"></i> 24/7 Online Access</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-id-card-alt"></i> Premium Glassmorphic Cards</div>
+        <span class="marquee-dot"></span>
+    </div>
+</div>
+
+<hr class="section-divider">
+
+{{-- ═══════ § 2 — SMART SEARCH SANDBOX ═══════ --}}
+<section class="search-section" id="search">
+    <div class="search-wrap">
+        <div class="pill-tag"><i class="fas fa-search"></i> Smart Search</div>
+        <h2 class="section-title">Is it in the library?<br><span style="color:var(--ss-cyan);">Find out instantly.</span></h2>
+        <p class="section-sub" style="text-align:center;margin:0 auto 36px;">No login needed to browse. Type any title or author and see live availability results.</p>
+
+        <div class="search-bar">
+            <i class="fas fa-search search-ico"></i>
+            <input type="text" id="live-search-input" placeholder="Try: Clean Code, Harry Potter…" autocomplete="off">
+            <button class="search-submit-btn">Search</button>
+        </div>
+        <div class="search-results-drop" id="search-drop"></div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+{{-- ═══════ § 3 — LIVE AVAILABILITY FEED ═══════ --}}
+<section class="avail-section" id="available">
+    <div class="avail-inner">
+        <div class="avail-header">
+            <div>
+                <div class="pill-tag"><i class="fas fa-circle" style="font-size:0.5rem;"></i> Available Now</div>
+                <h2 class="section-title">Ready to rent today.</h2>
+                <p class="section-sub">These books are on the shelf right now. Hover to rent — just log in first.</p>
+            </div>
+            <a href="{{ route('user.books') }}" class="btn-ghost-ss" style="flex-shrink:0;align-self:flex-end;">View All Books <i class="fas fa-arrow-right"></i></a>
         </div>
 
-        @if (Route::has('login'))
-            <div class="h-14.5 hidden lg:block"></div>
+        <div class="book-grid">
+            @forelse($availableBooks as $book)
+            <div class="bcard">
+                @if($book->image && filter_var($book->image, FILTER_VALIDATE_URL))
+                    <img class="bcard-cover" src="{{ $book->image }}" alt="{{ $book->name }}"
+                         onerror="this.parentNode.querySelector('.bcard-cover-ph').style.display='flex';this.style.display='none';">
+                    <div class="bcard-cover-ph" style="display:none;"><i class="fas fa-book"></i><span>{{ Str::limit($book->name, 28) }}</span></div>
+                @else
+                    <div class="bcard-cover-ph"><i class="fas fa-book"></i><span>{{ Str::limit($book->name, 28) }}</span></div>
+                @endif
+                <span class="bcard-qty">{{ $book->quantity }} left</span>
+                <div class="bcard-hover-layer">
+                    @auth
+                        <a href="{{ route('user.rent', $book->id) }}" class="bcard-rent-btn">Rent This Book</a>
+                    @else
+                        <a href="{{ route('login') }}" class="bcard-rent-btn">Login to Rent</a>
+                    @endauth
+                </div>
+                <div class="bcard-body">
+                    <div class="bcard-title">{{ $book->name }}</div>
+                    <div class="bcard-author">{{ $book->author ?? 'Unknown Author' }}</div>
+                </div>
+            </div>
+            @empty
+            <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--ss-text-3);">
+                <i class="fas fa-book" style="font-size:2rem;margin-bottom:16px;display:block;"></i>
+                No books are currently available. Check back soon!
+            </div>
+            @endforelse
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+{{-- ═══════ JOURNEY TIMELINE ═══════ --}}
+<section class="timeline-section">
+    <div class="timeline-inner">
+        <div class="pill-tag"><i class="fas fa-route"></i> How It Works</div>
+        <h2 class="section-title">From sign-up to your first book.<br><span style="color:var(--ss-cyan);">In 4 simple steps.</span></h2>
+        <p class="section-sub" style="text-align:center;margin:0 auto;">No queues, no forms, no waiting. Here's your journey to unlimited library access.</p>
+
+        <div class="timeline-track">
+            <div class="timeline-node">
+                <div class="timeline-circle" style="color:var(--ss-cyan);">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="timeline-num">Step 01</div>
+                <div class="timeline-title">Register</div>
+                <div class="timeline-desc">Create your account with your student email. Takes under 2 minutes.</div>
+            </div>
+            <div class="timeline-node">
+                <div class="timeline-circle" style="color:var(--ss-violet);">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="timeline-num">Step 02</div>
+                <div class="timeline-title">Get Approved</div>
+                <div class="timeline-desc">A library admin verifies and activates your membership instantly.</div>
+            </div>
+            <div class="timeline-node">
+                <div class="timeline-circle" style="color:var(--ss-electric);">
+                    <i class="fas fa-id-card-alt"></i>
+                </div>
+                <div class="timeline-num">Step 03</div>
+                <div class="timeline-title">Get Your Card</div>
+                <div class="timeline-desc">Your premium glassmorphic Digital ID is generated automatically.</div>
+            </div>
+            <div class="timeline-node">
+                <div class="timeline-circle" style="color:var(--gold);">
+                    <i class="fas fa-book-reader"></i>
+                </div>
+                <div class="timeline-num">Step 04</div>
+                <div class="timeline-title">Rent Books!</div>
+                <div class="timeline-desc">Browse the catalog and rent any available book from your dashboard.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+{{-- ═══════ § 4 — DIGITAL ACCESS SHOWCASE ═══════ --}}
+<section class="id-section" id="how-it-works">
+    <div class="id-inner">
+
+        {{-- Left: Steps --}}
+        <div>
+            <div class="pill-tag"><i class="fas fa-id-card-alt"></i> Digital Access</div>
+            <h2 class="section-title">Your Digital Student ID.<br><span style="color:var(--ss-cyan);">Generated instantly.</span></h2>
+            <p class="section-sub" style="margin-bottom:48px;">Stop hunting for physical cards. ShelfSync issues a premium glassmorphic Digital Access Card the moment your account is approved.</p>
+
+            <div class="id-steps">
+                <div class="id-step" data-idstep>
+                    <div class="id-step-icon" style="background:rgba(0,212,255,0.09);color:var(--ss-cyan);"><i class="fas fa-user-plus"></i></div>
+                    <div class="id-step-body">
+                        <h3>Step 1 — Register Your Account</h3>
+                        <p>Sign up with your student email and ID number. Takes under 2 minutes.</p>
+                    </div>
+                </div>
+                <div class="id-step" data-idstep style="transition-delay:0.12s">
+                    <div class="id-step-icon" style="background:rgba(124,58,237,0.09);color:var(--ss-violet);"><i class="fas fa-user-check"></i></div>
+                    <div class="id-step-body">
+                        <h3>Step 2 — Get Admin Approval</h3>
+                        <p>A library admin verifies your details and activates your account with a single click.</p>
+                    </div>
+                </div>
+                <div class="id-step" data-idstep style="transition-delay:0.24s">
+                    <div class="id-step-icon" style="background:rgba(6,214,160,0.09);color:var(--ss-electric);"><i class="fas fa-id-card-alt"></i></div>
+                    <div class="id-step-body">
+                        <h3>Step 3 — Receive Your Digital ID</h3>
+                        <p>Your premium glassmorphic Digital Access Card is instantly generated with your name, department, and a 6-month validity.</p>
+                    </div>
+                </div>
+                <div class="id-step" data-idstep style="transition-delay:0.36s">
+                    <div class="id-step-icon" style="background:rgba(245,158,11,0.09);color:var(--gold);"><i class="fas fa-book-open"></i></div>
+                    <div class="id-step-body">
+                        <h3>Step 4 — Start Renting Books</h3>
+                        <p>Browse the full catalog and rent any available book from your dashboard. No paperwork, ever.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:40px;">
+                @guest
+                <a href="{{ route('register') }}" class="btn-primary-ss"><i class="fas fa-rocket"></i> Get Your Digital ID Now</a>
+                @endguest
+            </div>
+        </div>
+
+        {{-- Right: ID Card Mockup --}}
+        <div class="id-card-wrap">
+            <div class="id-card" id="id-card-mockup">
+                <div class="card-logo-row">
+                    <div class="card-logo-text">ShelfSync</div>
+                    <div class="card-chip"></div>
+                </div>
+                <div class="card-id-ring">S</div>
+                <div class="card-name">Student Name</div>
+                <div class="card-dept">Department of Software Engineering</div>
+                <div class="card-bottom">
+                    <div>
+                        <div class="card-sid">232-35-XXX</div>
+                        <div class="card-active" style="margin-top:8px;">● ACTIVE</div>
+                    </div>
+                    <div class="card-valid">
+                        VALID THRU
+                        <span>{{ now()->addMonths(6)->format('m/Y') }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+{{-- ═══════ § 5 — DUE BACK SOON RADAR ═══════ --}}
+<section class="radar-section" id="radar">
+    <div class="radar-inner">
+        <div class="radar-header">
+            <div class="pill-tag" style="color:var(--ss-amber);background:rgba(245,158,11,0.07);border-color:rgba(245,158,11,0.2);">
+                <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ss-amber);box-shadow:0 0 8px rgba(245,158,11,0.7);animation:pulse 1.5s infinite;"></span>
+                Due Back Soon
+            </div>
+            <h2 class="section-title">Popular books returning soon.</h2>
+            <p class="section-sub">These titles are currently checked out but returning within the next 10 days. Register now to be ready to rent them the moment they land back on the shelf.</p>
+        </div>
+
+        @if($dueSoonRentals->count() > 0)
+        <div class="radar-grid">
+            @foreach($dueSoonRentals as $rental)
+            @php $daysLeft = now()->diffInDays($rental->due_date, false); @endphp
+            <div class="radar-card">
+                @if($rental->book && $rental->book->image && filter_var($rental->book->image, FILTER_VALIDATE_URL))
+                    <img class="radar-book-thumb" src="{{ $rental->book->image }}" alt="{{ $rental->book->name }}" onerror="this.outerHTML='<div class=radar-book-ph><i class=fas fa-book></i></div>'">
+                @else
+                    <div class="radar-book-ph"><i class="fas fa-book"></i></div>
+                @endif
+                <div class="radar-info">
+                    <div class="radar-title">{{ $rental->book->name ?? 'Unknown Book' }}</div>
+                    <div class="radar-author">{{ $rental->book->author ?? 'Unknown Author' }}</div>
+                    <div class="radar-due">
+                        <span class="radar-pulse"></span>
+                        <span style="color:var(--ss-amber);">
+                            @if($daysLeft <= 0) Due today
+                            @elseif($daysLeft === 1) Due tomorrow
+                            @else Due in {{ $daysLeft }} days
+                            @endif
+                        </span>
+                    </div>
+                </div>
+                @guest
+                <a href="{{ route('register') }}" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:var(--gold);border-radius:var(--r-pill);padding:6px 14px;font-size:0.7rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Notify me</a>
+                @endguest
+            </div>
+            @endforeach
+        </div>
+        @else
+        <div class="radar-empty">
+            <i class="fas fa-check-circle" style="font-size:2.5rem;color:var(--ss-electric);margin-bottom:16px;display:block;"></i>
+            <strong style="color:#fff;display:block;margin-bottom:8px;">Great news!</strong>
+            No popular books are overdue right now — most titles are available to rent today.
+            <div style="margin-top:20px;"><a href="{{ route('user.books') }}" class="btn-primary-ss" style="font-size:0.82rem;padding:10px 24px;">Browse the Catalog</a></div>
+        </div>
         @endif
-    </body>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+{{-- ═══════ FEATURE SHOWCASE (BENTO GRID) ═══════ --}}
+<section class="features-section" id="features">
+    <div class="features-bg-text">Smart Search · Digital ID · Zero Fines Confusion · Track Progress · Instant Rentals · Smart Search · Digital ID · Zero Fines Confusion · Track Progress · Instant Rentals ·</div>
+    <div class="features-inner">
+        <div class="features-header">
+            <div class="pill-tag"><i class="fas fa-star"></i> Platform Features</div>
+            <h2 class="section-title">Everything you need.<br><span style="color:var(--ss-cyan);">All in one place.</span></h2>
+            <p class="section-sub" style="text-align:center;margin:0 auto;">ShelfSync isn't just a catalog — it's your complete digital library companion.</p>
+        </div>
+        <div class="bento-grid">
+            <div class="bento-card large">
+                <div class="bento-icon" style="background:rgba(0,212,255,0.08);color:var(--ss-cyan);"><i class="fas fa-search"></i></div>
+                <h3>Smart Search</h3>
+                <p>Search the entire catalog in real-time. Find books by title, author, or category — results appear as you type with instant availability status.</p>
+            </div>
+            <div class="bento-card">
+                <div class="bento-icon" style="background:rgba(124,58,237,0.08);color:var(--ss-violet);"><i class="fas fa-id-card-alt"></i></div>
+                <h3>Digital Student ID</h3>
+                <p>A premium glassmorphic access card generated automatically with your details and 6-month validity.</p>
+            </div>
+            <div class="bento-card">
+                <div class="bento-icon" style="background:rgba(6,214,160,0.08);color:var(--ss-electric);"><i class="fas fa-balance-scale"></i></div>
+                <h3>Fine Management</h3>
+                <p>Transparent fine tracking with a built-in appeal system. Know exactly what you owe and why.</p>
+            </div>
+            <div class="bento-card">
+                <div class="bento-icon" style="background:rgba(245,158,11,0.08);color:var(--gold);"><i class="fas fa-clock"></i></div>
+                <h3>24/7 Online Access</h3>
+                <p>Browse and rent books anytime, from any device. The library never closes.</p>
+            </div>
+            <div class="bento-card large">
+                <div class="bento-icon" style="background:rgba(244,63,94,0.08);color:var(--ss-rose);"><i class="fas fa-chart-line"></i></div>
+                <h3>Reading Progress Tracker</h3>
+                <p>Track every book you've rented, monitor due dates at a glance, and build your reading history. ShelfSync keeps your entire library journey organized in one beautiful dashboard.</p>
+            </div>
+            <div class="bento-card">
+                <div class="bento-icon" style="background:rgba(0,212,255,0.08);color:var(--ss-cyan);"><i class="fas fa-file-alt"></i></div>
+                <h3>Zero Paperwork</h3>
+                <p>Everything is digital — registration, approvals, rentals, and returns. No forms required.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+{{-- ═══════ FAQ ACCORDION ═══════ --}}
+<section class="faq-section" id="faq">
+    <div class="faq-inner">
+        <div class="faq-header">
+            <div class="pill-tag"><i class="fas fa-question-circle"></i> FAQ</div>
+            <h2 class="section-title">Got questions?<br><span style="color:var(--ss-cyan);">We've got answers.</span></h2>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                <span>How do I start renting books?</span>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-a"><p>Create a free account, wait for admin approval (usually within 24 hours), then browse the catalog and rent any available book with a single click.</p></div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                <span>Is there a fine for late returns?</span>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-a"><p>Yes, a small daily fine is applied after your due date. You can track all fines in your dashboard and even submit an appeal if you believe it was an error.</p></div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                <span>How do I get my Digital Student ID?</span>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-a"><p>Your Digital Access Card is automatically generated the moment an admin approves your account. You'll find it in your dashboard — no extra steps required.</p></div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                <span>Can I rent multiple books at once?</span>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-a"><p>Absolutely! You can rent as many available books as you need. Each rental has its own due date that you can track from your personal dashboard.</p></div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                <span>What happens if I lose a book?</span>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-a"><p>Contact the library admin through the platform. A replacement fee based on the book's value will be applied to your account, and you can use the fine appeal system if needed.</p></div>
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+{{-- ═══════ § 6 — CONVERSION CTA BANNER ═══════ --}}
+@guest
+<div class="cta-banner">
+    <h2>Ready to get started?</h2>
+    <p>Join hundreds of DIU students already using ShelfSync. Register in under 2 minutes and get your Digital Library Card today.</p>
+    <div class="cta-banner-btns">
+        <a href="{{ route('register') }}" class="btn-primary-ss" style="font-size:1rem;padding:16px 40px;"><i class="fas fa-rocket"></i> Register Free</a>
+        <a href="{{ route('login') }}"    class="btn-ghost-ss"  style="font-size:1rem;padding:16px 40px;">Already have an account? Log In</a>
+    </div>
+</div>
+@endguest
+
+{{-- ═══════ § 7 — FOOTER ═══════ --}}
+<footer class="landing-footer">
+    <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+        <img src="{{ asset('img/shelfsync.svg') }}" height="24" alt="ShelfSync">
+    </a>
+    <div class="footer-links">
+        <a href="#search">Search Books</a>
+        <a href="#available">Available Now</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#features">Features</a>
+        <a href="#faq">FAQ</a>
+        @auth <a href="{{ url('/dashboard') }}">Dashboard</a>
+        @else <a href="{{ route('login') }}">Log In</a><a href="{{ route('register') }}">Register</a>
+        @endauth
+    </div>
+    <p style="color:var(--ss-text-3);font-size:0.78rem;">© {{ date('Y') }} ShelfSync · DIU Digital Library</p>
+</footer>
+
+{{-- ═══════ SEARCH OVERLAY (triggered by nav search icon) ═══════ --}}
+<div id="search-overlay"
+     style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,10,11,0.94);backdrop-filter:blur(18px);align-items:flex-start;justify-content:center;padding-top:130px;">
+    <div style="width:100%;max-width:640px;padding:0 20px;">
+        <div style="position:relative;">
+            <i class="fas fa-search" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);color:var(--ss-text-3);font-size:1rem;pointer-events:none;"></i>
+            <input id="overlay-search-input" type="text" class="ss-input" placeholder="Search books, authors…"
+                   style="font-size:1rem;padding:16px 22px 16px 48px !important;border-radius:16px !important;">
+        </div>
+        <p style="font-size:0.78rem;color:var(--ss-text-3);margin-top:14px;text-align:center;">
+            Press <kbd style="background:rgba(255,255,255,0.08);border:1px solid var(--ss-border);border-radius:4px;padding:1px 6px;font-family:monospace;">Esc</kbd> to close &nbsp;·&nbsp;
+            Press <kbd style="background:rgba(255,255,255,0.08);border:1px solid var(--ss-border);border-radius:4px;padding:1px 6px;font-family:monospace;">Enter</kbd> to search
+        </p>
+    </div>
+</div>
+
+{{-- Scripts --}}
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    /* ── Mobile navbar border-radius ── */
+    $('#mainNav')
+        .on('show.bs.collapse', ()=>{ document.querySelector('.ss-navbar-pill').style.borderRadius='20px'; })
+        .on('hide.bs.collapse', ()=>{ document.querySelector('.ss-navbar-pill').style.borderRadius='100px'; });
+
+    /* ── Avatar Dropdown ── */
+    const avatarBtn = document.getElementById('avatarBtn');
+    const avatarDd  = document.getElementById('avatarDropdown');
+    if (avatarBtn && avatarDd) {
+        avatarBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            const open = avatarDd.classList.contains('open');
+            avatarDd.classList.toggle('open', !open);
+            const chev = avatarBtn.querySelector('.ss-avatar-chevron');
+            if (chev) chev.style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)';
+        });
+        document.addEventListener('click', () => {
+            avatarDd.classList.remove('open');
+            const chev = avatarBtn?.querySelector('.ss-avatar-chevron');
+            if (chev) chev.style.transform = 'rotate(0deg)';
+        });
+        avatarDd.addEventListener('click', e => e.stopPropagation());
+    }
+
+    /* ── Nav Search Overlay ── */
+    const overlay      = document.getElementById('search-overlay');
+    const overlayInput = document.getElementById('overlay-search-input');
+    const navSearchBtn = document.getElementById('nav-search-btn');
+    if (navSearchBtn) {
+        navSearchBtn.addEventListener('click', ()=>{ overlay.style.display='flex'; setTimeout(()=>overlayInput.focus(),60); });
+        navSearchBtn.addEventListener('mouseenter', function(){ this.style.borderColor='rgba(0,212,255,0.45)'; this.style.color='var(--ss-cyan)'; });
+        navSearchBtn.addEventListener('mouseleave', function(){ this.style.borderColor='rgba(255,255,255,0.12)'; this.style.color='var(--ss-text-2)'; });
+    }
+    document.addEventListener('keydown', e => {
+        if (e.key==='Escape') overlay.style.display='none';
+        if ((e.ctrlKey||e.metaKey)&&e.key==='k'){ e.preventDefault(); overlay.style.display='flex'; setTimeout(()=>overlayInput?.focus(),60); }
+    });
+    overlay?.addEventListener('click', e=>{ if(e.target===overlay) overlay.style.display='none'; });
+    overlayInput?.addEventListener('keydown', e=>{
+        if (e.key==='Enter'&&overlayInput.value.trim())
+            window.location.href = '{{ route("user.books") }}?search='+encodeURIComponent(overlayInput.value.trim());
+    });
+
+    /* ── ID Card: RAF-based 60fps tilt (zero jank) ── */
+    const card = document.getElementById('id-card-mockup');
+    if (card) {
+        let rafId    = null;
+        let targetRY = -8, targetRX = 4;   // resting defaults
+        let currentRY= -8, currentRX = 4;
+        const LERP = 0.12;                  // interpolation speed
+
+        function lerpVal(a, b, t) { return a + (b - a) * t; }
+
+        function animateTilt() {
+            currentRY = lerpVal(currentRY, targetRY, LERP);
+            currentRX = lerpVal(currentRX, targetRX, LERP);
+            card.style.transform =
+                `perspective(1000px) rotateY(${currentRY.toFixed(3)}deg) rotateX(${currentRX.toFixed(3)}deg) scale(1.025)`;
+            // Keep looping while mouse is over
+            rafId = requestAnimationFrame(animateTilt);
+        }
+
+        card.addEventListener('mouseenter', () => {
+            card.classList.add('is-tilting');
+            card.classList.remove('is-resetting');
+            card.style.transition = 'none'; // RAF drives it — no CSS transition during move
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(animateTilt);
+        });
+
+        card.addEventListener('mousemove', e => {
+            const r  = card.getBoundingClientRect();
+            const cx = (e.clientX - r.left) / r.width  - 0.5; // -0.5 … +0.5
+            const cy = (e.clientY - r.top)  / r.height - 0.5;
+            targetRY =  cx * 16;   // max ±16° horizontal
+            targetRX = -cy * 10;   // max ±10° vertical
+        });
+
+        card.addEventListener('mouseleave', () => {
+            // Cancel RAF loop
+            if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+            // Smooth CSS transition back to rest
+            card.classList.remove('is-tilting');
+            card.classList.add('is-resetting');
+            card.style.transition = '';
+            card.style.transform  = 'perspective(1000px) rotateY(-8deg) rotateX(4deg)';
+            // Re-enable float animation after the reset settles
+            setTimeout(() => {
+                card.classList.remove('is-resetting');
+                card.style.transform = '';
+            }, 580);
+        });
+    }
+
+    /* ── Live Section Search ── */
+    const searchInput = document.getElementById('live-search-input');
+    const searchDrop  = document.getElementById('search-drop');
+    const allBooks    = @json($searchableBooks);
+
+    function imgEl(b) {
+        if (b.image) return `<img class="sri-thumb" src="${b.image}" alt="" onerror="this.outerHTML='<div class=sri-ph><i class=fas fa-book></i></div>'">`;
+        return `<div class="sri-ph"><i class="fas fa-book"></i></div>`;
+    }
+
+    searchInput?.addEventListener('input', () => {
+        const q = searchInput.value.trim().toLowerCase();
+        if (!q) { searchDrop.style.display = 'none'; return; }
+        const hits = allBooks.filter(b => b.name.toLowerCase().includes(q) || (b.author||'').toLowerCase().includes(q)).slice(0, 7);
+        if (!hits.length) { searchDrop.style.display = 'none'; return; }
+        searchDrop.innerHTML = hits.map(b => `
+            <a class="sri" href="{{ route('user.books') }}">
+                ${imgEl(b)}
+                <div style="flex:1;min-width:0;">
+                    <div class="sri-name">${b.name}</div>
+                    <div class="sri-auth">${b.author || 'Unknown Author'}</div>
+                </div>
+                <span class="sri-cta">{{ auth()->check() ? 'View' : 'Login to Rent' }}</span>
+            </a>`).join('');
+        searchDrop.style.display = 'block';
+    });
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.search-wrap')) searchDrop.style.display = 'none';
+    });
+
+    /* Typewriter placeholder */
+    const hints = ['Clean Code', 'Harry Potter', 'Introduction to Algorithms', 'The Alchemist', 'JavaScript'];
+    let hi = 0, ci = 0, typing = true;
+    (function type() {
+        if (document.activeElement === searchInput) { setTimeout(type, 200); return; }
+        const h = hints[hi];
+        if (typing) { searchInput.placeholder = 'Try: ' + h.substring(0, ci+1) + '…'; ci++; if (ci >= h.length){ typing=false; setTimeout(type, 1800); return; } }
+        else { ci--; searchInput.placeholder = 'Try: ' + h.substring(0, ci) + '…'; if (ci <= 0){ typing=true; hi=(hi+1)%hints.length; } }
+        setTimeout(type, typing ? 90 : 50);
+    })();
+
+    /* ── Journey steps IntersectionObserver ── */
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.25 });
+    document.querySelectorAll('[data-idstep]').forEach(el => io.observe(el));
+});
+
+/* ── FAQ Accordion (one-at-a-time toggle) ── */
+function toggleFaq(el) {
+    const item = el.parentElement;
+    const wasOpen = item.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    // Toggle clicked
+    if (!wasOpen) item.classList.add('open');
+}
+</script>
+
+@include('components.global-fx')
+</body>
 </html>

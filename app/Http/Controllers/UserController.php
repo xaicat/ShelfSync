@@ -14,7 +14,37 @@ class UserController extends Controller
 {
     public function index()
     {
-        return view('user.index');
+        // § Search sandbox — all books (id, name, author, image)
+        $searchableBooks = Book::select('id', 'name', 'author', 'image')->limit(100)->get();
+
+        // § Live Availability feed — available books, newest first
+        $availableBooks = Book::where('quantity', '>', 0)
+            ->withCount('rentals')
+            ->orderByDesc('rentals_count')
+            ->limit(12)
+            ->get();
+
+        // § Due Back Soon Radar — approved rentals with a due_date in the next 10 days
+        $dueSoonRentals = Rental::with('book')
+            ->where('approval_status', 'approved')
+            ->whereNotNull('due_date')
+            ->where('due_date', '>=', now())
+            ->where('due_date', '<=', now()->addDays(10))
+            ->orderBy('due_date')
+            ->limit(6)
+            ->get();
+
+        // § Live metrics
+        $metrics = [
+            'books'    => Book::count(),
+            'students' => \App\Models\User::where('role', 'user')->count(),
+            'rentals'  => Rental::count(),
+            'resolved' => \App\Models\FineAppeal::where('status', 'resolved')->count(),
+        ];
+
+        return view('welcome', compact(
+            'searchableBooks', 'availableBooks', 'dueSoonRentals', 'metrics'
+        ));
     }
 
     // ── User Dashboard ─────────────────────────────────────────

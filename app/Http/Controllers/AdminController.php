@@ -25,9 +25,24 @@ class AdminController extends Controller
                                 ->where('return_date', '<', today())
                                 ->count();
 
+        // Recent activity for feed
+        $recentActivity = Rental::with(['user', 'book'])
+            ->latest('updated_at')
+            ->take(5)
+            ->get();
+
+        // Rental distribution for donut chart
+        $rentalDistribution = [
+            'active'   => $activeRentals,
+            'pending'  => $pendingRentals,
+            'returned' => Rental::where('approval_status', 'returned')->count(),
+            'rejected' => Rental::where('approval_status', 'rejected')->count(),
+        ];
+
         return view('admin.dashboard', compact(
             'bookCount', 'userCount', 'categoryCount',
-            'activeRentals', 'pendingRentals', 'overdueRentals'
+            'activeRentals', 'pendingRentals', 'overdueRentals',
+            'recentActivity', 'rentalDistribution'
         ));
     }
 

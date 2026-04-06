@@ -59,54 +59,55 @@
                 <p style="color:var(--ss-amber);font-size:0.85rem;margin:0;">Your library card request is pending admin approval.</p>
             </div>
         @else
-            <!-- The Card -->
+            <!-- The Premium Card -->
             @php 
                 $cStatus = Auth::user()->card_status; 
-                $glowClass = $cStatus === 'approved' ? 'rgba(0,212,255,0.4)' : ($cStatus === 'revoked' ? 'rgba(244,63,94,0.4)' : 'rgba(255,255,255,0.1)');
-                $borderClass = $cStatus === 'approved' ? 'var(--ss-cyan)' : ($cStatus === 'revoked' ? 'var(--ss-rose)' : 'var(--ss-border-strong)');
-                $filter = $cStatus === 'expired' ? 'grayscale(100%) opacity(0.7)' : 'none';
+                $isActive = $cStatus === 'approved';
+                $isRevoked = $cStatus === 'revoked';
             @endphp
             
             <div style="display:flex;justify-content:center;margin-bottom:20px;">
-                <div style="max-width:350px;width:100%;min-height:220px;border-radius:18px;position:relative;background:linear-gradient(135deg,rgba(0,0,0,0.8),rgba(15,15,20,0.95));border:1px solid rgba(255,255,255,0.1);box-shadow:0 10px 30px rgba(0,0,0,0.5);overflow:hidden;" class="p-4 mx-auto id-card-glow {{ $cStatus === 'expired' ? 'card-expired' : '' }}">
-                    
-                    <!-- SVG Overlay Pattern -->
-                    <svg style="position:absolute;top:0;right:0;width:150px;height:100%;opacity:0.05;" viewBox="0 0 100 100">
-                        <circle cx="80" cy="20" r="40" fill="#fff"/>
-                        <circle cx="100" cy="80" r="30" fill="#fff"/>
-                    </svg>
-                    
-                    <!-- Header -->
-                    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
-                        <div>
-                            <div style="font-family:var(--ss-font-display);font-size:0.75rem;font-weight:800;letter-spacing:1px;color:var(--ss-cyan);text-transform:uppercase;">DIU Student</div>
-                            <div style="font-size:0.65rem;color:var(--ss-text-3);">Digital Access Card</div>
-                        </div>
+                <div class="premium-id-card {{ $isActive ? 'card-active' : '' }} {{ $isRevoked ? 'card-revoked' : '' }} {{ $cStatus === 'expired' ? 'card-expired' : '' }}" id="profileCard">
+                    <!-- Holographic shine overlay -->
+                    <div class="card-shine"></div>
+                    <!-- Background pattern -->
+                    <div class="card-pattern">
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="150" cy="30" r="60" fill="rgba(255,255,255,0.03)"/>
+                            <circle cx="180" cy="120" r="40" fill="rgba(255,255,255,0.02)"/>
+                            <circle cx="20" cy="160" r="50" fill="rgba(0,212,255,0.02)"/>
+                        </svg>
                     </div>
-
-                    <!-- Details -->
-                    <div style="margin-bottom:16px;">
-                        <div style="font-family:monospace;font-size:1.1rem;color:#fff;letter-spacing:2px;margin-bottom:4px;text-shadow: 0 0 4px rgba(255,255,255,0.2);">UID: {{ $card->student_id }}</div>
-                        <div style="font-size:1.25rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;width:100%;">{{ Auth::user()->name }}</div>
-                        <div style="font-size:0.85rem;color:var(--ss-text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;width:100%;">{{ $card->department }}</div>
-                    </div>
-
-                    <!-- Footer -->
-                    <div class="d-flex justify-content-between align-items-end mt-3">
-                        <div class="text-truncate">
-                            <div style="font-size:0.6rem;color:var(--ss-text-3);text-transform:uppercase;">Valid Thru</div>
-                            <div style="font-size:0.8rem;color:#fff;font-weight:600;">
-                                {{ $card->expires_at ? $card->expires_at->format('m/Y') : 'Lifetime' }}
+                    <!-- Card content -->
+                    <div class="card-content">
+                        <div class="card-header-row">
+                            <div>
+                                <div class="card-brand">DIU Student</div>
+                                <div class="card-sub-brand">Digital Access Card</div>
+                            </div>
+                            <div class="card-chip">
+                                <div class="chip-line"></div>
+                                <div class="chip-line"></div>
                             </div>
                         </div>
-                        
-                        @if($cStatus === 'approved')
-                            <span class="ss-badge" style="background:var(--ss-cyan);color:#000;border:none;font-weight:800;">ACTIVE</span>
-                        @elseif($cStatus === 'expired')
-                            <span class="ss-badge" style="background:#555;color:#fff;border:none;">EXPIRED</span>
-                        @elseif($cStatus === 'revoked')
-                            <span class="ss-badge ss-badge-danger" style="background:var(--ss-rose);color:#fff;border:none;">REVOKED</span>
-                        @endif
+                        <div class="card-body-section">
+                            <div class="card-uid">UID: {{ $card->student_id }}</div>
+                            <div class="card-holder-name">{{ Auth::user()->name }}</div>
+                            <div class="card-department">{{ $card->department }}</div>
+                        </div>
+                        <div class="card-footer-row">
+                            <div>
+                                <div class="card-label">Valid Thru</div>
+                                <div class="card-valid-date">{{ $card->expires_at ? $card->expires_at->format('m/Y') : 'Lifetime' }}</div>
+                            </div>
+                            @if($isActive)
+                                <span class="card-status-badge active">● ACTIVE</span>
+                            @elseif($cStatus === 'expired')
+                                <span class="card-status-badge expired">EXPIRED</span>
+                            @elseif($isRevoked)
+                                <span class="card-status-badge revoked">REVOKED</span>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -125,11 +126,93 @@
     </div>
 
     <style>
-    @keyframes pulse-red {
-        0% { box-shadow: 0 0 0 0 rgba(244,63,94, 0.4); border-color: rgba(244,63,94, 1); }
-        70% { box-shadow: 0 0 0 15px rgba(244,63,94, 0); border-color: rgba(244,63,94, 0.5); }
-        100% { box-shadow: 0 0 0 0 rgba(244,63,94, 0); border-color: rgba(244,63,94, 1); }
+    /* ── Premium ID Card ── */
+    .premium-id-card {
+        max-width: 380px; width: 100%; min-height: 230px;
+        border-radius: 20px; position: relative; overflow: hidden;
+        background: linear-gradient(145deg, rgba(15,15,22,0.95), rgba(8,8,14,0.98));
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04) inset;
+        transition: transform 0.12s ease-out;
+        cursor: default;
+        perspective: 1000px;
     }
+    .premium-id-card.card-active {
+        border-color: rgba(0,212,255,0.15);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(0,212,255,0.06);
+        animation: cardBorderPulse 3s ease-in-out infinite alternate;
+    }
+    .premium-id-card.card-revoked {
+        border-color: rgba(244,63,94,0.2);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 20px rgba(244,63,94,0.08);
+    }
+    .premium-id-card.card-expired { filter: grayscale(70%) brightness(0.7); }
+    @keyframes cardBorderPulse {
+        0% { border-color: rgba(0,212,255,0.1); }
+        100% { border-color: rgba(0,212,255,0.25); }
+    }
+
+    /* Holographic shine */
+    .card-shine {
+        position: absolute; inset: 0; z-index: 2; pointer-events: none;
+        background: linear-gradient(
+            105deg,
+            transparent 30%,
+            rgba(255,255,255,0.04) 42%,
+            rgba(255,255,255,0.12) 48%,
+            rgba(0,212,255,0.08) 50%,
+            rgba(255,255,255,0.04) 52%,
+            transparent 62%
+        );
+        background-size: 250% 100%;
+        background-position: 200% 0;
+        transition: background-position 0.6s ease;
+    }
+    .premium-id-card:hover .card-shine {
+        background-position: -50% 0;
+    }
+
+    /* Pattern */
+    .card-pattern {
+        position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    }
+    .card-pattern svg { width: 100%; height: 100%; }
+
+    /* Content */
+    .card-content { position: relative; z-index: 1; padding: 24px 26px; height: 100%; display: flex; flex-direction: column; justify-content: space-between; min-height: 230px; }
+    .card-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; }
+    .card-brand { font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; color: var(--ss-cyan); text-transform: uppercase; }
+    .card-sub-brand { font-size: 0.62rem; color: var(--ss-text-3); margin-top: 2px; }
+
+    /* Chip */
+    .card-chip {
+        width: 36px; height: 26px; border-radius: 5px;
+        background: linear-gradient(135deg, #c9a84c, #b8941f, #d4af37);
+        display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 4px 5px;
+        box-shadow: 0 2px 8px rgba(201,168,76,0.3);
+    }
+    .chip-line { height: 1.5px; background: rgba(0,0,0,0.15); border-radius: 1px; }
+
+    .card-body-section { margin-bottom: 18px; }
+    .card-uid { font-family: 'Courier New', monospace; font-size: 1rem; color: #fff; letter-spacing: 2px; margin-bottom: 6px; text-shadow: 0 0 6px rgba(255,255,255,0.1); }
+    .card-holder-name { font-size: 1.2rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-department { font-size: 0.82rem; color: var(--ss-text-2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .card-footer-row { display: flex; justify-content: space-between; align-items: flex-end; }
+    .card-label { font-size: 0.55rem; color: var(--ss-text-3); text-transform: uppercase; letter-spacing: 1px; }
+    .card-valid-date { font-size: 0.85rem; color: #fff; font-weight: 600; margin-top: 2px; }
+
+    .card-status-badge {
+        font-size: 0.68rem; font-weight: 700; padding: 4px 14px; border-radius: 20px;
+        letter-spacing: 0.5px;
+    }
+    .card-status-badge.active { background: var(--ss-cyan); color: #000; box-shadow: 0 0 14px rgba(0,212,255,0.3); }
+    .card-status-badge.expired { background: rgba(100,100,100,0.5); color: #aaa; }
+    .card-status-badge.revoked { background: var(--ss-rose); color: #fff; box-shadow: 0 0 14px rgba(244,63,94,0.3); }
+
+    /* Tilt states */
+    .premium-id-card.is-tilting { transition: none; }
+    .premium-id-card.is-resetting { transition: transform 0.55s cubic-bezier(.16,1,.3,1); }
     </style>
 
     <!-- Profile Card -->
@@ -252,5 +335,48 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const card = document.getElementById('profileCard');
+    if (!card) return;
+
+    let tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function tick() {
+        cx = lerp(cx, tx, 0.08);
+        cy = lerp(cy, ty, 0.08);
+        card.style.transform = `perspective(800px) rotateY(${cx}deg) rotateX(${cy}deg)`;
+        if (Math.abs(cx - tx) > 0.01 || Math.abs(cy - ty) > 0.01) {
+            raf = requestAnimationFrame(tick);
+        } else {
+            raf = null;
+        }
+    }
+
+    card.addEventListener('mouseenter', function() {
+        card.classList.add('is-tilting');
+        card.classList.remove('is-resetting');
+    });
+
+    card.addEventListener('mousemove', function(e) {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width;
+        const py = (e.clientY - r.top) / r.height;
+        tx = (px - 0.5) * 18;
+        ty = (0.5 - py) * 12;
+        if (!raf) raf = requestAnimationFrame(tick);
+    });
+
+    card.addEventListener('mouseleave', function() {
+        tx = 0; ty = 0;
+        card.classList.remove('is-tilting');
+        card.classList.add('is-resetting');
+        if (!raf) raf = requestAnimationFrame(tick);
+    });
+});
+</script>
 
 </x-user-layout>
