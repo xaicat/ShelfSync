@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShelfSync — Your University Digital Library</title>
     <meta name="description" content="Search books, get a Digital ID Card, and rent from the DIU library — all in one place.">
-    <link rel="icon" type="image/svg+xml" href="{{ asset('img/fivicon.svg') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('img/favicon.svg') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
     <!-- Poppins — clean geometric sans for the entire landing page -->
@@ -435,7 +435,7 @@
     /* Background scrolling text */
     .features-bg-text{position:absolute;top:50%;left:0;width:200%;white-space:nowrap;font-size:6rem;font-weight:700;color:rgba(255,255,255,0.015);letter-spacing:0.05em;pointer-events:none;animation:featureBgScroll 40s linear infinite;transform:translateY(-50%);}
     @keyframes featureBgScroll{0%{transform:translateY(-50%) translateX(0);}100%{transform:translateY(-50%) translateX(-50%);}}
-    .bento-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;position:relative;z-index:1;}
+    .bento-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-flow:dense;gap:16px;position:relative;z-index:1;}
     .bento-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:var(--r-card);padding:28px;position:relative;overflow:hidden;transition:transform 0.35s cubic-bezier(.16,1,.3,1),border-color 0.3s,box-shadow 0.35s;}
     .bento-card:hover{transform:translateY(-6px);border-color:rgba(0,212,255,0.25);box-shadow:0 20px 50px rgba(0,0,0,0.4),0 0 30px rgba(0,212,255,0.06);}
     .bento-card.large{grid-column:span 2;}
@@ -967,7 +967,6 @@
 <footer class="landing-footer">
     <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
         <img src="{{ asset('img/shelfsync.svg') }}" height="24" alt="ShelfSync">
-        <span style="font-family:var(--ss-font-display);font-weight:700;font-size:0.92rem;color:var(--ss-text-3);">ShelfSync</span>
     </a>
     <div class="footer-links">
         <a href="#search">Search Books</a>
