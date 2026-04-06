@@ -8,6 +8,15 @@
 .books-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:22px; }
 .books-count { font-size:0.82rem;color:var(--ss-text-2);margin-left:auto;white-space:nowrap; }
 #no-results { display:none;text-align:center;padding:80px 0; }
+.bai-trigger {
+    width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
+    background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.15);
+    color: var(--ss-cyan); font-size: 0.72rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s; opacity: 0.6;
+}
+.book-card:hover .bai-trigger { opacity: 1; }
+.bai-trigger:hover { background: rgba(0,212,255,0.18); transform: scale(1.1); opacity: 1; }
 </style>
 
 <div class="books-page">
@@ -81,7 +90,12 @@
 
             <!-- Body -->
             <div class="book-card-body">
-                <div class="book-card-cat">{{ $book->category->name ?? 'General' }}</div>
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
+                    <div class="book-card-cat">{{ $book->category->name ?? 'General' }}</div>
+                    <button class="bai-trigger" onclick="event.stopPropagation();BookAI.open({{ $book->id }}, '{{ addslashes($book->name) }}', '{{ addslashes($book->author ?? 'Unknown') }}', '{{ $book->image ?? asset('img/no-cover.svg') }}')" title="AI Book Info">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
                 <div class="book-card-title" title="{{ $book->name }}">{{ $book->name }}</div>
                 <div class="book-card-author">{{ $book->author ?? 'Unknown Author' }}</div>
                 <div class="book-card-footer">

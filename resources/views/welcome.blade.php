@@ -271,27 +271,44 @@
     .avail-section{padding:100px 24px 80px;}
     .avail-inner{max-width:1200px;margin:0 auto;}
     .avail-header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:48px;}
-    .book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:20px;}
+    .book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:22px;}
     .bcard{
         background:rgba(255,255,255,0.03);
         border:1px solid rgba(255,255,255,0.07);
-        border-radius:var(--r-card);overflow:hidden;
+        border-radius:16px;overflow:hidden;
         position:relative;
         transition:transform 0.38s cubic-bezier(.16,1,.3,1),border-color 0.3s,box-shadow 0.38s;
     }
-    .bcard:hover{transform:translateY(-10px);border-color:rgba(0,212,255,0.3);box-shadow:0 24px 60px rgba(0,0,0,0.5),0 0 40px rgba(0,212,255,0.07);}
-    .bcard-cover{width:100%;height:240px;object-fit:cover;display:block;}
-    .bcard-cover-ph{width:100%;height:240px;background:linear-gradient(160deg,rgba(0,212,255,0.09),rgba(124,58,237,0.09));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
-    .bcard-cover-ph i{font-size:2.4rem;color:rgba(0,212,255,0.22);}
+    .bcard:hover{transform:translateY(-6px);border-color:rgba(0,212,255,0.2);box-shadow:0 20px 50px rgba(0,0,0,0.4);}
+    .bcard-cover-wrap{position:relative;overflow:hidden;height:260px;background:rgba(255,255,255,0.02);}
+    .bcard-cover{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s cubic-bezier(.16,1,.3,1);}
+    .bcard:hover .bcard-cover{transform:scale(1.05);}
+    .bcard-cover-ph{width:100%;height:260px;background:linear-gradient(160deg,rgba(0,212,255,0.06),rgba(124,58,237,0.06));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
+    .bcard-cover-ph i{font-size:2.4rem;color:rgba(0,212,255,0.18);}
     .bcard-cover-ph span{font-size:0.7rem;color:var(--ss-text-3);text-align:center;padding:0 14px;}
-    .bcard-body{padding:16px;}
-    .bcard-title{font-size:0.88rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
-    .bcard-author{font-size:0.73rem;color:var(--ss-text-3);}
-    .bcard-qty{position:absolute;top:12px;right:12px;background:rgba(10,10,11,0.8);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r-pill);padding:3px 11px;font-size:0.65rem;font-weight:700;color:var(--ss-electric);}
+    .bcard-qty{position:absolute;top:12px;right:12px;background:rgba(10,10,11,0.75);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:3px 10px;font-size:0.62rem;font-weight:700;color:var(--ss-electric);letter-spacing:0.02em;z-index:2;}
+    .bcard-body{padding:14px 16px 16px;}
+    .bcard-cat{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ss-cyan);margin-bottom:6px;opacity:0.7;}
+    .bcard-title{font-size:0.85rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;line-height:1.3;}
+    .bcard-author{font-size:0.72rem;color:var(--ss-text-3);margin-bottom:12px;}
+    .bcard-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+    .bcard-price{font-size:0.85rem;font-weight:700;color:var(--ss-electric);}
+    /* AI trigger */
+    .bcard .bai-trigger{
+        position:absolute;top:12px;left:12px;z-index:2;
+        width:28px;height:28px;border-radius:8px;
+        background:rgba(10,10,11,0.75);backdrop-filter:blur(10px);border:1px solid rgba(0,212,255,0.15);
+        color:var(--ss-cyan);font-size:0.72rem;
+        display:flex;align-items:center;justify-content:center;
+        cursor:pointer;transition:all 0.2s;opacity:0;
+    }
+    .bcard:hover .bai-trigger{opacity:1;}
+    .bcard .bai-trigger:hover{background:rgba(0,212,255,0.15);transform:scale(1.1);}
     /* Hover CTA overlay */
-    .bcard-hover-layer{position:absolute;inset:0;border-radius:var(--r-card);background:linear-gradient(to top,rgba(0,0,0,0.88) 0%,transparent 55%);display:flex;align-items:flex-end;justify-content:center;padding-bottom:18px;opacity:0;transition:opacity 0.3s;}
-    .bcard:hover .bcard-hover-layer{opacity:1;}
-    .bcard-rent-btn{background:linear-gradient(135deg,var(--ss-cyan),var(--ss-blue));color:#fff;border:none;padding:10px 24px;border-radius:var(--r-pill);font-size:0.8rem;font-weight:700;text-decoration:none;display:inline-block;}
+    .bcard-hover-layer{position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,transparent 50%);display:flex;align-items:flex-end;justify-content:center;padding-bottom:18px;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+    .bcard:hover .bcard-hover-layer{opacity:1;pointer-events:auto;}
+    .bcard-rent-btn{background:linear-gradient(135deg,var(--ss-cyan),var(--ss-blue));color:#fff;border:none;padding:9px 22px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none;display:inline-block;transition:transform 0.2s,box-shadow 0.2s;}
+    .bcard-rent-btn:hover{transform:scale(1.04);box-shadow:0 4px 16px rgba(0,212,255,0.3);color:#fff;text-decoration:none;}
 
     /* ═══════════════════════════════════════════════════
        § 4 — DIGITAL ACCESS SHOWCASE
@@ -432,8 +449,8 @@
     .features-section{padding:100px 24px;position:relative;overflow:hidden;}
     .features-inner{max-width:1100px;margin:0 auto;}
     .features-header{text-align:center;margin-bottom:56px;}
-    /* Background scrolling text */
-    .features-bg-text{position:absolute;top:50%;left:0;width:200%;white-space:nowrap;font-size:6rem;font-weight:700;color:rgba(255,255,255,0.015);letter-spacing:0.05em;pointer-events:none;animation:featureBgScroll 40s linear infinite;transform:translateY(-50%);}
+    /* Background scrolling text — outlined stroke style */
+    .features-bg-text{position:absolute;top:50%;left:0;width:200%;white-space:nowrap;font-size:7rem;font-weight:800;letter-spacing:0.06em;pointer-events:none;animation:featureBgScroll 40s linear infinite;transform:translateY(-50%);color:transparent;-webkit-text-stroke:1px rgba(255,255,255,0.04);text-transform:uppercase;}
     @keyframes featureBgScroll{0%{transform:translateY(-50%) translateX(0);}100%{transform:translateY(-50%) translateX(-50%);}}
     .bento-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-flow:dense;gap:16px;position:relative;z-index:1;}
     .bento-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:var(--r-card);padding:28px;position:relative;overflow:hidden;transition:transform 0.35s cubic-bezier(.16,1,.3,1),border-color 0.3s,box-shadow 0.35s;}
@@ -651,24 +668,33 @@
         <div class="book-grid">
             @forelse($availableBooks as $book)
             <div class="bcard">
-                @if($book->image && filter_var($book->image, FILTER_VALIDATE_URL))
-                    <img class="bcard-cover" src="{{ $book->image }}" alt="{{ $book->name }}"
-                         onerror="this.parentNode.querySelector('.bcard-cover-ph').style.display='flex';this.style.display='none';">
-                    <div class="bcard-cover-ph" style="display:none;"><i class="fas fa-book"></i><span>{{ Str::limit($book->name, 28) }}</span></div>
-                @else
-                    <div class="bcard-cover-ph"><i class="fas fa-book"></i><span>{{ Str::limit($book->name, 28) }}</span></div>
-                @endif
-                <span class="bcard-qty">{{ $book->quantity }} left</span>
-                <div class="bcard-hover-layer">
-                    @auth
-                        <a href="{{ route('user.rent', $book->id) }}" class="bcard-rent-btn">Rent This Book</a>
+                <div class="bcard-cover-wrap">
+                    @if($book->image && filter_var($book->image, FILTER_VALIDATE_URL))
+                        <img class="bcard-cover" src="{{ $book->image }}" alt="{{ $book->name }}"
+                             onerror="this.parentNode.querySelector('.bcard-cover-ph').style.display='flex';this.style.display='none';">
+                        <div class="bcard-cover-ph" style="display:none;"><i class="fas fa-book"></i><span>{{ Str::limit($book->name, 28) }}</span></div>
                     @else
-                        <a href="{{ route('login') }}" class="bcard-rent-btn">Login to Rent</a>
-                    @endauth
+                        <div class="bcard-cover-ph"><i class="fas fa-book"></i><span>{{ Str::limit($book->name, 28) }}</span></div>
+                    @endif
+                    <span class="bcard-qty">{{ $book->quantity }} left</span>
+                    <button class="bai-trigger" onclick="event.stopPropagation();BookAI.open({{ $book->id }}, '{{ addslashes($book->name) }}', '{{ addslashes($book->author ?? 'Unknown') }}', '{{ $book->image ?? asset('img/no-cover.svg') }}')" title="AI Book Info">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
                 </div>
                 <div class="bcard-body">
-                    <div class="bcard-title">{{ $book->name }}</div>
+                    <div class="bcard-cat">{{ $book->category->name ?? 'General' }}</div>
+                    <div class="bcard-title" title="{{ $book->name }}">{{ $book->name }}</div>
                     <div class="bcard-author">{{ $book->author ?? 'Unknown Author' }}</div>
+                    <div class="bcard-footer">
+                        <span class="bcard-price">৳{{ number_format($book->price, 0) }}</span>
+                        @auth
+                            <a href="{{ route('user.rent', $book->id) }}" class="ss-btn ss-btn-primary ss-btn-sm" style="font-size:0.7rem;padding:5px 14px;">
+                                <i class="fas fa-bookmark"></i> Rent
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="ss-btn ss-btn-ghost ss-btn-sm" style="font-size:0.7rem;padding:5px 14px;">Login</a>
+                        @endauth
+                    </div>
                 </div>
             </div>
             @empty
@@ -1157,6 +1183,7 @@ function toggleFaq(el) {
 }
 </script>
 
+@include('components.book-ai-modal')
 @include('components.global-fx')
 </body>
 </html>

@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AiController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -11,6 +12,14 @@ Route::get('/', [UserController::class, 'index'])->name('home');
 Route::get('/user/books', [UserController::class, 'showBooks'])->name('user.books');
 Route::get('/contact', [UserController::class, 'contact'])->name('contact');
 Route::post('/contact', [UserController::class, 'submitContact'])->name('contact.submit');
+
+// ── AI BOOK ASSISTANT (public, guest-accessible) ─────────────
+Route::middleware('throttle:15,1')->group(function () {
+    Route::post('/api/book-ai/info',    [AiController::class, 'bookInfo'])->name('api.book.ai.info');
+    Route::post('/api/book-ai/chat',    [AiController::class, 'bookChat'])->name('api.book.ai.chat');
+    Route::post('/api/book-ai/history', [AiController::class, 'chatHistory'])->name('api.book.ai.history');
+    Route::delete('/api/book-ai/history', [AiController::class, 'clearHistory'])->name('api.book.ai.clear');
+});
 
 // ── DASHBOARD REDIRECT ────────────────────────────────────────
 Route::get('/dashboard', function () {
