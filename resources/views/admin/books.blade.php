@@ -64,6 +64,10 @@
                     <td style="font-weight:700;color:var(--ss-electric);">৳{{ number_format($book->price, 0) }}</td>
                     <td style="text-align:center;white-space:nowrap;">
                         <div style="display:inline-flex;gap:8px;">
+                            <button class="ss-btn ss-btn-ghost ss-btn-sm" style="color:var(--ss-cyan);border-color:rgba(0,212,255,0.2);"
+                                onclick="BookAI.open({{ $book->id }}, '{{ addslashes($book->name) }}', '{{ addslashes($book->author ?? 'Unknown') }}', '{{ $book->image ?? asset('img/no-cover.svg') }}')" title="AI Book Info">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
                             <a href="{{ route('admin.books.edit', $book->id) }}" class="ss-btn ss-btn-ghost ss-btn-sm">
                                 <i class="fas fa-edit"></i>
                             </a>

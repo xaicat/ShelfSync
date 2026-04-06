@@ -276,6 +276,7 @@ if (avatarBtn && avatarDropdown) {
 }
 </script>
 {{ $scripts ?? '' }}
+@include('components.book-ai-modal')
 @include('components.global-fx')
 </body>
 </html>
