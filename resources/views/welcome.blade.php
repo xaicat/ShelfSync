@@ -8,34 +8,43 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset('img/fivicon.svg') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
+    <!-- Poppins — clean geometric sans for the entire landing page -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/shelfsync.css') }}">
     <style>
     /* ═══════════════════════════════════════════════════
        LANDING — DESIGN SYSTEM
     ═══════════════════════════════════════════════════ */
+    /* ── Landing-page luxury font variables (override shelfsync globals) ── */
     :root {
-        --gold: #f59e0b;
+        --gold:   #f59e0b;
         --r-card: 24px;
         --r-pill: 100px;
         --r-input: 18px;
+        /* Poppins everywhere */
+        --lp-font: 'Poppins', system-ui, sans-serif;
     }
     html { scroll-behavior: smooth; }
-    body {
-        background: var(--ss-bg);
-        color: var(--ss-text);
-        font-family: var(--ss-font);
-        font-weight: 400;
-        line-height: 1.6;
-        overflow-x: hidden;
+
+    /* ── Core font rendering — beats shelfsync.css ── */
+    body.welcome-page {
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+        text-rendering: optimizeLegibility !important;
+        font-family: var(--lp-font) !important;
+        font-weight: 400 !important;
+        line-height: 1.7 !important;
         padding-top: 0 !important;
-        /* ── Crisp sub-pixel font rendering ── */
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-rendering: optimizeLegibility;
     }
-    /* Tighten only heading weights — remove bulkiness */
-    h1,h2,h3,h4 { font-weight: 700; letter-spacing: -0.02em; }
-    p { line-height: 1.65; }
+
+    /* Heading weight hierarchy — Poppins everywhere */
+    body.welcome-page h1 { font-family: var(--lp-font) !important; font-weight: 700 !important; letter-spacing: -0.02em !important; }
+    body.welcome-page h2 { font-family: var(--lp-font) !important; font-weight: 600 !important; letter-spacing: -0.02em !important; }
+    body.welcome-page h3 { font-family: var(--lp-font) !important; font-weight: 500 !important; }
+    body.welcome-page h4 { font-family: var(--lp-font) !important; font-weight: 500 !important; }
+    body.welcome-page p  { font-family: var(--lp-font) !important; font-weight: 400 !important; line-height: 1.75 !important; color: rgba(255,255,255,0.6); }
 
     /* Ambient drifting orbs */
     .orb {
@@ -50,9 +59,22 @@
     body>*{position:relative;z-index:1;}
 
     /* ── Shared components ── */
-    .pill-tag{display:inline-flex;align-items:center;gap:7px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:2.5px;color:var(--ss-cyan);background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.2);padding:5px 16px;border-radius:var(--r-pill);margin-bottom:18px;}
-    .section-title{font-family:var(--ss-font-display);font-size:clamp(2rem,4vw,3rem);font-weight:700;letter-spacing:-0.025em;line-height:1.12;margin-bottom:14px;}
-    .section-sub{color:var(--ss-text-2);font-size:0.95rem;line-height:1.7;max-width:520px;}
+    .pill-tag{
+        display:inline-flex;align-items:center;gap:7px;
+        font-size:0.68rem;font-weight:500;text-transform:uppercase;letter-spacing:3px;
+        color:var(--ss-cyan);background:rgba(0,212,255,0.07);
+        border:1px solid rgba(0,212,255,0.2);
+        padding:5px 16px;border-radius:var(--r-pill);margin-bottom:18px;
+    }
+    .section-title{
+        font-size:clamp(1.8rem,3.8vw,2.8rem);
+        font-weight:600 !important;
+        letter-spacing:-0.02em;
+        line-height:1.15;
+        margin-bottom:14px;
+        color:#fff;
+    }
+    .section-sub{color:rgba(255,255,255,0.6);font-size:0.95rem;line-height:1.75;font-weight:400 !important;max-width:520px;}
     .btn-primary-ss{display:inline-flex;align-items:center;gap:9px;padding:14px 32px;border-radius:var(--r-pill);font-size:0.88rem;font-weight:700;text-decoration:none;color:#fff;background:linear-gradient(135deg,var(--ss-cyan),var(--ss-blue));box-shadow:0 8px 28px rgba(0,212,255,0.28);transition:all 0.3s cubic-bezier(.16,1,.3,1);border:none;letter-spacing:0.02em;}
     .btn-primary-ss:hover{transform:translateY(-3px);box-shadow:0 14px 38px rgba(0,212,255,0.42);color:#fff;}
     .btn-ghost-ss{display:inline-flex;align-items:center;gap:9px;padding:14px 32px;border-radius:var(--r-pill);font-size:0.88rem;font-weight:600;text-decoration:none;color:var(--ss-text-2);border:1px solid rgba(255,255,255,0.13);background:rgba(255,255,255,0.04);transition:all 0.28s;letter-spacing:0.02em;}
@@ -62,27 +84,48 @@
     .section-divider{border:none;border-top:1px solid rgba(255,255,255,0.05);margin:0;}
 
     /* ═══════════════════════════════════════════════════
-       § 0 — NAVBAR (pill, fully preserved)
+       § 0 — NAVBAR — exact premium glassmorphic recipe
     ═══════════════════════════════════════════════════ */
     .ss-nav-float-wrap{position:fixed;top:20px;left:50%;transform:translateX(-50%);width:calc(100% - 48px);max-width:1200px;z-index:9000;}
-    .ss-navbar-pill{
-        width:100%;display:flex;align-items:center;flex-wrap:nowrap;padding:9px 20px;
-        border-radius:var(--r-pill);
-        background:rgba(10,10,11,0.78);
-        backdrop-filter:blur(40px) saturate(2);
-        -webkit-backdrop-filter:blur(40px) saturate(2);
-        border:1px solid rgba(255,255,255,0.08);
-        /* Softer, diffused shadow — not heavy */
-        box-shadow:0 4px 30px rgba(0,0,0,0.18),0 1px 0 rgba(255,255,255,0.05) inset;
-        transition:border-color 0.35s,box-shadow 0.35s;
+    .ss-navbar-pill {
+        width:100% !important;
+        display:flex !important;
+        align-items:center !important;
+        flex-wrap:nowrap !important;
+        padding:9px 22px !important;
+        border-radius:9999px !important;
+        /* Exact premium recipe */
+        background:rgba(10,10,12,0.65) !important;
+        backdrop-filter:blur(24px) saturate(1.5) !important;
+        -webkit-backdrop-filter:blur(24px) saturate(1.5) !important;
+        border:none !important;
+        border-bottom:1px solid rgba(255,255,255,0.08) !important;
+        box-shadow:0 4px 30px rgba(0,0,0,0.1) !important;
+        transition:background 0.4s ease, box-shadow 0.4s ease !important;
     }
-    .ss-navbar-pill:hover{
-        border-color:rgba(255,255,255,0.12);
-        box-shadow:0 6px 36px rgba(0,0,0,0.22),0 0 0 1px rgba(0,212,255,0.04),0 1px 0 rgba(255,255,255,0.06) inset;
+    .ss-navbar-pill:hover {
+        background: rgba(10,10,12,0.78) !important;
+        box-shadow: 0 6px 40px rgba(0,0,0,0.15) !important;
     }
-    /* Smoother nav-link hover transitions */
-    .ss-nav-link{ transition:color 0.2s ease, background 0.2s ease !important; }
-    .ss-nav-sep{width:1px;height:20px;background:rgba(255,255,255,0.1);margin:0 8px;flex-shrink:0;}
+    /* Elegant nav-link hover — soft fade, perfectly rounded */
+    .ss-nav-float-wrap .ss-nav-link {
+        border-radius: 99px !important;
+        padding: 6px 14px !important;
+        font-weight: 400 !important;
+        font-size: 0.85rem !important;
+        color: rgba(255,255,255,0.55) !important;
+        transition: color 0.22s ease, background 0.22s ease !important;
+        background: transparent !important;
+    }
+    .ss-nav-float-wrap .ss-nav-link:hover {
+        color: rgba(255,255,255,0.9) !important;
+        background: rgba(255,255,255,0.05) !important;
+    }
+    .ss-nav-float-wrap .ss-nav-link.active {
+        color: var(--ss-cyan) !important;
+        background: rgba(0,212,255,0.08) !important;
+    }
+    .ss-nav-sep{width:1px;height:18px;background:rgba(255,255,255,0.1);margin:0 8px;flex-shrink:0;}
 
     /* ═══════════════════════════════════════════════════
        § 1 — HERO
@@ -93,67 +136,125 @@
         text-align:center;padding:130px 24px 80px;
         position:relative;
     }
-    .hero-kicker{display:inline-flex;align-items:center;gap:8px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--ss-cyan);border:1px solid rgba(0,212,255,0.22);background:rgba(0,212,255,0.07);padding:7px 20px;border-radius:var(--r-pill);margin-bottom:36px;animation:fadeUp 0.8s ease both;}
-    .hero-h1{font-family:var(--ss-font-display);font-size:clamp(3rem,7.5vw,6rem);font-weight:800;line-height:1.05;letter-spacing:-0.035em;margin-bottom:26px;animation:fadeUp 0.9s ease 0.1s both;}
-    .hero-h1 .grad{background:linear-gradient(110deg,var(--ss-cyan),var(--ss-violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .hero-p{max-width:520px;font-size:1.08rem;line-height:1.75;color:var(--ss-text-2);font-weight:400;margin-bottom:44px;animation:fadeUp 0.9s ease 0.2s both;}
+    .hero-kicker{
+        display:inline-flex;align-items:center;gap:8px;
+        font-size:0.7rem;font-weight:500;text-transform:uppercase;letter-spacing:3px;
+        color:var(--ss-cyan);border:1px solid rgba(0,212,255,0.22);
+        background:rgba(0,212,255,0.07);padding:7px 20px;
+        border-radius:var(--r-pill);margin-bottom:36px;
+        animation:fadeUp 0.8s ease both;
+    }
+    .hero-h1{
+        font-size: clamp(2.8rem, 6.5vw, 5rem) !important;
+        font-weight: 700 !important;
+        line-height: 1.1 !important;
+        letter-spacing: -0.02em !important;
+        margin-bottom: 24px;
+        color: #fff;
+        animation: fadeUp 0.9s ease 0.1s both;
+    }
+    .hero-h1 .grad{
+        background:linear-gradient(110deg, var(--ss-cyan), var(--ss-violet));
+        -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+        font-weight: 700 !important;
+    }
+    .hero-p{
+        max-width:520px;font-size:1rem;line-height:1.8;
+        color:rgba(255,255,255,0.6);font-weight:400 !important;
+        margin-bottom:44px;animation:fadeUp 0.9s ease 0.2s both;
+    }
     .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;animation:fadeUp 0.9s ease 0.3s both;}
 
     /* Live stat strip */
-    .hero-stats{margin-top:72px;display:flex;gap:48px;justify-content:center;flex-wrap:wrap;animation:fadeUp 1s ease 0.45s both;}
+    .hero-stats{margin-top:72px;display:flex;gap:52px;justify-content:center;flex-wrap:wrap;animation:fadeUp 1s ease 0.45s both;}
     .hs{text-align:center;}
-    .hs-n{font-family:var(--ss-font-display);font-size:2.6rem;font-weight:800;line-height:1;}
-    .hs-l{font-size:0.7rem;color:var(--ss-text-3);letter-spacing:2px;text-transform:uppercase;margin-top:6px;}
+    .hs-n{font-size:2.4rem;font-weight:600 !important;line-height:1;letter-spacing:-0.02em;}
+    .hs-l{font-size:0.65rem;color:var(--ss-text-3);letter-spacing:3px;text-transform:uppercase;margin-top:8px;font-weight:500;}
     .hs-div{width:1px;height:50px;background:rgba(255,255,255,0.08);margin:auto 0;}
 
     /* ═══════════════════════════════════════════════════
        § 2 — SMART SEARCH SANDBOX
+       NOTE: shelfsync.css applies border-radius:var(--ss-r-sm)!important
+       to ALL inputs. Every rule here uses !important to win that fight.
     ═══════════════════════════════════════════════════ */
     .search-section{padding:100px 24px;text-align:center;}
     .search-wrap{display:flex;flex-direction:column;align-items:center;}
+
+    /* Pill container */
     .search-bar{
         position:relative;width:100%;max-width:700px;
-        background:rgba(255,255,255,0.04);
-        border:1px solid rgba(255,255,255,0.09);
-        /* Full pill shape */
-        border-radius:9999px;
-        padding:6px 6px 6px 28px;
-        display:flex;align-items:center;gap:12px;
+        background:rgba(255,255,255,0.04) !important;
+        border:1px solid rgba(255,255,255,0.09) !important;
+        border-radius:9999px !important;
+        padding:5px 5px 5px 26px !important;
+        display:flex;align-items:center;gap:10px;
         backdrop-filter:blur(20px);
+        box-shadow:none !important;
         transition:border-color 0.28s,box-shadow 0.28s;
     }
     .search-bar:focus-within{
-        border-color:rgba(0,212,255,0.5);
-        /* Soft cyan glow — no harsh browser outline */
-        box-shadow:0 0 0 4px rgba(0,212,255,0.1),0 8px 40px rgba(0,0,0,0.25);
-        outline:none;
+        border-color:rgba(0,212,255,0.5) !important;
+        box-shadow:0 0 0 4px rgba(0,212,255,0.09),0 8px 40px rgba(0,0,0,0.2) !important;
     }
-    #live-search-input{
-        flex:1;background:transparent;border:none;outline:none;
-        color:var(--ss-text);font-size:0.97rem;
-        padding:13px 0;font-family:var(--ss-font);font-weight:400;
-        letter-spacing:0.01em;
+
+    /* Override shelfsync.css global input rule entirely */
+    .search-bar #live-search-input,
+    .search-bar input[type="text"] {
+        flex:1 !important;
+        background:transparent !important;
+        border:none !important;
+        outline:none !important;
+        box-shadow:none !important;
+        border-radius:0 !important;           /* flat inside pill container */
+        padding:13px 4px !important;
+        color:var(--ss-text) !important;
+        font-size:0.95rem !important;
+        font-family:var(--lp-font) !important;
+        font-weight:300 !important;
+        letter-spacing:0.01em !important;
+        width:100% !important;
+        -webkit-appearance:none !important;
+        appearance:none !important;
     }
-    #live-search-input:focus{outline:none;box-shadow:none;}
-    .search-ico{color:var(--ss-text-3);font-size:0.95rem;}
-    /* Submit button also pill-shaped */
-    .search-submit-btn{
-        background:linear-gradient(135deg,var(--ss-cyan),var(--ss-blue));
-        color:#fff;border:none;
-        padding:13px 28px;
-        border-radius:9999px;
-        font-weight:700;font-size:0.82rem;letter-spacing:0.04em;flex-shrink:0;
-        transition:box-shadow 0.25s,transform 0.25s;
+    .search-bar #live-search-input:focus {
+        outline:none !important;
+        box-shadow:none !important;
+        border-color:transparent !important;
+        background:transparent !important;
     }
-    .search-submit-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,212,255,0.3);}
+
+    .search-ico{color:var(--ss-text-3);font-size:0.9rem;flex-shrink:0;}
+
+    /* Submit pill — must also win against Bootstrap .btn */
+    .search-submit-btn {
+        background:linear-gradient(135deg,var(--ss-cyan),var(--ss-blue)) !important;
+        color:#fff !important;
+        border:none !important;
+        padding:12px 26px !important;
+        border-radius:9999px !important;
+        font-weight:600 !important;
+        font-size:0.8rem !important;
+        letter-spacing:0.04em !important;
+        flex-shrink:0 !important;
+        box-shadow:none !important;
+        transition:box-shadow 0.25s,transform 0.25s !important;
+        cursor:pointer !important;
+    }
+    .search-submit-btn:hover {
+        transform:translateY(-1px) !important;
+        box-shadow:0 6px 22px rgba(0,212,255,0.32) !important;
+        color:#fff !important;
+    }
+
+    /* Results dropdown */
     .search-results-drop{
-        width:100%;max-width:700px;margin-top:6px;
+        width:100%;max-width:700px;margin-top:8px;
         background:rgba(8,8,12,0.98);
-        border:1px solid rgba(0,212,255,0.2);
-        border-radius:20px;
+        border:1px solid rgba(0,212,255,0.18);
+        border-radius:20px !important;
         overflow:hidden;display:none;
-        backdrop-filter:blur(24px);
-        box-shadow:0 20px 60px rgba(0,0,0,0.5);
+        backdrop-filter:blur(28px);
+        box-shadow:0 24px 60px rgba(0,0,0,0.55);
     }
     .sri{display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.2s;text-decoration:none;color:var(--ss-text);}
     .sri:last-child{border-bottom:none;}
@@ -223,7 +324,7 @@
         transition:transform 0.12s ease-out;
         animation:cardFloat 6s ease-in-out infinite alternate;
     }
-    .id-card.is-tilting { animation-play-state:paused; }
+    .id-card.is-tilting { animation:none !important; }
     .id-card.is-resetting { transition:transform 0.55s cubic-bezier(.16,1,.3,1); }
     @keyframes cardFloat{
         0%  {transform:perspective(1000px) rotateY(-8deg) rotateX(4deg) translateY(0);}
@@ -282,8 +383,8 @@
     }
     .cta-banner::before{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,0.1),transparent);top:-150px;left:-100px;pointer-events:none;}
     .cta-banner::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,0.1),transparent);bottom:-100px;right:-80px;pointer-events:none;}
-    .cta-banner h2{font-family:var(--ss-font-display);font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-0.03em;margin-bottom:16px;position:relative;}
-    .cta-banner p{color:var(--ss-text-2);font-size:1rem;line-height:1.7;max-width:480px;margin:0 auto 36px;position:relative;}
+    .cta-banner h2{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:600 !important;letter-spacing:-0.02em;margin-bottom:16px;position:relative;color:#fff;}
+    .cta-banner p{color:rgba(255,255,255,0.6);font-size:0.95rem;line-height:1.75;font-weight:400 !important;max-width:480px;margin:0 auto 36px;position:relative;}
     .cta-banner-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;}
 
     /* ═══════════════════════════════════════════════════
@@ -295,20 +396,89 @@
     .footer-links a:hover{color:var(--ss-cyan);}
     @media(max-width:640px){.landing-footer{flex-direction:column;text-align:center;padding:32px 20px;}.footer-links{justify-content:center;}}
 
+    /* ═══════════════════════════════════════════════════
+       § NEW-A — INFINITE MARQUEE STRIP
+    ═══════════════════════════════════════════════════ */
+    .marquee-section{padding:0;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);background:rgba(0,212,255,0.02);}
+    .marquee-track{display:flex;width:max-content;animation:marqueeScroll 30s linear infinite;}
+    .marquee-track:hover{animation-play-state:paused;}
+    .marquee-item{display:inline-flex;align-items:center;gap:10px;padding:18px 40px;font-size:0.82rem;font-weight:500;color:rgba(255,255,255,0.5);white-space:nowrap;letter-spacing:0.02em;}
+    .marquee-item i{font-size:0.9rem;color:var(--ss-cyan);opacity:0.7;}
+    .marquee-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.15);flex-shrink:0;margin:0 8px;}
+    @keyframes marqueeScroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
+    /* ═══════════════════════════════════════════════════
+       § NEW-B — JOURNEY TIMELINE
+    ═══════════════════════════════════════════════════ */
+    .timeline-section{padding:100px 24px;text-align:center;}
+    .timeline-inner{max-width:1100px;margin:0 auto;}
+    .timeline-track{display:flex;align-items:flex-start;justify-content:center;position:relative;margin-top:56px;gap:0;}
+    /* The connecting line */
+    .timeline-track::before{content:'';position:absolute;top:32px;left:12%;right:12%;height:2px;background:linear-gradient(90deg,var(--ss-cyan),var(--ss-violet),var(--ss-electric));opacity:0.3;border-radius:2px;}
+    .timeline-node{flex:1;max-width:220px;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;padding:0 12px;cursor:default;}
+    .timeline-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:20px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);backdrop-filter:blur(12px);transition:all 0.35s cubic-bezier(.16,1,.3,1);position:relative;}
+    .timeline-circle::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px solid transparent;transition:border-color 0.35s,box-shadow 0.35s;}
+    .timeline-node:hover .timeline-circle{transform:scale(1.15);border-color:var(--ss-cyan);background:rgba(0,212,255,0.08);box-shadow:0 0 30px rgba(0,212,255,0.2);}
+    .timeline-node:hover .timeline-circle::after{border-color:rgba(0,212,255,0.2);box-shadow:0 0 20px rgba(0,212,255,0.1);}
+    .timeline-num{font-size:0.6rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--ss-text-3);margin-bottom:10px;transition:color 0.3s;}
+    .timeline-node:hover .timeline-num{color:var(--ss-cyan);}
+    .timeline-title{font-size:0.92rem;font-weight:600;color:#fff;margin-bottom:8px;transition:color 0.3s;}
+    .timeline-desc{font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:1.6;max-height:0;overflow:hidden;opacity:0;transition:max-height 0.4s ease,opacity 0.35s ease;}
+    .timeline-node:hover .timeline-desc{max-height:80px;opacity:1;}
+
+    /* ═══════════════════════════════════════════════════
+       § NEW-C — FEATURE SHOWCASE (BENTO GRID)
+    ═══════════════════════════════════════════════════ */
+    .features-section{padding:100px 24px;position:relative;overflow:hidden;}
+    .features-inner{max-width:1100px;margin:0 auto;}
+    .features-header{text-align:center;margin-bottom:56px;}
+    /* Background scrolling text */
+    .features-bg-text{position:absolute;top:50%;left:0;width:200%;white-space:nowrap;font-size:6rem;font-weight:700;color:rgba(255,255,255,0.015);letter-spacing:0.05em;pointer-events:none;animation:featureBgScroll 40s linear infinite;transform:translateY(-50%);}
+    @keyframes featureBgScroll{0%{transform:translateY(-50%) translateX(0);}100%{transform:translateY(-50%) translateX(-50%);}}
+    .bento-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;position:relative;z-index:1;}
+    .bento-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:var(--r-card);padding:28px;position:relative;overflow:hidden;transition:transform 0.35s cubic-bezier(.16,1,.3,1),border-color 0.3s,box-shadow 0.35s;}
+    .bento-card:hover{transform:translateY(-6px);border-color:rgba(0,212,255,0.25);box-shadow:0 20px 50px rgba(0,0,0,0.4),0 0 30px rgba(0,212,255,0.06);}
+    .bento-card.large{grid-column:span 2;}
+    .bento-card .bento-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:18px;border:1px solid rgba(255,255,255,0.07);transition:transform 0.3s,box-shadow 0.3s;}
+    .bento-card:hover .bento-icon{transform:scale(1.1);box-shadow:0 0 20px rgba(0,212,255,0.15);}
+    .bento-card h3{font-size:1rem;font-weight:600;color:#fff;margin-bottom:8px;}
+    .bento-card p{font-size:0.82rem;color:rgba(255,255,255,0.5);line-height:1.65;margin:0;}
+
+    /* ═══════════════════════════════════════════════════
+       § NEW-D — FAQ ACCORDION
+    ═══════════════════════════════════════════════════ */
+    .faq-section{padding:100px 24px;}
+    .faq-inner{max-width:760px;margin:0 auto;}
+    .faq-header{text-align:center;margin-bottom:48px;}
+    .faq-item{border:1px solid rgba(255,255,255,0.07);border-radius:16px;margin-bottom:10px;overflow:hidden;background:rgba(255,255,255,0.02);transition:border-color 0.3s,background 0.3s;}
+    .faq-item.open{border-color:rgba(0,212,255,0.2);background:rgba(0,212,255,0.03);}
+    .faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;cursor:pointer;gap:16px;transition:background 0.2s;}
+    .faq-q:hover{background:rgba(255,255,255,0.02);}
+    .faq-q span{font-size:0.92rem;font-weight:500;color:#fff;}
+    .faq-chevron{font-size:0.7rem;color:var(--ss-text-3);transition:transform 0.3s,color 0.3s;flex-shrink:0;}
+    .faq-item.open .faq-chevron{transform:rotate(180deg);color:var(--ss-cyan);}
+    .faq-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s ease;}
+    .faq-item.open .faq-a{max-height:200px;padding:0 24px 20px;}
+    .faq-a p{font-size:0.85rem;color:rgba(255,255,255,0.55);line-height:1.75;margin:0;}
+
     @keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
     @media(max-width:768px){
         .ss-nav-float-wrap{width:calc(100% - 24px);}
         .hero-ctas{flex-direction:column;align-items:center;}
         .hero-stats{gap:28px;}
-        .avail-section,.search-section,.id-section,.radar-section{padding:70px 20px;}
+        .avail-section,.search-section,.id-section,.radar-section,.timeline-section,.features-section,.faq-section{padding:70px 20px;}
         .cta-banner{padding:48px 24px;margin:40px 16px;}
-        .features-section{padding:80px 20px;}
         .book-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
         .id-card{transform:none;}
+        .timeline-track{flex-direction:column;align-items:center;gap:32px;}
+        .timeline-track::before{display:none;}
+        .timeline-desc{max-height:none;opacity:1;}
+        .bento-grid{grid-template-columns:1fr;}
+        .bento-card.large{grid-column:span 1;}
     }
     </style>
 </head>
-<body>
+<body class="welcome-page">
 
 <!-- Ambient orbs -->
 <div style="position:fixed;inset:0;z-index:0;pointer-events:none;">
@@ -415,6 +585,37 @@
     </div>
 </section>
 
+{{-- ═══════ INFINITE MARQUEE STRIP ═══════ --}}
+<div class="marquee-section">
+    <div class="marquee-track">
+        <div class="marquee-item"><i class="fas fa-book-open"></i> {{ $metrics['books'] }}+ Books Available</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-graduation-cap"></i> DIU Exclusive Platform</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-bolt"></i> Instant Digital Student ID</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-lock"></i> Zero Paperwork Required</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-clock"></i> 24/7 Online Access</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-id-card-alt"></i> Premium Glassmorphic Cards</div>
+        <span class="marquee-dot"></span>
+        <!-- Duplicate for seamless loop -->
+        <div class="marquee-item"><i class="fas fa-book-open"></i> {{ $metrics['books'] }}+ Books Available</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-graduation-cap"></i> DIU Exclusive Platform</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-bolt"></i> Instant Digital Student ID</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-lock"></i> Zero Paperwork Required</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-clock"></i> 24/7 Online Access</div>
+        <span class="marquee-dot"></span>
+        <div class="marquee-item"><i class="fas fa-id-card-alt"></i> Premium Glassmorphic Cards</div>
+        <span class="marquee-dot"></span>
+    </div>
+</div>
+
 <hr class="section-divider">
 
 {{-- ═══════ § 2 — SMART SEARCH SANDBOX ═══════ --}}
@@ -482,6 +683,52 @@
 
 <hr class="section-divider">
 
+{{-- ═══════ JOURNEY TIMELINE ═══════ --}}
+<section class="timeline-section">
+    <div class="timeline-inner">
+        <div class="pill-tag"><i class="fas fa-route"></i> How It Works</div>
+        <h2 class="section-title">From sign-up to your first book.<br><span style="color:var(--ss-cyan);">In 4 simple steps.</span></h2>
+        <p class="section-sub" style="text-align:center;margin:0 auto;">No queues, no forms, no waiting. Here's your journey to unlimited library access.</p>
+
+        <div class="timeline-track">
+            <div class="timeline-node">
+                <div class="timeline-circle" style="color:var(--ss-cyan);">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="timeline-num">Step 01</div>
+                <div class="timeline-title">Register</div>
+                <div class="timeline-desc">Create your account with your student email. Takes under 2 minutes.</div>
+            </div>
+            <div class="timeline-node">
+                <div class="timeline-circle" style="color:var(--ss-violet);">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="timeline-num">Step 02</div>
+                <div class="timeline-title">Get Approved</div>
+                <div class="timeline-desc">A library admin verifies and activates your membership instantly.</div>
+            </div>
+            <div class="timeline-node">
+                <div class="timeline-circle" style="color:var(--ss-electric);">
+                    <i class="fas fa-id-card-alt"></i>
+                </div>
+                <div class="timeline-num">Step 03</div>
+                <div class="timeline-title">Get Your Card</div>
+                <div class="timeline-desc">Your premium glassmorphic Digital ID is generated automatically.</div>
+            </div>
+            <div class="timeline-node">
+                <div class="timeline-circle" style="color:var(--gold);">
+                    <i class="fas fa-book-reader"></i>
+                </div>
+                <div class="timeline-num">Step 04</div>
+                <div class="timeline-title">Rent Books!</div>
+                <div class="timeline-desc">Browse the catalog and rent any available book from your dashboard.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
 {{-- ═══════ § 4 — DIGITAL ACCESS SHOWCASE ═══════ --}}
 <section class="id-section" id="how-it-works">
     <div class="id-inner">
@@ -501,7 +748,7 @@
                     </div>
                 </div>
                 <div class="id-step" data-idstep style="transition-delay:0.12s">
-                    <div class="id-step-icon" style="background:rgba(124,58,237,0.09);color:var(--ss-violet);"><i class="fas fa-shield-check"></i></div>
+                    <div class="id-step-icon" style="background:rgba(124,58,237,0.09);color:var(--ss-violet);"><i class="fas fa-user-check"></i></div>
                     <div class="id-step-body">
                         <h3>Step 2 — Get Admin Approval</h3>
                         <p>A library admin verifies your details and activates your account with a single click.</p>
@@ -611,6 +858,99 @@
 
 <hr class="section-divider">
 
+{{-- ═══════ FEATURE SHOWCASE (BENTO GRID) ═══════ --}}
+<section class="features-section" id="features">
+    <div class="features-bg-text">Smart Search · Digital ID · Zero Fines Confusion · Track Progress · Instant Rentals · Smart Search · Digital ID · Zero Fines Confusion · Track Progress · Instant Rentals ·</div>
+    <div class="features-inner">
+        <div class="features-header">
+            <div class="pill-tag"><i class="fas fa-star"></i> Platform Features</div>
+            <h2 class="section-title">Everything you need.<br><span style="color:var(--ss-cyan);">All in one place.</span></h2>
+            <p class="section-sub" style="text-align:center;margin:0 auto;">ShelfSync isn't just a catalog — it's your complete digital library companion.</p>
+        </div>
+        <div class="bento-grid">
+            <div class="bento-card large">
+                <div class="bento-icon" style="background:rgba(0,212,255,0.08);color:var(--ss-cyan);"><i class="fas fa-search"></i></div>
+                <h3>Smart Search</h3>
+                <p>Search the entire catalog in real-time. Find books by title, author, or category — results appear as you type with instant availability status.</p>
+            </div>
+            <div class="bento-card">
+                <div class="bento-icon" style="background:rgba(124,58,237,0.08);color:var(--ss-violet);"><i class="fas fa-id-card-alt"></i></div>
+                <h3>Digital Student ID</h3>
+                <p>A premium glassmorphic access card generated automatically with your details and 6-month validity.</p>
+            </div>
+            <div class="bento-card">
+                <div class="bento-icon" style="background:rgba(6,214,160,0.08);color:var(--ss-electric);"><i class="fas fa-balance-scale"></i></div>
+                <h3>Fine Management</h3>
+                <p>Transparent fine tracking with a built-in appeal system. Know exactly what you owe and why.</p>
+            </div>
+            <div class="bento-card">
+                <div class="bento-icon" style="background:rgba(245,158,11,0.08);color:var(--gold);"><i class="fas fa-clock"></i></div>
+                <h3>24/7 Online Access</h3>
+                <p>Browse and rent books anytime, from any device. The library never closes.</p>
+            </div>
+            <div class="bento-card large">
+                <div class="bento-icon" style="background:rgba(244,63,94,0.08);color:var(--ss-rose);"><i class="fas fa-chart-line"></i></div>
+                <h3>Reading Progress Tracker</h3>
+                <p>Track every book you've rented, monitor due dates at a glance, and build your reading history. ShelfSync keeps your entire library journey organized in one beautiful dashboard.</p>
+            </div>
+            <div class="bento-card">
+                <div class="bento-icon" style="background:rgba(0,212,255,0.08);color:var(--ss-cyan);"><i class="fas fa-file-alt"></i></div>
+                <h3>Zero Paperwork</h3>
+                <p>Everything is digital — registration, approvals, rentals, and returns. No forms required.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+{{-- ═══════ FAQ ACCORDION ═══════ --}}
+<section class="faq-section" id="faq">
+    <div class="faq-inner">
+        <div class="faq-header">
+            <div class="pill-tag"><i class="fas fa-question-circle"></i> FAQ</div>
+            <h2 class="section-title">Got questions?<br><span style="color:var(--ss-cyan);">We've got answers.</span></h2>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                <span>How do I start renting books?</span>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-a"><p>Create a free account, wait for admin approval (usually within 24 hours), then browse the catalog and rent any available book with a single click.</p></div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                <span>Is there a fine for late returns?</span>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-a"><p>Yes, a small daily fine is applied after your due date. You can track all fines in your dashboard and even submit an appeal if you believe it was an error.</p></div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                <span>How do I get my Digital Student ID?</span>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-a"><p>Your Digital Access Card is automatically generated the moment an admin approves your account. You'll find it in your dashboard — no extra steps required.</p></div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                <span>Can I rent multiple books at once?</span>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-a"><p>Absolutely! You can rent as many available books as you need. Each rental has its own due date that you can track from your personal dashboard.</p></div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                <span>What happens if I lose a book?</span>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-a"><p>Contact the library admin through the platform. A replacement fee based on the book's value will be applied to your account, and you can use the fine appeal system if needed.</p></div>
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
 {{-- ═══════ § 6 — CONVERSION CTA BANNER ═══════ --}}
 @guest
 <div class="cta-banner">
@@ -633,7 +973,8 @@
         <a href="#search">Search Books</a>
         <a href="#available">Available Now</a>
         <a href="#how-it-works">How It Works</a>
-        <a href="#radar">Due Back Soon</a>
+        <a href="#features">Features</a>
+        <a href="#faq">FAQ</a>
         @auth <a href="{{ url('/dashboard') }}">Dashboard</a>
         @else <a href="{{ route('login') }}">Log In</a><a href="{{ route('register') }}">Register</a>
         @endauth
@@ -805,6 +1146,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }, { threshold: 0.25 });
     document.querySelectorAll('[data-idstep]').forEach(el => io.observe(el));
 });
+
+/* ── FAQ Accordion (one-at-a-time toggle) ── */
+function toggleFaq(el) {
+    const item = el.parentElement;
+    const wasOpen = item.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    // Toggle clicked
+    if (!wasOpen) item.classList.add('open');
+}
 </script>
 
 @include('components.global-fx')
