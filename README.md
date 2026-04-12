@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📚 ShelfSync
+# ShelfSync
 ### Digital Library Management System
 
 [![PHP](https://img.shields.io/badge/PHP-8.x-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
@@ -473,9 +473,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 | Name | Role |
 |------|------|
-| **[Your Name]** | Full-Stack Developer |
-| **[Team Member 2]** | Frontend / UI Designer |
-| **[Team Member 3]** | Database Design |
+| **Mahadi Hassan** | Software Engineer |
 
 ---
 
