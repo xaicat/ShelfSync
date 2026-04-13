@@ -886,7 +886,6 @@
 
 {{-- ═══════ FEATURE SHOWCASE (BENTO GRID) ═══════ --}}
 <section class="features-section" id="features">
-    <div class="features-bg-text">Smart Search · Digital ID · Zero Fines Confusion · Track Progress · Instant Rentals · Smart Search · Digital ID · Zero Fines Confusion · Track Progress · Instant Rentals ·</div>
     <div class="features-inner">
         <div class="features-header">
             <div class="pill-tag"><i class="fas fa-star"></i> Platform Features</div>

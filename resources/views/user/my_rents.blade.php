@@ -11,7 +11,7 @@
 
     @if($rentals->isEmpty())
         <div class="ss-card anim-fade-up-1" style="padding:60px;text-align:center;">
-            <div style="font-size:3rem;margin-bottom:16px;">📚</div>
+            <div style="font-size:3rem;margin-bottom:16px;">📖</div>
             <p style="color:var(--ss-text-2);margin-bottom:20px;">You haven't rented any books yet.</p>
             <a href="{{ route('user.books') }}" class="ss-btn ss-btn-primary"><i class="fas fa-book-open"></i> Browse Books</a>
         </div>
