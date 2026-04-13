@@ -1,6 +1,9 @@
 <div align="center">
 
-# ShelfSync
+<p align="center">
+  <img src="https://raw.githubusercontent.com/xaicat/school_project/18de95e436d78b97cf1cc88f1ab28ed42bcb34e6/public/img/diushelf%20sync.svg?token=BAAAA7Z5TJMKGP3RZ55XQRLJ3SFZ6" alt="ShelfSync" width="300">
+</p>
+
 ### Digital Library Management System
 
 [![PHP](https://img.shields.io/badge/PHP-8.x-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
