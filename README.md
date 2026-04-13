@@ -1,10 +1,8 @@
 <div align="center">
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/xaicat/ShelfSync/d10bcc9fbae7e004461007947d4cb4df0ab5e84b/public/img/diushelf%20sync.svg?token=BAAAA77GWM67QU7RTNPNTU3J3SHZC" alt="ShelfSync" width="300">
+  <img src="https://raw.githubusercontent.com/xaicat/ShelfSync/d10bcc9fbae7e004461007947d4cb4df0ab5e84b/public/img/diushelf%20sync.svg" alt="ShelfSync" width="300">
 </p>
-
-### Digital Library Management System
 
 [![PHP](https://img.shields.io/badge/PHP-8.x-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
 [![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
