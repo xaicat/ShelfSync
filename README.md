@@ -1,245 +1,330 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://raw.githubusercontent.com/xaicat/ShelfSync/d10bcc9fbae7e004461007947d4cb4df0ab5e84b/public/img/diushelf%20sync.svg" alt="ShelfSync" width="300">
 </p>
 
-## About Laravel
+[![PHP](https://img.shields.io/badge/PHP-8.x-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
+[![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
+[![Groq AI](https://img.shields.io/badge/Groq_AI-Llama_3.1-F55036?style=for-the-badge)](https://groq.com)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**A next-generation, glassmorphic web application that fully digitizes university library operations — from book rentals and digital membership cards to automated fines and an AI-powered book assistant.**
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+[Features](#-features) · [Tech Stack](#-tech-stack) · [Installation](#-installation) · [Configuration](#-environment-configuration) · [Usage](#-usage-guide) · [Folder Structure](#-project-structure)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+</div>
 
-## Learning Laravel
+---
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=w15mMk5oCMs">
+    <img src="https://img.youtube.com/vi/w15mMk5oCMs/maxresdefault.jpg" alt="Watch the video" style="width:100%; border-radius: 10px; box-shadow: 0px 4px 8px rgba(0,0,0,0.2);">
+    <br>
+    <sub><b>Click to play video on YouTube</b></sub>
+  </a>
+</div>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Overview
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+ShelfSync replaces paper-based library workflows with a fast, beautiful, and fully automated web system. Students can browse books, apply for a digital library card, rent books, track their reading, and get AI-powered book insights — all without leaving their browser.
 
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-----
-Anyone who downloads (clones) it will have a "blank" project without your local database or environment settings. To make it work-
-
-Here is the standard "First-Time Setup" process you should document for new users:
-
-### 1. The Environment File (`.env`)
-
-Because your `.env` file was ignored by Git (to keep your passwords secret), the downloader won't have one. They need to create it.
-
-* **Instruction:** Copy the example file: `cp .env.example .env`
-* **Action:** Then open the new `.env` file and enter their own local database name, username, and password.
-
-### 2. Install Dependencies
-
-The `vendor` and `node_modules` folders were also not uploaded.
-
-* **Instruction:** Run these two commands to install the PHP and JavaScript libraries:
-* `composer install`
-* `npm install && npm run build`
-
-
-
-### 3. Generate the App Key
-
-Laravel requires a unique security key for every installation.
-
-* **Instruction:** Run `php artisan key:generate`. This will automatically update their `.env` file with a secure key.
+Librarians get a powerful admin panel to manage inventory, approve rentals, process returns, handle fine disputes, and manage student memberships — all from one consolidated dashboard.
 
 ---
 
-### 4. Setting up the Database
+## Features
 
-This is the most important part. There are two ways to recreate your MySQL tables:
+### Public (No Login Required)
+- **Landing Page** — Featured books, platform features showcase, how-it-works timeline, and FAQ
+- **Live Book Catalog** — Real-time search by title, author, or category with instant results
+- **Category Filter** — Filter the catalog by book category
+- **AI Book Assistant** — Click ⓘ on any book to get AI-generated metadata (author, publisher, genre, summary) and chat with the **Llama 3.1** AI about the book
+- **Contact Form** — Submit inquiries directly to the library
 
-#### Option A: Using Laravel Migrations (Recommended)
+### Student Features
+- **Registration & Profile** — Secure onboarding with Laravel Breeze (Streamlined for local deployments)
+- **Digital Library Card** — Apply for a glassmorphic digital ID card with 6-month validity
+- **Book Renting** — Submit rental requests with a chosen return date
+- **My Rentals** — Track approved, pending, and returned rentals with fine details
+- **Fine Appeal** — Dispute overdue fines with a written appeal
+- **Reading Tracker** — Log progress and mark books as completed
+- **Wishlist** — Bookmark books for future renting (AJAX toggle)
+- **Persistent AI Chat** — AI conversations saved per-book across sessions (Graceful degradation prevents crashes if offline)
 
-If you built your tables using Laravel's migration files (located in your `database/migrations` folder), this is the easiest way.
-
-* **Instruction:** "Run `php artisan migrate` to create the tables in your local database."
-* **If you have seeders:** "Run `php artisan migrate --seed` to also add initial data."
-
-#### Option B: Using a `.sql` Dump
-
-If you didn't use migrations and instead exported a `.sql` file from phpMyAdmin:
-
-* **Instruction:** "Create a new database in phpMyAdmin, then use the **Import** tab to upload the `database.sql` file provided in this repository."
-
----
-
-### 5. Final Step: Start the Site
-
-Once the database is linked, you can view the project just like you do.
-
-* **Instruction:** Run `php artisan serve` and visit `http://localhost:8000`.
-
----
-
-### Summary Table for your README
-
-| Step | Command | Purpose |
-| --- | --- | --- |
-| **1** | `composer install` | Install PHP libraries |
-| **2** | `cp .env.example .env` | Create environment file |
-| **3** | `php artisan key:generate` | Set app security key |
-| **4** | `php artisan migrate` | **Create Database Tables** |
-| **5** | `php artisan serve` | Launch the project |
-
-**Renaming Project**
-----
-To completely rename your project and database after downloading it, you need to update a few specific configuration files. Since the project uses **Vite** and **Tailwind** (as seen in your file structure), there are a couple of extra spots to check.
-
-Here is the checklist of changes:
-
-### 1. The `.env` File (Most Important)
-
-This is where Laravel looks for its identity and database connection.
-
-* **`APP_NAME`**: Change this to your new project name (e.g., `APP_NAME="My New App"`). If the name has spaces, use quotes.
-* **`APP_URL`**: Update this to match your local URL (e.g., `http://localhost:8000`).
-* **`DB_DATABASE`**: Change this to your **new** database name.
+### Admin Features
+- **Dashboard** — Consolidated stats: users, books, active rentals, outstanding fines
+- **Rental Approval Workflow** — Approve / reject / process returns with auto-fine calculation
+- **Dual-Layer Book Fetcher** — Instantly add books by ISBN using the ultra-fast Google Books API, with an automatic fallback to the OpenLibrary API.
+- **Local Cover Engine** — Automatically intercepts remote hotlinks and downloads book covers to local storage for instant loading.
+- **Category Management** — Add and remove book categories
+- **Library Card Management** — Approve, reject, or revoke membership cards
+- **Fine Management** — Manually clear or adjust fines
+- **Appeal Resolution** — Review and resolve student fine disputes
 
 ---
 
-### 2. Create the New Database
+## Tech Stack
 
-Laravel won't create the physical database for you; it only tries to connect to it.
-
-* Open **phpMyAdmin**.
-* Click **New** and create a database with the exact name you just typed in your `.env` file.
-* Run `php artisan migrate` in your terminal to build the tables in this new database.
-
----
-
-### 3. Update `package.json`
-
-Since you are using Vite, your project name is often defined in the metadata here.
-
-* Open `package.json`.
-* Change the `"name": "old-name"` field to your new project name (use lowercase and hyphens, e.g., `"my-new-app"`).
+| Layer | Technology |
+|-------|-----------|
+| **Backend** | Laravel 11 (PHP 8.x) |
+| **Database** | MySQL (via XAMPP) |
+| **ORM** | Eloquent |
+| **Authentication** | Laravel Breeze |
+| **Frontend** | Blade Templating + Vanilla CSS |
+| **AI Integration** | Groq REST API (Llama 3.1 8B Instant model) |
+| **Metadata Engine**| Google Books API & OpenLibrary API Proxy |
+| **UI Design** | Custom Glassmorphism Dark Mode Design System |
 
 ---
 
-### 4. Update the Folder Name
+## Prerequisites
 
-While not strictly required for the code to run, you should rename the actual folder in `C:\xampp\htdocs\` to match your new project name.
+Before you begin, ensure you have the following installed:
 
-* **Note:** If you rename the folder, remember to `cd` into the new folder name in your terminal before running `php artisan serve`.
+| Requirement | Version | Download |
+|-------------|---------|----------|
+| **XAMPP** | 8.x (PHP 8.1+) | [apachefriends.org](https://www.apachefriends.org/) |
+| **Composer** | 2.x | [getcomposer.org](https://getcomposer.org/) |
+| **Git** | Latest | [git-scm.com](https://git-scm.com/) |
+| **Node.js & NPM** | 18.x+ | [nodejs.org](https://nodejs.org/) |
 
 ---
 
-### 5. Clear the Cache
+## Installation
 
-Laravel "remembers" old configurations. After making these changes, run these commands to ensure the app recognizes the new names:
+Follow these steps exactly to get ShelfSync running on your local machine.
+
+### Step 1 — Clone the Repository
+
+Open your terminal and navigate to your XAMPP `htdocs` folder:
 
 ```bash
-php artisan config:clear
-php artisan cache:clear
-
+cd C:/xampp/htdocs
 ```
 
-### Summary of File Locations
-
-| File | Variable to Change | Purpose |
-| --- | --- | --- |
-| **`.env`** | `APP_NAME` | Changes the name in emails and titles. |
-| **`.env`** | `DB_DATABASE` | Points the app to your new MySQL DB. |
-| **`package.json`** | `"name"` | Updates the JS/Node identity. |
-| **`app.blade.php`** | `<title>` | (Optional) If you hardcoded the title in HTML. |
-----
-To quickly rename your project across all files, using a "Global Search and Replace" is the most efficient method. Since we are working with HTML, CSS, and Laravel, this ensures you don't miss any hardcoded titles or labels.
-
-### 1. Global Search & Replace in VS Code
-
-If you use VS Code, follow these steps to rename the project name throughout your code:
-
-1. Press **`Ctrl + Shift + H`** (Windows) or **`Cmd + Shift + H`** (Mac) to open the Global Replace sidebar.
-2. In the **Search** box, type your **old project name** (e.g., `Laravel`).
-3. In the **Replace** box, type your **new project name** (e.g., `MyCoolApp`).
-4. Click the **"Replace All"** icon (the small grid icon next to the replace box).
-
----
-
-### 2. Mandatory Manual Changes
-
-Some things cannot be automated via search and replace. You must manually update these specific areas:
-
-#### Update the `.env` File
-
-This is the heart of your environment. Open `.env` and update:
-
-* **`APP_NAME=NewProjectName`**
-* **`DB_DATABASE=new_database_name`**
-
-#### Update the Folder Name
-
-1. Close your code editor and stop any running terminal processes.
-2. Go to `C:\xampp\htdocs\` and rename the folder.
-3. **Crucial:** If you are using GitHub Desktop, you will need to "Locate" the repository again since the path has changed.
-
----
-
-### 3. Refreshing the Application
-
-After renaming, Laravel might still have the old name stored in its internal "memory" (cache). Run these commands in your terminal to force an update:
+Clone the project:
 
 ```bash
-php artisan config:clear
-php artisan cache:clear
-php artisan route:clear
-php artisan view:clear
-
+git clone https://github.com/YOUR_USERNAME/school_project.git shelfsync
 ```
 
-### 4. Re-linking the Database
+Navigate into the project directory:
 
-Since you changed the `DB_DATABASE` name in your `.env`:
+```bash
+cd shelfsync
+```
 
-1. Go to **phpMyAdmin**.
-2. Create a **New** database with that exact new name.
-3. Run your migrations to build the tables:
+---
+
+### Step 2 — Install PHP Dependencies
+
+```bash
+composer install
+```
+
+> If you get a memory error, run: `php -d memory_limit=-1 /path/to/composer install`
+
+---
+
+### Step 3 — Install Node.js Dependencies
+
+```bash
+npm install
+```
+
+---
+
+### Step 4 — Set Up Environment File
+
+Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+> On Windows (Command Prompt):
+> ```
+> copy .env.example .env
+> ```
+
+Generate the application key:
+
+```bash
+php artisan key:generate
+```
+
+---
+
+### Step 5 — Configure the Database
+
+1. **Start XAMPP** — Open XAMPP Control Panel and start **Apache** and **MySQL**
+2. **Open phpMyAdmin** — Go to [http://localhost/phpmyadmin](http://localhost/phpmyadmin)
+3. **Create a new database** — Click "New" and create a database named `shelfsync`
+
+Now open `.env` in your code editor and update these lines:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=shelfsync
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+> **Note:** The default XAMPP MySQL has username `root` with an **empty password**. If you've set a password, enter it in `DB_PASSWORD`.
+
+---
+
+### Step 6 — Run Database Migrations
+
 ```bash
 php artisan migrate
-
 ```
-----
-## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This will create all the necessary tables in your `shelfsync` database.
 
+---
+
+### Step 7 — Build Frontend Assets
+
+```bash
+npm run dev
+```
+
+> For a one-time production build:
+> ```bash
+> npm run build
+> ```
+
+---
+
+### Step 8 — Launch the Application
+
+**Use Laravel's built-in server:**
+```bash
+php artisan serve
+```
+Then open [http://localhost:8000](http://localhost:8000)
+
+---
+
+## Environment Configuration
+
+Open your `.env` file and configure these key variables:
+
+```env
+# ── Application ────────────────────────────────────────────
+APP_NAME="ShelfSync"
+APP_ENV=local
+APP_KEY=base64:YOUR_GENERATED_KEY
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+# ── Database ───────────────────────────────────────────────
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=shelfsync
+DB_USERNAME=root
+DB_PASSWORD=
+
+# ── Groq AI (Llama 3.1) ────────────────────────────────────
+GROQ_API_KEY=your_groq_api_key_here
+GROQ_MODEL=llama-3.1-8b-instant
+```
+
+---
+
+## Setting Up the Groq AI API Key
+
+The AI Book Assistant requires a Groq API key. It is extremely fast and **completely free**.
+
+1. Visit **[Groq Console](https://console.groq.com/keys)**
+2. Sign in with your account
+3. Click **"Create API Key"**
+4. Copy the generated key
+5. Paste it into your `.env` file:
+
+```env
+GROQ_API_KEY=gsk_your_key_here
+GROQ_MODEL=llama-3.1-8b-instant
+```
+
+6. Run `php artisan config:clear` to clear the config cache!
+
+> **Security & Stability:** The API key is never sent to the browser. All AI calls are made server-side. The app features *Graceful Degradation* — if you are offline or the API rate limits, the UI remains perfectly functional and displays a polite offline message.
+
+---
+
+## Usage Guide
+
+### Creating an Admin Account
+
+After registering a normal account, open **phpMyAdmin**, find your user in the `users` table, and change the `role` column from `user` to `admin`.
+
+Or run this artisan command in Tinker:
+
+```bash
+php artisan tinker
+```
+
+```php
+\App\Models\User::where('email', 'your@email.com')->update(['role' => 'admin']);
+```
+
+### Default URL Routes
+
+| Route | Description |
+|-------|-------------|
+| `/` | Landing page |
+| `/user/books` | Public book catalog |
+| `/register` | Student registration |
+| `/login` | Login page |
+| `/user/dashboard` | Student dashboard (requires login) |
+| `/admin/dashboard` | Admin panel (requires admin role) |
+| `/profile` | Edit profile |
+
+---
+
+## ⭐ Security Features
+
+- ✅ **CSRF Protection** — All forms and AJAX calls include CSRF tokens
+- ✅ **Role Middleware** — Admin routes double-protected by `auth` + `admin` middleware  
+- ✅ **Server-Side AI Calls** — API tokens never exposed to the browser
+- ✅ **Backend Data Proxy** — Metadata fetching is routed through the server to bypass campus WiFi firewalls and CORS errors.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Authors
+
+| Name | Role |
+|------|------|
+| **Mahadi Hassan** | Software Engineer |
+
+---
+
+## Acknowledgements
+
+- [Laravel](https://laravel.com/) — The PHP framework for web artisans
+- [Groq & Meta Llama](https://groq.com) — Powering the hyper-fast AI Book Assistant
+- [Google Books API](https://developers.google.com/books) — Lightning-fast ISBN lookups
+- [Font Awesome](https://fontawesome.com/) — Icons
+
+---
+
+<div align="center">
+
+**Made with ❤️ for the love of reading and clean code.**
+
+⭐ Star this repo if you found it useful!
+
+</div>

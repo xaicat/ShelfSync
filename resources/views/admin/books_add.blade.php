@@ -148,48 +148,39 @@ function updatePreview(url) {
     }
 }
 
-
 async function fetchISBN() {
     const isbnInput = document.getElementById('isbnInput');
-    // 1. Multi-Format Support: Strip dashes and spaces completely
     const rawIsbn = isbnInput.value.replace(/[-\s]/g, '').trim();
     if (!rawIsbn) {
         isbnInput.focus();
         return;
     }
     
-    // 4. UI Feedback: Change button text to 'Searching...' and disable
     const btn = document.getElementById('fetchBtn');
     const originalBtnHTML = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
     btn.disabled = true;
 
     try {
-        // 3. Timeout & Error Handling: Promise.race with a 5000ms timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
         
-        const fetchPromise = fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${rawIsbn}&format=json&jscmd=data`, { signal: controller.signal });
+        // Fetch through our secure backend proxy to bypass university CORS/blocking
+        const fetchPromise = fetch(`/admin/books/fetch-isbn?isbn=${rawIsbn}`, { signal: controller.signal });
         
         const res = await fetchPromise;
         clearTimeout(timeoutId);
 
-        if (!res.ok) {
-            throw new Error('Network response was not ok');
-        }
+        if (!res.ok) throw new Error('Network response was not ok');
         
-        const json = await res.json();
-        const bookData = json[`ISBN:${rawIsbn}`];
+        const bookData = await res.json();
         
-        if (bookData) {
+        if (bookData && !bookData.error) {
             document.querySelector('input[name="name"]').value = bookData.title || '';
+            document.querySelector('input[name="author"]').value = bookData.author || '';
             
-            if (bookData.authors && bookData.authors.length > 0) {
-                document.querySelector('input[name="author"]').value = bookData.authors[0].name;
-            }
-            
-            if (bookData.subjects && bookData.subjects.length > 0) {
-                const sub = bookData.subjects[0].name;
+            if (bookData.category) {
+                const sub = bookData.category;
                 document.getElementById('newCategoryInput').value = sub;
                 document.getElementById('categorySelect').value = '';
                 document.getElementById('categorySelect').style.display = 'none';
@@ -198,17 +189,14 @@ async function fetchISBN() {
                 catText.style.display = 'block';
             }
             
-            // 2. Cover Image Proxy & Fallback
-            // Always try the direct URL structure first. OpenLibrary creates them dynamically. 
-            // -L means large size.
-            const cov = `https://covers.openlibrary.org/b/isbn/${rawIsbn}-L.jpg?default=false`;
+            // Cover Image
+            const cov = bookData.cover || '';
             document.getElementById('coverUrlInput').value = cov;
             const img = document.getElementById('imgPreview');
-            img.src = cov;
+            img.src = cov ? cov : '{{ asset("img/no-cover.svg") }}';
             
-            // Fallback if the image doesn't exist (onerror)
             img.onerror = function() {
-                this.onerror = null; // Prevent infinite loops
+                this.onerror = null;
                 this.src = '{{ asset("img/no-cover.svg") }}';
             };
 
@@ -216,7 +204,11 @@ async function fetchISBN() {
             document.getElementById('dropPlaceholder').style.display = 'none';
             document.getElementById('dropZone').style.borderColor = 'var(--ss-cyan)';
             
-            btn.innerHTML = '<i class="fas fa-check"></i> Success';
+            if (bookData.description) {
+                document.querySelector('textarea[name="description"]').value = bookData.description;
+            }
+            
+            btn.innerHTML = '<i class="fas fa-check"></i> Found in ' + (bookData.source === 'google' ? 'Google' : 'OpenLibrary');
             btn.classList.add('ss-btn-success');
             btn.classList.remove('ss-btn-primary');
             setTimeout(() => {
@@ -226,16 +218,15 @@ async function fetchISBN() {
                 btn.disabled = false;
             }, 3000);
         } else {
-            // Specifically handling "Not Found" vs "Server Busy"
-            throw new Error('Book not found in OpenLibrary database.');
+            throw new Error('Book not found in any database.');
         }
     } catch (err) {
         let errorMsg = 'Not Found';
         if (err.name === 'AbortError') {
             errorMsg = 'Server Busy';
-            alert('The OpenLibrary API is currently overloaded or too slow. Please try again or enter details manually.');
-        } else if (err.message.includes('Book not found')) {
-            alert('Could not find a book matching this ISBN in OpenLibrary. Please enter the details manually.');
+            alert('The Backend API is currently overloaded or too slow. Please try again or enter details manually.');
+        } else if (err.message.includes('Book not found') || err.message.includes('Network response was not ok')) {
+            alert('Could not find a book matching this ISBN in our databases. Please enter the details manually.');
         } else {
             errorMsg = 'Network Error';
             alert('Failed to connect to the metadata API. Check your connection.');
