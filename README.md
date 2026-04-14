@@ -7,7 +7,7 @@
 [![PHP](https://img.shields.io/badge/PHP-8.x-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
 [![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
-[![Gemini AI](https://img.shields.io/badge/Gemini_AI-2.5_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
+[![Groq AI](https://img.shields.io/badge/Groq_AI-Llama_3.1-F55036?style=for-the-badge)](https://groq.com)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 **A next-generation, glassmorphic web application that fully digitizes university library operations — from book rentals and digital membership cards to automated fines and an AI-powered book assistant.**
@@ -39,28 +39,28 @@ Librarians get a powerful admin panel to manage inventory, approve rentals, proc
 - **Landing Page** — Featured books, platform features showcase, how-it-works timeline, and FAQ
 - **Live Book Catalog** — Real-time search by title, author, or category with instant results
 - **Category Filter** — Filter the catalog by book category
-- **AI Book Assistant** — Click ⓘ on any book to get AI-generated metadata (author, publisher, genre, summary) and chat with Gemini AI about the book
+- **AI Book Assistant** — Click ⓘ on any book to get AI-generated metadata (author, publisher, genre, summary) and chat with the **Llama 3.1** AI about the book
 - **Contact Form** — Submit inquiries directly to the library
 
 ### Student Features
-- **Registration & Email Verification** — Secure onboarding with Laravel Breeze
+- **Registration & Profile** — Secure onboarding with Laravel Breeze (Streamlined for local deployments)
 - **Digital Library Card** — Apply for a glassmorphic digital ID card with 6-month validity
 - **Book Renting** — Submit rental requests with a chosen return date
 - **My Rentals** — Track approved, pending, and returned rentals with fine details
 - **Fine Appeal** — Dispute overdue fines with a written appeal
 - **Reading Tracker** — Log progress and mark books as completed
 - **Wishlist** — Bookmark books for future renting (AJAX toggle)
-- **Persistent AI Chat** — AI conversations saved per-book across sessions
+- **Persistent AI Chat** — AI conversations saved per-book across sessions (Graceful degradation prevents crashes if offline)
 
 ### Admin Features
 - **Dashboard** — Consolidated stats: users, books, active rentals, outstanding fines
 - **Rental Approval Workflow** — Approve / reject / process returns with auto-fine calculation
-- **Book Management (CRUD)** — Create, edit, and delete books with external image URLs
+- **Dual-Layer Book Fetcher** — Instantly add books by ISBN using the ultra-fast Google Books API, with an automatic fallback to the OpenLibrary API.
+- **Local Cover Engine** — Automatically intercepts remote hotlinks and downloads book covers to local storage for instant loading.
 - **Category Management** — Add and remove book categories
 - **Library Card Management** — Approve, reject, or revoke membership cards
 - **Fine Management** — Manually clear or adjust fines
 - **Appeal Resolution** — Review and resolve student fine disputes
-- **Member Management** — View all users, promote to admin or demote
 
 ---
 
@@ -73,9 +73,9 @@ Librarians get a powerful admin panel to manage inventory, approve rentals, proc
 | **ORM** | Eloquent |
 | **Authentication** | Laravel Breeze |
 | **Frontend** | Blade Templating + Vanilla CSS |
-| **AI Integration** | Google Gemini 2.5 Flash (REST API v1beta) |
+| **AI Integration** | Groq REST API (Llama 3.1 8B Instant model) |
+| **Metadata Engine**| Google Books API & OpenLibrary API Proxy |
 | **UI Design** | Custom Glassmorphism Dark Mode Design System |
-| **Web Server** | Apache (XAMPP) |
 
 ---
 
@@ -184,36 +184,11 @@ DB_PASSWORD=
 php artisan migrate
 ```
 
-This will create all 10 tables in your `shelfsync` database.
-
-> If you want to reset and re-run all migrations from scratch:
-> ```bash
-> php artisan migrate:fresh
-> ```
+This will create all the necessary tables in your `shelfsync` database.
 
 ---
 
-### Step 7 — (Optional) Seed the Database
-
-If a seeder is available to populate demo books and users:
-
-```bash
-php artisan db:seed
-```
-
----
-
-### Step 8 — Set Up Storage Link
-
-```bash
-php artisan storage:link
-```
-
-This links the `storage/app/public` directory to `public/storage` for file access.
-
----
-
-### Step 9 — Build Frontend Assets
+### Step 7 — Build Frontend Assets
 
 ```bash
 npm run dev
@@ -226,27 +201,13 @@ npm run dev
 
 ---
 
-### Step 10 — Launch the Application
+### Step 8 — Launch the Application
 
-You can either:
-
-**Option A — Use Laravel's built-in server:**
+**Use Laravel's built-in server:**
 ```bash
 php artisan serve
 ```
 Then open [http://localhost:8000](http://localhost:8000)
-
-**Option B — Access via XAMPP Apache:**
-
-Since you cloned into `htdocs/shelfsync`, visit:
-```
-http://localhost/shelfsync/public
-```
-
-> **Tip for XAMPP:** Set the `APP_URL` in `.env` to match:
-> ```env
-> APP_URL=http://localhost/shelfsync/public
-> ```
 
 ---
 
@@ -260,7 +221,7 @@ APP_NAME="ShelfSync"
 APP_ENV=local
 APP_KEY=base64:YOUR_GENERATED_KEY
 APP_DEBUG=true
-APP_URL=http://localhost/shelfsync/public
+APP_URL=http://localhost:8000
 
 # ── Database ───────────────────────────────────────────────
 DB_CONNECTION=mysql
@@ -270,45 +231,31 @@ DB_DATABASE=shelfsync
 DB_USERNAME=root
 DB_PASSWORD=
 
-# ── Mail (for Email Verification) ──────────────────────────
-# For local testing, use 'log' driver (emails go to storage/logs)
-MAIL_MAILER=log
-MAIL_HOST=127.0.0.1
-MAIL_PORT=2525
-MAIL_USERNAME=null
-MAIL_PASSWORD=null
-MAIL_FROM_ADDRESS="noreply@shelfsync.com"
-MAIL_FROM_NAME="ShelfSync"
-
-# ── Google Gemini AI ───────────────────────────────────────
-GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_MODEL=gemini-2.5-flash
+# ── Groq AI (Llama 3.1) ────────────────────────────────────
+GROQ_API_KEY=your_groq_api_key_here
+GROQ_MODEL=llama-3.1-8b-instant
 ```
 
 ---
 
-## Setting Up the Gemini AI API Key
+## Setting Up the Groq AI API Key
 
-The AI Book Assistant requires a Google Gemini API key. It is **free** to create.
+The AI Book Assistant requires a Groq API key. It is extremely fast and **completely free**.
 
-1. Visit **[Google AI Studio](https://aistudio.google.com/)**
-2. Sign in with your Google account
-3. Click **"Get API Key"** → **"Create API Key"**
+1. Visit **[Groq Console](https://console.groq.com/keys)**
+2. Sign in with your account
+3. Click **"Create API Key"**
 4. Copy the generated key
 5. Paste it into your `.env` file:
 
 ```env
-GEMINI_API_KEY=AIzaSy...your_key_here
-GEMINI_MODEL=gemini-2.5-flash
+GROQ_API_KEY=gsk_your_key_here
+GROQ_MODEL=llama-3.1-8b-instant
 ```
 
-6. Run `php artisan config:clear` to clear the config cache:
+6. Run `php artisan config:clear` to clear the config cache!
 
-```bash
-php artisan config:clear
-```
-
-> **Security:** The API key is never sent to the browser. All Gemini calls are made server-side through `AiController.php`.
+> **Security & Stability:** The API key is never sent to the browser. All AI calls are made server-side. The app features *Graceful Degradation* — if you are offline or the API rate limits, the UI remains perfectly functional and displays a polite offline message.
 
 ---
 
@@ -342,132 +289,12 @@ php artisan tinker
 
 ---
 
-## 📁 Project Structure
-
-```
-shelfsync/
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   │   ├── AdminController.php     # All admin management logic
-│   │   │   ├── UserController.php      # Student features logic
-│   │   │   ├── AiController.php        # Gemini AI integration
-│   │   │   └── ProfileController.php   # Profile management
-│   │   └── Middleware/
-│   └── Models/
-│       ├── User.php
-│       ├── Book.php
-│       ├── Category.php
-│       ├── Rental.php
-│       ├── LibraryCard.php
-│       ├── FineAppeal.php
-│       ├── Wishlist.php
-│       ├── ReadingProgress.php
-│       ├── ChatHistory.php
-│       └── Contact.php
-├── database/
-│   └── migrations/             # 18 migration files
-├── public/
-│   └── css/
-│       └── shelfsync.css       # Custom design system
-├── resources/
-│   └── views/
-│       ├── layouts/
-│       │   ├── user.blade.php          # Student layout
-│       │   └── admin.blade.php         # Admin layout
-│       ├── components/
-│       │   ├── book-ai-modal.blade.php # AI modal component
-│       │   └── global-fx.blade.php     # Cursor + particles
-│       ├── user/                       # Student views
-│       ├── admin/                      # Admin views
-│       └── welcome.blade.php           # Landing page
-├── routes/
-│   └── web.php                 # All 30+ application routes
-├── .env.example                # Environment template
-└── composer.json
-```
-
----
-
-## User Roles
-
-| Role | Access | How to Set |
-|------|--------|-----------|
-| **Guest** | Browse catalog, AI assistant, contact form | No account needed |
-| **Student** | + Rent books, library card, wishlist, reading tracker, fine appeals | Register an account |
-| **Admin** | + Full management panel | Set `role = admin` in the `users` table |
-
----
-
-## Database Tables
-
-| Table | Description |
-|-------|-------------|
-| `users` | All registered users (students + admins) |
-| `categories` | Book categories |
-| `books` | Library catalog with cover, author, quantity, price |
-| `rentals` | Rental requests, approvals, returns, and fines |
-| `fine_appeals` | Student fine dispute submissions |
-| `library_cards` | Digital membership cards |
-| `wishlists` | Student book bookmarks |
-| `reading_progress` | Per-user book reading status |
-| `chat_histories` | AI assistant conversation logs |
-| `contacts` | Public contact form submissions |
-
----
-
-## Security Features
+## ⭐ Security Features
 
 - ✅ **CSRF Protection** — All forms and AJAX calls include CSRF tokens
 - ✅ **Role Middleware** — Admin routes double-protected by `auth` + `admin` middleware  
-- ✅ **Server-Side AI Calls** — Gemini API key never exposed to browser
-- ✅ **Rate Limiting** — AI endpoints throttled at 15 requests/minute/IP
-- ✅ **Password Hashing** — Bcrypt via Laravel's default Hash facade
-- ✅ **Input Validation** — All form inputs validated server-side before DB interaction
-
----
-
-## Troubleshooting
-
-**`php artisan migrate` fails:**
-- Ensure MySQL is running in XAMPP
-- Verify `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` in `.env`
-- Make sure the database `shelfsync` was created in phpMyAdmin
-
-**AI modal shows "Couldn't reach the AI service":**
-- Check your `GEMINI_API_KEY` in `.env`
-- Run `php artisan config:clear`
-- Verify the key works at [Google AI Studio](https://aistudio.google.com/)
-
-**404 errors on routes:**
-- Make sure `APP_URL` in `.env` matches your actual URL
-- If using XAMPP (not `php artisan serve`), ensure URL includes `/public`
-
-**Page loads but CSS looks broken:**
-- Run `npm run dev` or `npm run build`
-- Ensure the `public/` folder is accessible
-
-**Email verification not working:**
-- Set `MAIL_MAILER=log` in `.env` for local development
-- Verification emails will be written to `storage/logs/laravel.log`
-
----
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. **Fork** the repository
-2. Create a new feature branch: `git checkout -b feature/your-feature-name`
-3. Commit your changes: `git commit -m 'Add: your feature description'`
-4. Push to the branch: `git push origin feature/your-feature-name`
-5. Open a **Pull Request**
-
-### Coding Standards
-- Follow **PSR-12** PHP coding standards
-- Keep Controllers thin — move complex logic to Service classes or Model scopes
-- All new database fields must be added via **new migration files**, never by editing existing ones
-- Blade components go in `resources/views/components/`
+- ✅ **Server-Side AI Calls** — API tokens never exposed to the browser
+- ✅ **Backend Data Proxy** — Metadata fetching is routed through the server to bypass campus WiFi firewalls and CORS errors.
 
 ---
 
@@ -488,9 +315,9 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 ## Acknowledgements
 
 - [Laravel](https://laravel.com/) — The PHP framework for web artisans
-- [Google Gemini AI](https://ai.google.dev/) — Powering the AI Book Assistant
+- [Groq & Meta Llama](https://groq.com) — Powering the hyper-fast AI Book Assistant
+- [Google Books API](https://developers.google.com/books) — Lightning-fast ISBN lookups
 - [Font Awesome](https://fontawesome.com/) — Icons
-- [Google Fonts](https://fonts.google.com/) — Typography
 
 ---
 
