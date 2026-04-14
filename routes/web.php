@@ -97,6 +97,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Books
     Route::get('/books',              [AdminController::class, 'books'])->name('books');
     Route::get('/books/add',          [AdminController::class, 'createBook'])->name('books.create');
+    Route::get('/books/fetch-isbn',   [AdminController::class, 'fetchIsbn'])->name('books.fetch_isbn');
     Route::post('/books',             [AdminController::class, 'storeBook'])->name('books.store');
     Route::delete('/books/{id}',      [AdminController::class, 'deleteBook'])->name('books.delete');
     Route::get('/books/edit/{id}',    [AdminController::class, 'editBook'])->name('books.edit');

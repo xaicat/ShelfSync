@@ -188,6 +188,48 @@ class AdminController extends Controller
         return view('admin.books_add', compact('categories'));
     }
 
+    public function fetchIsbn(Request $request)
+    {
+        $isbn = preg_replace('/[-\s]/', '', $request->isbn);
+        if (!$isbn) {
+            return response()->json(['error' => 'Invalid ISBN'], 400);
+        }
+
+        // Tier 1: Try Google Books (Ultra Fast)
+        try {
+            $gRes = \Illuminate\Support\Facades\Http::timeout(5)->get("https://www.googleapis.com/books/v1/volumes?q=isbn:{$isbn}");
+            if ($gRes->successful() && !empty($gRes->json()['items'])) {
+                $info = $gRes->json()['items'][0]['volumeInfo'];
+                return response()->json([
+                    'source' => 'google',
+                    'title' => $info['title'] ?? '',
+                    'author' => !empty($info['authors']) ? $info['authors'][0] : '',
+                    'category' => !empty($info['categories']) ? $info['categories'][0] : '',
+                    'description' => $info['description'] ?? '',
+                    'cover' => !empty($info['imageLinks']['thumbnail']) ? str_replace('http:', 'https:', $info['imageLinks']['thumbnail']) : "https://covers.openlibrary.org/b/isbn/{$isbn}-L.jpg?default=false",
+                ]);
+            }
+        } catch (\Exception $e) {}
+
+        // Tier 2: Fallback OpenLibrary (Backup)
+        try {
+            $oRes = \Illuminate\Support\Facades\Http::timeout(5)->get("https://openlibrary.org/api/books?bibkeys=ISBN:{$isbn}&format=json&jscmd=data");
+            if ($oRes->successful() && isset($oRes->json()["ISBN:{$isbn}"])) {
+                $info = $oRes->json()["ISBN:{$isbn}"];
+                return response()->json([
+                    'source' => 'openlibrary',
+                    'title' => $info['title'] ?? '',
+                    'author' => !empty($info['authors'][0]['name']) ? $info['authors'][0]['name'] : '',
+                    'category' => !empty($info['subjects'][0]['name']) ? $info['subjects'][0]['name'] : '',
+                    'description' => '',
+                    'cover' => $info['cover']['large'] ?? "https://covers.openlibrary.org/b/isbn/{$isbn}-L.jpg?default=false",
+                ]);
+            }
+        } catch (\Exception $e) {}
+
+        return response()->json(['error' => 'Book not found in any database.'], 404);
+    }
+
     public function storeBook(Request $request)
     {
         $request->validate([
@@ -211,9 +253,28 @@ class AdminController extends Controller
             return redirect()->back()->withErrors(['category_id' => 'Please select a category or provide a new one.'])->withInput();
         }
 
-        // Handle Image URL directly (No Local Storage)
+        // Local Cover Engine: Intercept HTTP URLs & Download Locally
         if ($request->filled('cover_url')) {
-            $data['image'] = $request->cover_url;
+            $url = $request->cover_url;
+            if (str_starts_with($url, 'http')) {
+                try {
+                    $context = stream_context_create(['http' => ['ignore_errors' => true]]);
+                    $imgData = file_get_contents($url, false, $context);
+                    if ($imgData && strlen($imgData) > 500) { // Valid image size check
+                        $dir = public_path('img/covers');
+                        if (!file_exists($dir)) mkdir($dir, 0755, true);
+                        $filename = 'cover_' . uniqid() . '.jpg';
+                        file_put_contents($dir . '/' . $filename, $imgData);
+                        $data['image'] = asset('img/covers/' . $filename);
+                    } else {
+                        $data['image'] = $url; // Fallback to hotlink if download fails
+                    }
+                } catch (\Exception $e) {
+                    $data['image'] = $url;
+                }
+            } else {
+                $data['image'] = $url; // It's already local
+            }
         }
 
         Book::create($data);
@@ -241,7 +302,26 @@ class AdminController extends Controller
         $data = $request->except(['_token', '_method', 'cover_url']);
 
         if ($request->filled('cover_url')) {
-            $data['image'] = $request->cover_url;
+            $url = $request->cover_url;
+            if (str_starts_with($url, 'http')) {
+                try {
+                    $context = stream_context_create(['http' => ['ignore_errors' => true]]);
+                    $imgData = file_get_contents($url, false, $context);
+                    if ($imgData && strlen($imgData) > 500) {
+                        $dir = public_path('img/covers');
+                        if (!file_exists($dir)) mkdir($dir, 0755, true);
+                        $filename = 'cover_' . uniqid() . '.jpg';
+                        file_put_contents($dir . '/' . $filename, $imgData);
+                        $data['image'] = asset('img/covers/' . $filename);
+                    } else {
+                        $data['image'] = $url;
+                    }
+                } catch (\Exception $e) {
+                    $data['image'] = $url;
+                }
+            } else {
+                $data['image'] = $url;
+            }
         }
 
         $book->update($data);

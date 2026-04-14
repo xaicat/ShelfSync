@@ -246,16 +246,7 @@
                 </div>
             </div>
 
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-            <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:14px;margin-bottom:18px;font-size:0.82rem;color:var(--ss-amber);">
-                <i class="fas fa-exclamation-triangle mr-2"></i>
-                Your email is unverified.
-                <form method="POST" action="{{ route('verification.send') }}" style="display:inline;margin:0;">
-                    @csrf
-                    <button type="submit" style="background:none;border:none;color:var(--ss-cyan);text-decoration:underline;cursor:pointer;font-size:inherit;">Resend verification email</button>
-                </form>
-            </div>
-            @endif
+
 
             <button type="submit" class="ss-btn ss-btn-primary">
                 <i class="fas fa-save"></i> Save Changes
