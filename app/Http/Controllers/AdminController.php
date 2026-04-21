@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-    // ═══════════════════════════════════════════════
-    // DASHBOARD
-    // ═══════════════════════════════════════════════
     public function index()
     {
         $bookCount      = Book::count();
@@ -25,13 +22,11 @@ class AdminController extends Controller
                                 ->where('return_date', '<', today())
                                 ->count();
 
-        // Recent activity for feed
         $recentActivity = Rental::with(['user', 'book'])
             ->latest('updated_at')
             ->take(5)
             ->get();
 
-        // Rental distribution for donut chart
         $rentalDistribution = [
             'active'   => $activeRentals,
             'pending'  => $pendingRentals,
@@ -46,9 +41,6 @@ class AdminController extends Controller
         ));
     }
 
-    // ═══════════════════════════════════════════════
-    // RENTAL MANAGEMENT (NEW)
-    // ═══════════════════════════════════════════════
     public function rentals(Request $request)
     {
         $query = Rental::with(['user', 'book']);
@@ -77,7 +69,7 @@ class AdminController extends Controller
         }
 
         $rental->update(['approval_status' => 'approved']);
-        $rental->book->decrement('quantity', $rental->quantity); // ← stock decrement on approval
+        $rental->book->decrement('quantity', $rental->quantity);
 
         return redirect()->back()->with('success', 'Rental approved. Stock decremented.');
     }
@@ -91,7 +83,7 @@ class AdminController extends Controller
         }
 
         $rental->update(['approval_status' => 'returned']);
-        $rental->book->increment('quantity', $rental->quantity); // ← THE RESTOCK FIX
+        $rental->book->increment('quantity', $rental->quantity);
 
         return redirect()->back()->with('success', 'Book returned. Inventory restocked.');
     }
@@ -108,9 +100,6 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Rental request rejected.');
     }
 
-    // ═══════════════════════════════════════════════
-    // QUICK RETURN SCANNER
-    // ═══════════════════════════════════════════════
     public function scanReturn()
     {
         return view('admin.returns_scan');
@@ -120,10 +109,9 @@ class AdminController extends Controller
     {
         $request->validate(['scan_id' => 'required']);
         $scan = trim($request->scan_id);
-        
-        // Extract numeric ID if scanned QR starts with RENTAL-
+
         $id = str_replace('RENTAL-', '', strtoupper($scan));
-        
+
         $rental = Rental::find($id);
         if (!$rental) {
             return redirect()->back()->with('error', "No rental record found for '{$scan}'")->withInput();
@@ -137,16 +125,12 @@ class AdminController extends Controller
             return redirect()->back()->with('error', 'Cannot return. Rental status is currently: ' . $rental->approval_status);
         }
 
-        // Process Return
         $rental->update(['approval_status' => 'returned']);
         $rental->book->increment('quantity', clone $rental->quantity);
 
         return redirect()->back()->with('success', "Success! '{$rental->book->name}' has been marked as returned and stock updated.");
     }
 
-    // ═══════════════════════════════════════════════
-    // CATEGORY MANAGEMENT
-    // ═══════════════════════════════════════════════
     public function categories()
     {
         $categories = Category::all();
@@ -173,9 +157,6 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Category Deleted');
     }
 
-    // ═══════════════════════════════════════════════
-    // BOOK MANAGEMENT
-    // ═══════════════════════════════════════════════
     public function books()
     {
         $books = Book::with('category')->get();
@@ -195,34 +176,32 @@ class AdminController extends Controller
             return response()->json(['error' => 'Invalid ISBN'], 400);
         }
 
-        // Tier 1: Try Google Books (Ultra Fast)
         try {
             $gRes = \Illuminate\Support\Facades\Http::timeout(5)->get("https://www.googleapis.com/books/v1/volumes?q=isbn:{$isbn}");
             if ($gRes->successful() && !empty($gRes->json()['items'])) {
                 $info = $gRes->json()['items'][0]['volumeInfo'];
                 return response()->json([
-                    'source' => 'google',
-                    'title' => $info['title'] ?? '',
-                    'author' => !empty($info['authors']) ? $info['authors'][0] : '',
-                    'category' => !empty($info['categories']) ? $info['categories'][0] : '',
+                    'source'      => 'google',
+                    'title'       => $info['title'] ?? '',
+                    'author'      => !empty($info['authors']) ? $info['authors'][0] : '',
+                    'category'    => !empty($info['categories']) ? $info['categories'][0] : '',
                     'description' => $info['description'] ?? '',
-                    'cover' => !empty($info['imageLinks']['thumbnail']) ? str_replace('http:', 'https:', $info['imageLinks']['thumbnail']) : "https://covers.openlibrary.org/b/isbn/{$isbn}-L.jpg?default=false",
+                    'cover'       => !empty($info['imageLinks']['thumbnail']) ? str_replace('http:', 'https:', $info['imageLinks']['thumbnail']) : "https://covers.openlibrary.org/b/isbn/{$isbn}-L.jpg?default=false",
                 ]);
             }
         } catch (\Exception $e) {}
 
-        // Tier 2: Fallback OpenLibrary (Backup)
         try {
             $oRes = \Illuminate\Support\Facades\Http::timeout(5)->get("https://openlibrary.org/api/books?bibkeys=ISBN:{$isbn}&format=json&jscmd=data");
             if ($oRes->successful() && isset($oRes->json()["ISBN:{$isbn}"])) {
                 $info = $oRes->json()["ISBN:{$isbn}"];
                 return response()->json([
-                    'source' => 'openlibrary',
-                    'title' => $info['title'] ?? '',
-                    'author' => !empty($info['authors'][0]['name']) ? $info['authors'][0]['name'] : '',
-                    'category' => !empty($info['subjects'][0]['name']) ? $info['subjects'][0]['name'] : '',
+                    'source'      => 'openlibrary',
+                    'title'       => $info['title'] ?? '',
+                    'author'      => !empty($info['authors'][0]['name']) ? $info['authors'][0]['name'] : '',
+                    'category'    => !empty($info['subjects'][0]['name']) ? $info['subjects'][0]['name'] : '',
                     'description' => '',
-                    'cover' => $info['cover']['large'] ?? "https://covers.openlibrary.org/b/isbn/{$isbn}-L.jpg?default=false",
+                    'cover'       => $info['cover']['large'] ?? "https://covers.openlibrary.org/b/isbn/{$isbn}-L.jpg?default=false",
                 ]);
             }
         } catch (\Exception $e) {}
@@ -233,19 +212,18 @@ class AdminController extends Controller
     public function storeBook(Request $request)
     {
         $request->validate([
-            'name'        => 'required',
-            'author'      => 'nullable|string|max:255',
-            'category_id' => 'nullable',
-            'new_category'=> 'nullable|string|max:255',
-            'price'       => 'required|numeric',
-            'quantity'    => 'required|numeric',
-            'description' => 'nullable',
-            'cover_url'   => 'nullable|string|max:2048',
+            'name'         => 'required',
+            'author'       => 'nullable|string|max:255',
+            'category_id'  => 'nullable',
+            'new_category' => 'nullable|string|max:255',
+            'price'        => 'required|numeric',
+            'quantity'     => 'required|numeric',
+            'description'  => 'nullable',
+            'cover_url'    => 'nullable|string|max:2048',
         ]);
 
         $data = $request->except(['_token', 'image', 'new_category', 'cover_url']);
 
-        // Handle Smart Category Mapping
         if ($request->filled('new_category')) {
             $cat = \App\Models\Category::firstOrCreate(['name' => $request->new_category]);
             $data['category_id'] = $cat->id;
@@ -253,27 +231,26 @@ class AdminController extends Controller
             return redirect()->back()->withErrors(['category_id' => 'Please select a category or provide a new one.'])->withInput();
         }
 
-        // Local Cover Engine: Intercept HTTP URLs & Download Locally
         if ($request->filled('cover_url')) {
             $url = $request->cover_url;
             if (str_starts_with($url, 'http')) {
                 try {
                     $context = stream_context_create(['http' => ['ignore_errors' => true]]);
                     $imgData = file_get_contents($url, false, $context);
-                    if ($imgData && strlen($imgData) > 500) { // Valid image size check
+                    if ($imgData && strlen($imgData) > 500) {
                         $dir = public_path('img/covers');
                         if (!file_exists($dir)) mkdir($dir, 0755, true);
                         $filename = 'cover_' . uniqid() . '.jpg';
                         file_put_contents($dir . '/' . $filename, $imgData);
                         $data['image'] = asset('img/covers/' . $filename);
                     } else {
-                        $data['image'] = $url; // Fallback to hotlink if download fails
+                        $data['image'] = $url;
                     }
                 } catch (\Exception $e) {
                     $data['image'] = $url;
                 }
             } else {
-                $data['image'] = $url; // It's already local
+                $data['image'] = $url;
             }
         }
 
@@ -334,12 +311,8 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Book Deleted');
     }
 
-    // ═══════════════════════════════════════════════
-    // MEMBER MANAGEMENT
-    // ═══════════════════════════════════════════════
     public function members()
     {
-        // Show all users except the currently logged-in admin
         $users = User::where('id', '!=', Auth::id())->orderBy('created_at', 'desc')->get();
         return view('admin.displayMembers', compact('users'));
     }
@@ -367,13 +340,13 @@ class AdminController extends Controller
     public function revokeCard($id)
     {
         $user = \App\Models\User::findOrFail($id);
-        
+
         \App\Models\LibraryCard::updateOrCreate(
             ['user_id' => $user->id],
             [
                 'student_id' => $user->libraryCard->student_id ?? 'REVOKED-' . $user->id,
                 'department' => $user->libraryCard->department ?? 'N/A',
-                'status' => 'revoked',
+                'status'     => 'revoked',
                 'expires_at' => now()->subDay()
             ]
         );
@@ -381,9 +354,6 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Library Access Revoked for ' . $user->name);
     }
 
-    // ═══════════════════════════════════════════════
-    // LIBRARY CARD REQUESTS
-    // ═══════════════════════════════════════════════
     public function displayCards()
     {
         $cards = \App\Models\LibraryCard::with('user')->orderBy('created_at', 'desc')->get();
@@ -394,8 +364,8 @@ class AdminController extends Controller
     {
         $card = \App\Models\LibraryCard::findOrFail($id);
         $card->update([
-            'status' => 'approved',
-            'issued_at' => now(),
+            'status'     => 'approved',
+            'issued_at'  => now(),
             'expires_at' => now()->addMonths(6)
         ]);
         return redirect()->back()->with('success', 'Library Card Approved! Issue Date and 6-Month Expiry configured.');
@@ -408,12 +378,8 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Library Card Rejected.');
     }
 
-    // ═══════════════════════════════════════════════
-    // FINES & APPEALS
-    // ═══════════════════════════════════════════════
     public function fines()
     {
-        // Get rentals that either have a fine or an active appeal
         $rentals = \App\Models\Rental::with(['user', 'book', 'fineAppeal'])
             ->where('fine_amount', '>', 0)
             ->orWhereHas('fineAppeal', function($q) {
@@ -439,7 +405,7 @@ class AdminController extends Controller
             'action' => 'required|in:add,reduce'
         ]);
         $rental = \App\Models\Rental::findOrFail($id);
-        
+
         if ($request->action === 'add') {
             $rental->update(['fine_amount' => $rental->fine_amount + $request->amount]);
             $msg = 'Fine increased successfully.';
@@ -448,7 +414,7 @@ class AdminController extends Controller
             $rental->update(['fine_amount' => $newAmount]);
             $msg = 'Fine reduced successfully.';
         }
-        
+
         return redirect()->back()->with('success', $msg);
     }
 
@@ -457,7 +423,7 @@ class AdminController extends Controller
         $request->validate(['status' => 'required|in:resolved,rejected']);
         $appeal = \App\Models\FineAppeal::findOrFail($id);
         $appeal->update(['status' => $request->status]);
-        
+
         return redirect()->back()->with('success', 'Appeal ticket ' . $request->status . '.');
     }
 }

@@ -14,41 +14,32 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'address' => ['nullable', 'string', 'max:500'], // ADDED ADDRESS VALIDATION
+            'address'  => ['nullable', 'string', 'max:500'],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'address' => $request->address, // SAVING ADDRESS TO DATABASE
-            'role' => 'user', // ASSIGNING DEFAULT ROLE
+            'address'  => $request->address,
+            'role'     => 'user',
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        // Redirect to home page instead of default dashboard to see the library UI
         return redirect(route('home'));
     }
 }

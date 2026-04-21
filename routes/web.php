@@ -7,13 +7,11 @@ use App\Http\Controllers\AiController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-// ── PUBLIC ROUTES ─────────────────────────────────────────────
 Route::get('/', [UserController::class, 'index'])->name('home');
 Route::get('/user/books', [UserController::class, 'showBooks'])->name('user.books');
 Route::get('/contact', [UserController::class, 'contact'])->name('contact');
 Route::post('/contact', [UserController::class, 'submitContact'])->name('contact.submit');
 
-// ── AI BOOK ASSISTANT (public, guest-accessible) ─────────────
 Route::middleware('throttle:15,1')->group(function () {
     Route::post('/api/book-ai/info',    [AiController::class, 'bookInfo'])->name('api.book.ai.info');
     Route::post('/api/book-ai/chat',    [AiController::class, 'bookChat'])->name('api.book.ai.chat');
@@ -21,7 +19,6 @@ Route::middleware('throttle:15,1')->group(function () {
     Route::delete('/api/book-ai/history', [AiController::class, 'clearHistory'])->name('api.book.ai.clear');
 });
 
-// ── DASHBOARD REDIRECT ────────────────────────────────────────
 Route::get('/dashboard', function () {
     if (Auth::user()->role === 'admin') {
         return redirect()->route('admin.dashboard');
@@ -29,7 +26,6 @@ Route::get('/dashboard', function () {
     return redirect()->route('user.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// ── USER AUTHENTICATED ROUTES ─────────────────────────────────
 Route::middleware('auth')->group(function () {
 
     // Profile
@@ -61,7 +57,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/wishlist/toggle/{bookId}', [UserController::class, 'toggleWishlist'])->name('user.wishlist.toggle');
 });
 
-// ── ADMIN ROUTES ───────────────────────────────────────────────
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard
