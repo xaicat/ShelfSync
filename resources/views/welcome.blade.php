@@ -886,6 +886,7 @@
 
 {{-- ═══════ FEATURE SHOWCASE (BENTO GRID) ═══════ --}}
 <section class="features-section" id="features">
+
     <div class="features-inner">
         <div class="features-header">
             <div class="pill-tag"><i class="fas fa-star"></i> Platform Features</div>
