@@ -14,17 +14,14 @@ class UserController extends Controller
 {
     public function index()
     {
-        // § Search sandbox — all books (id, name, author, image)
         $searchableBooks = Book::select('id', 'name', 'author', 'image')->limit(100)->get();
 
-        // § Live Availability feed — available books, newest first
         $availableBooks = Book::where('quantity', '>', 0)
             ->withCount('rentals')
             ->orderByDesc('rentals_count')
             ->limit(12)
             ->get();
 
-        // § Due Back Soon Radar — approved rentals with a due_date in the next 10 days
         $dueSoonRentals = Rental::with('book')
             ->where('approval_status', 'approved')
             ->whereNotNull('due_date')
@@ -34,7 +31,6 @@ class UserController extends Controller
             ->limit(6)
             ->get();
 
-        // § Live metrics
         $metrics = [
             'books'    => Book::count(),
             'students' => \App\Models\User::where('role', 'user')->count(),
@@ -47,15 +43,14 @@ class UserController extends Controller
         ));
     }
 
-    // ── User Dashboard ─────────────────────────────────────────
     public function dashboard()
     {
         $user = Auth::user();
 
-        $activeRentals   = Rental::with('book')->where('user_id', $user->id)->where('approval_status', 'approved')->get();
-        $pendingRentals  = Rental::where('user_id', $user->id)->where('approval_status', 'pending')->count();
-        $completedBooks  = ReadingProgress::where('user_id', $user->id)->where('status', 'completed')->count();
-        $wishlistCount   = Wishlist::where('user_id', $user->id)->count();
+        $activeRentals    = Rental::with('book')->where('user_id', $user->id)->where('approval_status', 'approved')->get();
+        $pendingRentals   = Rental::where('user_id', $user->id)->where('approval_status', 'pending')->count();
+        $completedBooks   = ReadingProgress::where('user_id', $user->id)->where('status', 'completed')->count();
+        $wishlistCount    = Wishlist::where('user_id', $user->id)->count();
         $currentlyReading = ReadingProgress::with('book')->where('user_id', $user->id)->where('status', 'reading')->orderByDesc('updated_at')->get();
         $readingHistory   = ReadingProgress::with('book')->where('user_id', $user->id)->where('status', 'completed')->orderByDesc('completed_at')->limit(5)->get();
         $totalFines       = Rental::where('user_id', $user->id)->sum('fine_amount');
@@ -67,7 +62,6 @@ class UserController extends Controller
         ));
     }
 
-    // ── Reading Tracker ─────────────────────────────────────────
     public function addReading(Request $request)
     {
         $request->validate([
@@ -107,7 +101,6 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'Book marked as read! 🎉');
     }
 
-    // ── Wishlist ─────────────────────────────────────────────────
     public function toggleWishlist($bookId)
     {
         $existing = Wishlist::where('user_id', Auth::id())->where('book_id', $bookId)->first();
@@ -121,7 +114,6 @@ class UserController extends Controller
         return response()->json(['wishlisted' => $state]);
     }
 
-    // ── Books ──────────────────────────────────────────────────
     public function showBooks(Request $request)
     {
         $query = Book::with('category');
@@ -140,7 +132,6 @@ class UserController extends Controller
         $books      = $query->orderBy('name')->get();
         $categories = \App\Models\Category::all();
 
-        // Wishlist IDs for the current user
         $wishlistIds = Auth::check()
             ? Wishlist::where('user_id', Auth::id())->pluck('book_id')->toArray()
             : [];
@@ -200,9 +191,6 @@ class UserController extends Controller
         return view('user.contact');
     }
 
-    // ═══════════════════════════════════════════════
-    // LIBRARY CARD SYSTEM
-    // ═══════════════════════════════════════════════
     public function applyCard(Request $request)
     {
         $request->validate([
@@ -215,7 +203,7 @@ class UserController extends Controller
             [
                 'student_id' => $request->student_id,
                 'department' => $request->department,
-                'status' => 'pending'
+                'status'     => 'pending'
             ]
         );
 
@@ -231,9 +219,6 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'Renewal request submitted.');
     }
 
-    // ═══════════════════════════════════════════════
-    // FINE APPEALS
-    // ═══════════════════════════════════════════════
     public function submitAppeal(Request $request)
     {
         $request->validate([

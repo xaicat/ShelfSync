@@ -20,17 +20,11 @@ class Book extends Model
         'description'
     ];
 
-    /**
-     * A book belongs to a category.
-     */
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    /**
-     * A book can have many rental records.
-     */
     public function rentals()
     {
         return $this->hasMany(Rental::class);
